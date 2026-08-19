@@ -15,5 +15,6 @@ python3 -m http.server 4173 -d Website
 将 `Website` 目录中的全部文件上传到任意静态托管服务，并把域名根目录指向 `index.html`。正式上线前请完成以下替换：
 
 - App Store 上线后，将首页“即将登陆 App Store”入口替换为正式下载链接。
+- 当前联系邮箱为 `aiAssistant@outlook.com`。
 - 根据实际运营主体、服务地区和所接入的第三方 SDK 对隐私政策做法律审核。
 - 如需网站备案信息，在页脚增加对应的 ICP 备案号和公安备案号。
