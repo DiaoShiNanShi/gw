@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生 18：Keychain 与安全存储 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 原生模块</div>
+    <h1>iOS 原生 18：Keychain 与安全存储</h1>
+    <span class="header-tag">iOS 原生模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>Token 存储、证书绑定、防逆向窃取。</p></blockquote><hr>
+<h2>1. Keychain 基础</h2>
+<pre><code class="language-swift">// 存 token（不是 API Key！）
+let query: [String: Any] = [
+    kSecClass as String: kSecClassGenericPassword,
+    kSecAttrAccount as String: "userToken",
+    kSecValueData as String: tokenData
+]
+SecItemAdd(query as CFDictionary, nil)</code></pre>
+<hr>
+<h2>2. 安全等级</h2>
+<table><thead><tr><th>存储</th><th>安全</th><th>能存什么</th></tr></thead><tbody><tr><td>UserDefaults</td><td>低</td><td>偏好设置</td></tr><tr><td>Keychain</td><td>高</td><td>token、证书</td></tr><tr><td>服务端</td><td>最高</td><td>API Key</td></tr></tbody></table>
+<hr>
+<h2>3. 防逆向</h2>
+<p>Keychain 越狱可读。真正敏感逻辑放服务端。见 <a href="../iOS逆向/04-逆向实战与合规.html">iOS 逆向</a> 章自查。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

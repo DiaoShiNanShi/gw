@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 03：RAG 企业级实战（知识库问答系统） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 03：RAG 企业级实战（知识库问答系统）</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：从零搭一个企业级 RAG 知识库系统——这是<strong>当前企业 AI 落地需求量最大的场景</strong>，没有之一。<br />
+什么"公司文档问答""客服知识库""政策问答机器人"，底层全是 RAG。</p>
+</blockquote>
+<hr />
+<h2>1. 为什么企业首选 RAG？（先搞清楚动机）</h2>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>RAG</th>
+<th>微调</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>公司内部资料（制度/产品手册）</td>
+<td>✅ 立刻能用</td>
+<td>❌ 训练成本高</td>
+</tr>
+<tr>
+<td>知识实时更新（新政策/新价格）</td>
+<td>✅ 改文档即可</td>
+<td>❌ 要重新训练</td>
+</tr>
+<tr>
+<td>需要引用来源（"这句话出自哪份文档"）</td>
+<td>✅ 天然带出处</td>
+<td>❌ 做不到</td>
+</tr>
+<tr>
+<td>不需要改模型行为/语气</td>
+<td>✅</td>
+<td>⚠️ 杀鸡用牛刀</td>
+</tr>
+</tbody>
+</table>
+<p><strong>一句话：RAG 解决"模型不知道的事"，微调解决"模型不会做的事"。</strong> 企业 80% 的需求是前者。</p>
+<div class="demo-card" data-demo="rag-demo"></div>
+<h2>2. RAG 完整架构（一张图看懂）</h2>
+<pre><code>用户提问 &quot;今年年假几天？&quot;
+        │
+        ▼
+┌─────────────────────────┐
+│ 1. 文档入库（离线做一次）   │
+│    资料 → 切分 → 向量化 → 存入向量库 │
+└─────────────────────────┘
+        │
+        ▼
+┌─────────────────────────┐
+│ 2. 检索（每次提问都做）    │
+│    问题向量化 → 向量库找最相似 Top-K 段 │
+│    （进阶：+ 关键词检索 + 重排序）      │
+└─────────────────────────┘
+        │
+        ▼
+┌─────────────────────────┐
+│ 3. 生成                  │
+│    把&quot;问题 + 检索到的资料&quot;拼给大模型    │
+│    模型&quot;照着资料&quot;回答，并标注来源       │
+└─────────────────────────┘
+</code></pre>
+<h2>3. 核心组件选型（2026 实用版）</h2>
+<h3>向量数据库选型</h3>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>特点</th>
+<th>适合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ChromaDB</strong></td>
+<td>纯 Python，零配置</td>
+<td>学习、原型</td>
+</tr>
+<tr>
+<td><strong>FAISS</strong></td>
+<td>Meta 出品，快，内存型</td>
+<td>中小规模（百万级向量）</td>
+</tr>
+<tr>
+<td><strong>Milvus</strong></td>
+<td>分布式，生产级</td>
+<td>企业大规模</td>
+</tr>
+<tr>
+<td><strong>Elasticsearch</strong></td>
+<td>老牌搜索，支持向量+关键词</td>
+<td>已有 ES 的公司</td>
+</tr>
+<tr>
+<td><strong>腾讯云/阿里云向量库</strong></td>
+<td>云服务，免运维</td>
+<td>不想自己搭</td>
+</tr>
+</tbody>
+</table>
+<h3>Embedding 模型选型（负责"把文字变向量"）</h3>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>bge-large-zh</strong>（智源）</td>
+<td>中文检索效果国产最强，常用</td>
+</tr>
+<tr>
+<td><strong>bge-m3</strong></td>
+<td>多语言 + 多粒度，中文神器</td>
+</tr>
+<tr>
+<td><strong>nomic-embed-text</strong></td>
+<td>Ollama 本地跑，方便</td>
+</tr>
+<tr>
+<td><strong>text-embedding-v3</strong>（阿里）</td>
+<td>API 调用，效果好</td>
+</tr>
+</tbody>
+</table>
+<p><strong>选型口诀：中文场景优先 bge 系列；想本地跑用 nomic-embed-text（Ollama 一条命令）。</strong></p>
+<h2>4. 关键细节：切分策略（最影响效果的一步）</h2>
+<p><strong>为什么切分很重要？</strong> 检索是按"片段"找的。切太碎 → 语义不完整；切太长 → 混入噪音。</p>
+<blockquote>
+<p><strong>反例</strong>：把整份 50 页的合同当一个片段，检索时"年假 15 天"和"离职赔偿"全混在一起，模型分不清。<br />
+<strong>正例</strong>：按章节/段落切，每段 300~500 字，段与段之间保留少量重叠（overlap 50~100 字），防止关键句被切断。</p>
+</blockquote>
+<pre><code class="language-python">def split_document(text, chunk_size=400, overlap=80):
+    &quot;&quot;&quot;按字符数切分，带重叠&quot;&quot;&quot;
+    chunks = []
+    for i in range(0, len(text), chunk_size - overlap):
+        chunks.append(text[i : i + chunk_size])
+    return chunks
+
+# 进阶：按 Markdown 标题切（保持章节完整性）
+import re
+def split_by_heading(text):
+    parts = re.split(r'(?m)^#{1,3} ', text)  # 按 # 标题切
+    return [p.strip() for p in parts if len(p.strip()) &gt; 50]
+</code></pre>
+<p><strong>企业级切分建议：先按结构切（章节），再对超长章节按字符切 + 重叠。</strong></p>
+<h2>5. 完整可运行的 RAG 系统（本地版，你的 Mac 能跑）</h2>
+<pre><code class="language-python">&quot;&quot;&quot;
+本地 RAG 系统：Ollama 提供模型 + ChromaDB 存向量
+安装：pip install chromadb  &amp;&amp;  ollama pull qwen2.5:1.5b &amp;&amp; ollama pull nomic-embed-text
+&quot;&quot;&quot;
+from openai import OpenAI
+import chromadb
+from chromadb.utils.embedding_functions import OllamaEmbeddingFunction
+
+llm = OpenAI(base_url=&quot;http://localhost:11434/v1&quot;, api_key=&quot;ollama&quot;)
+ef = OllamaEmbeddingFunction(
+    url=&quot;http://localhost:11434/api/embeddings&quot;, model_name=&quot;nomic-embed-text&quot;
+)
+db = chromadb.PersistentClient(path=&quot;./kb&quot;)   # 持久化到本地文件夹
+col = db.get_or_create_collection(&quot;docs&quot;, embedding_function=ef)
+
+def ingest(text, doc_id):
+    &quot;&quot;&quot;入库：切分 → 向量化 → 存储&quot;&quot;&quot;
+    chunks = [text[i:i+400] for i in range(0, len(text), 320)]  # 400字+80重叠
+    col.add(
+        ids=[f&quot;{doc_id}_{i}&quot; for i in range(len(chunks))],
+        documents=chunks,
+        metadatas=[{&quot;doc_id&quot;: doc_id} for _ in chunks],
+    )
+
+def query(question, top_k=3):
+    &quot;&quot;&quot;检索 + 生成&quot;&quot;&quot;
+    hits = col.query(query_texts=[question], n_results=top_k)
+    context = &quot;\n\n&quot;.join(hits[&quot;documents&quot;][0])
+    resp = llm.chat.completions.create(
+        model=&quot;qwen2.5:1.5b&quot;,
+        messages=[
+            {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;你是知识库助手。只根据提供的资料回答；资料没有就说'资料中未提及'。回答末尾标注资料编号[1][2]。&quot;},
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: f&quot;资料：\n{context}\n\n问题：{question}&quot;},
+        ],
+    )
+    return resp.choices[0].message.content
+
+# 使用
+# ingest(&quot;2026年员工手册：年假15天，入职满一年生效……&quot;, &quot;手册&quot;)
+# print(query(&quot;年假几天？&quot;))
+</code></pre>
+<h2>6. 企业级进阶（让 RAG 从"能用"到"好用"）</h2>
+<h3>进阶 1：混合检索（向量 + 关键词）</h3>
+<p><strong>痛点</strong>：向量检索对"精确匹配"不敏感。搜"iPhone 15 价格"，文档里写的是"iPhone 十五代售价"，向量可能匹配不到。</p>
+<p><strong>解法</strong>：向量检索 + BM25 关键词检索，结果合并（RRF 融合算法），双保险。</p>
+<pre><code class="language-python"># 用 Elasticsearch 或 rank_bm25 做关键词检索
+from rank_bm25 import BM25Okapi
+
+def hybrid_search(question, top_k=5):
+    # 向量结果
+    vec_hits = col.query(query_texts=[question], n_results=top_k)[&quot;documents&quot;][0]
+    # 关键词结果（本地 BM25）
+    tokenized_docs = [doc.split() for doc in all_docs]
+    bm25 = BM25Okapi(tokenized_docs)
+    kw_hits = [all_docs[i] for i in bm25.get_top_n(question.split(), all_docs, n=top_k)]
+    # 合并去重（简单版：先向量后关键词）
+    return list(dict.fromkeys(vec_hits + kw_hits))[:top_k]
+</code></pre>
+<h3>进阶 2：重排序（Rerank）——检索质量翻倍的关键</h3>
+<p><strong>痛点</strong>：向量库返回的 Top-5 里，可能只有 2 条真正相关。直接全喂给模型，会混淆。</p>
+<p><strong>解法</strong>：先用便宜的方式召回 20 条，再用专门的 Rerank 模型精排，只留 Top-3 喂给 LLM。</p>
+<pre><code class="language-python"># 使用 bge-reranker（本地跑）或 API 版
+from FlagEmbedding import FlagReranker
+reranker = FlagReranker(&quot;BAAI/bge-reranker-base&quot;, use_fp16=True)
+
+def rerank(question, candidates, top_k=3):
+    scores = reranker.compute_score([[question, c] for c in candidates])
+    ranked = sorted(zip(candidates, scores), key=lambda x: x[1], reverse=True)
+    return [c for c, s in ranked[:top_k]]
+</code></pre>
+<h3>进阶 3：查询改写（先理解再检索）</h3>
+<p><strong>痛点</strong>：用户问"它什么时候到期？"——"它"指代不明，直接检索效果差。</p>
+<p><strong>解法</strong>：先用 LLM 把口语问题改写为检索友好的完整问题。</p>
+<pre><code class="language-python">def rewrite_query(history, raw_question):
+    resp = llm.chat.completions.create(
+        model=&quot;qwen2.5:1.5b&quot;,
+        messages=[{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;根据对话历史，把用户问题改写为独立、完整、适合检索的问题。只输出改写结果。&quot;},
+                  {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: f&quot;历史：{history}\n问题：{raw_question}&quot;}],
+    )
+    return resp.choices[0].message.content
+</code></pre>
+<h3>进阶 4：引文溯源（企业必做）</h3>
+<p><strong>要求模型输出带来源编号</strong>，并把编号映射到原始文档链接。这样用户能点开原文核对——<strong>这是企业知识库敢用的前提</strong>（出了错能追责）。</p>
+<h2>7. 完整企业级 RAG 架构（架构图）</h2>
+<pre><code>前端（Web/App/企业微信）
+    │
+    ▼
+后端服务（FastAPI/Spring）
+    ├── 查询改写（LLM）
+    ├── 混合检索：向量库(Milvus) + 关键词(ES)
+    ├── Rerank 重排
+    ├── Prompt 组装 + 引文映射
+    └── 生成（LLM API / 本地 Ollama）
+    │
+    ▼
+数据管道（离线）：文档 → 解析(PDF/Word) → 清洗 → 切分 → Embedding → 向量库
+</code></pre>
+<h2>8. 文档解析（PDF/Word/Excel 怎么进知识库）</h2>
+<pre><code class="language-python"># PDF 解析（pip install pypdf）
+from pypdf import PdfReader
+def read_pdf(path):
+    reader = PdfReader(path)
+    return &quot;\n&quot;.join(page.extract_text() for page in reader.pages)
+
+# Word 解析（pip install python-docx）
+from docx import Document
+def read_docx(path):
+    doc = Document(path)
+    return &quot;\n&quot;.join(p.text for p in doc.paragraphs)
+
+# 表格类（pip install openpyxl）
+from openpyxl import load_workbook
+def read_xlsx(path):
+    wb = load_workbook(path)
+    rows = []
+    for ws in wb.worksheets:
+        for row in ws.iter_rows(values_only=True):
+            rows.append(&quot; | &quot;.join(str(c) for c in row if c is not None))
+    return &quot;\n&quot;.join(rows)
+</code></pre>
+<p><strong>企业注意</strong>：扫描版 PDF 是图片，要 OCR（如 PaddleOCR）。这经常是知识库项目里最费时间的环节。</p>
+<hr />
+<h2>小结</h2>
+<ol>
+<li><strong>RAG = 查资料 + 照着答</strong>，解决"模型不知道的事"</li>
+<li><strong>切分质量 &gt; 算法花活</strong>：先结构切，再字符切 + 重叠</li>
+<li><strong>好用三件套</strong>：混合检索 + Rerank + 查询改写</li>
+<li><strong>企业必做</strong>：引文溯源、文档解析、权限控制</li>
+<li><strong>选型</strong>：学习用 ChromaDB，企业用 Milvus/ES，Embedding 中文用 bge</li>
+</ol>
+<hr />
+<p><strong>下一步：</strong> 学 <a href="04-Agent智能体与Function-Calling.html">04-Agent智能体与Function-Calling.html</a> ——让 AI 不只会聊天，还会干活。<br />
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

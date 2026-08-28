@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>04-网络与异步 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 中级进阶</div>
+    <h1>04-网络与异步</h1>
+    <span class="header-tag">中级进阶</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>04-网络与异步</h1>
+<blockquote>
+<p>大白话版 · 网络请求、JSON 解析与异步处理（小白向）<br>
+目标：学会用 dio 发起网络请求、用 json_serializable 解析 JSON、处理缓存与错误、做好加载态。</p>
+</blockquote>
+<hr>
+<h2>一、先讲"是什么"：网络请求到底是干什么的？</h2>
+<p><strong>一句话版本：App 通过"网络请求"去服务器要数据（或提交数据），拿到后展示给用户。</strong></p>
+<p>打个比方：</p>
+<blockquote>
+<p>你去餐厅（App）吃饭：<br>
+- 你点菜 = <strong>发请求</strong>（告诉服务器我要什么）<br>
+- 后厨做菜 = <strong>服务器处理</strong><br>
+- 服务员端菜上来 = <strong>服务器返回数据</strong>（JSON）<br>
+- 你吃到嘴里 = <strong>App 把数据显示到界面</strong></p>
+<p>你点完菜不会傻站着干等吧？——这就引出了<strong>异步</strong>：点完菜可以先玩手机，菜到了再放下手机开吃。</p>
+</blockquote>
+<h3>一个完整流程（大白话）</h3>
+<pre class="codehilite"><code>App 发请求（GET 天气接口）
+    ↓  网络传输（异步，不等）
+服务器返回 JSON：{&quot;city&quot;:&quot;北京&quot;,&quot;temp&quot;:28}
+    ↓
+App 把 JSON 解析成 Dart 对象
+    ↓
+界面显示&quot;北京 28°C&quot;（加载态结束）
+</code></pre>
+
+<h3>关键概念先记住</h3>
+<table>
+<thead>
+<tr>
+<th>名词</th>
+<th>大白话</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API / 接口</td>
+<td>服务器提供的"取数窗口"</td>
+<td>餐厅的点菜窗口</td>
+</tr>
+<tr>
+<td>HTTP 请求</td>
+<td>你要数据的动作</td>
+<td>点菜</td>
+</tr>
+<tr>
+<td>响应（Response）</td>
+<td>服务器给回的数据</td>
+<td>上菜</td>
+</tr>
+<tr>
+<td>JSON</td>
+<td>数据的通用"快递箱格式"</td>
+<td>统一规格的打包盒</td>
+</tr>
+<tr>
+<td>异步（async/await）</td>
+<td>不阻塞主流程地等待</td>
+<td>点完菜先干别的</td>
+</tr>
+<tr>
+<td>缓存</td>
+<td>把数据先存一份本地</td>
+<td>把菜拍照存手机，下次没网也能看</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>二、再讲"为什么"：为什么用 dio？为什么要封装？</h2>
+<h3>2.1 为什么用 dio 而不是自带的 http？</h3>
+<p>Flutter 自带的 <code>http</code> 包简单但功能弱；<code>dio</code> 是社区最火的网络库，功能全、好用：</p>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>http</th>
+<th>dio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>基础 GET/POST</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>超时设置</td>
+<td>要手动</td>
+<td>✅ 一行搞定</td>
+</tr>
+<tr>
+<td>拦截器（统一加 token）</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>上传/下载进度</td>
+<td>麻烦</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>取消请求</td>
+<td>麻烦</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>FormData 表单</td>
+<td>麻烦</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>大白话：dio 是"增强版 http"，自带拦截器、超时、进度等生产级功能，<strong>实战首选</strong>。</p>
+</blockquote>
+<h3>2.2 为什么要把网络请求"封装"？</h3>
+<p><strong>大白话：</strong> 把"发请求 + 解析 + 错误处理"这套重复代码写成一个工具类，所有页面共用。好处：</p>
+<ol>
+<li><strong>一处改，处处生效</strong>：比如服务器地址变了、要统一加 token，只改封装文件。</li>
+<li><strong>代码不重复</strong>：不用每个页面都写一套 try-catch。</li>
+<li><strong>规范统一</strong>：所有请求都走同一个"大门"，好排查问题。</li>
+</ol>
+<hr>
+<h2>三、怎么用：一步步搭起网络层</h2>
+<h3>3.1 先装依赖（pubspec.yaml）</h3>
+<pre class="codehilite"><code class="language-yaml">dependencies:
+  dio: ^5.0.0                    # 网络请求库
+  json_annotation: ^4.8.0        # JSON 序列化注解
+  shared_preferences: ^2.2.0     # 本地缓存（轻量 KV，≈ UserDefaults）
+
+dev_dependencies:
+  build_runner: ^2.4.0           # 代码生成工具
+  json_serializable: ^6.7.0      # JSON 序列化代码生成
+</code></pre>
+
+<p>然后在终端执行：</p>
+<pre class="codehilite"><code class="language-bash">flutter pub get
+</code></pre>
+
+<blockquote>
+<p>对 iOS 工程师：<code>dio</code> ≈ Alamofire；<code>shared_preferences</code> ≈ UserDefaults；<code>build_runner</code> ≈ Sourcery（代码生成）。</p>
+</blockquote>
+<h3>3.2 深入 Future / async / await（吃透异步三兄弟）</h3>
+<p>先复习再深入。<strong>一句话：Future 是"未来的值"，async 标记"这个函数有异步操作"，await 是"等它"。</strong></p>
+<pre class="codehilite"><code class="language-dart">// 基础：模拟网络延迟 2 秒返回数据
+Future&lt;String&gt; fetchData() async {
+  await Future.delayed(const Duration(seconds: 2));
+  return '服务器数据';
+}
+
+// 进阶 1：链式调用（.then 等价于 await，但 await 更易读）
+Future&lt;void&gt; useThen() {
+  return fetchData().then((data) {
+    print('拿到：$data');
+  });
+}
+
+// 进阶 2：多个请求并行（Future.wait：同时发，全部回来才继续）
+Future&lt;void&gt; fetchAll() async {
+  final results = await Future.wait([
+    fetchData(),
+    fetchData(),
+  ]);
+  print(results);  // [服务器数据, 服务器数据]
+}
+
+// 进阶 3：错误处理（try-catch 捕获异常，绝不崩）
+Future&lt;void&gt; safeFetch() async {
+  try {
+    final data = await fetchData();
+    print('成功：$data');
+  } catch (e) {
+    print('失败了：$e');  // 网络错误、超时都会进这里
+  } finally {
+    print('不管成功失败，这里都会执行（比如关 loading）');
+  }
+}
+</code></pre>
+
+<p><strong>错误处理三种状态（大白话）：</strong><br>
+- <strong>加载中</strong>（loading）：显示转圈<br>
+- <strong>成功</strong>（success）：显示数据<br>
+- <strong>失败</strong>（error）：显示"重试"按钮</p>
+<h3>3.3 用 dio 发请求（核心代码）</h3>
+<pre class="codehilite"><code class="language-dart">// 第一步：创建 dio 实例（全局共用一份）
+import 'package:dio/dio.dart';
+
+class ApiClient {
+  // 单例：整个 App 共用一个 dio
+  static final ApiClient instance = ApiClient._();
+  ApiClient._();
+
+  // baseUrl：所有请求的前缀（服务器地址）
+  final Dio _dio = Dio(BaseOptions(
+    baseUrl: 'https://api.example.com',
+    connectTimeout: const Duration(seconds: 10),  // 连接超时
+    receiveTimeout: const Duration(seconds: 10),  // 接收超时
+  ));
+
+  // 拦截器：每次请求自动加 token（相当于 Alamofire 的 interceptor）
+  void init() {
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) {
+        options.headers['Authorization'] = 'Bearer 你的token';
+        handler.next(options);  // 放行
+      },
+      onError: (e, handler) {
+        // 统一错误处理：超时、断网、500 都走到这
+        handler.next(e);
+      },
+    ));
+  }
+
+  // 第二步：封装一个 GET 请求方法
+  Future&lt;dynamic&gt; get(String path, {Map&lt;String, dynamic&gt;? query}) async {
+    final response = await _dio.get(path, queryParameters: query);
+    return response.data;  // 返回解析后的数据（一般是 Map/List）
+  }
+}
+</code></pre>
+
+<p><strong>使用封装（在页面里）：</strong></p>
+<pre class="codehilite"><code class="language-dart">Future&lt;void&gt; loadWeather() async {
+  try {
+    // 请求数据
+    final data = await ApiClient.instance.get('/weather', query: {'city': '北京'});
+    // data 是一个 Map：{ &quot;city&quot;: &quot;北京&quot;, &quot;temp&quot;: 28 }
+    debugPrint('城市：${data['city']}，温度：${data['temp']}');
+  } catch (e) {
+    debugPrint('请求失败：$e');
+  }
+}
+</code></pre>
+
+<h3>3.4 JSON 解析（用 json_serializable 自动生成代码）</h3>
+<p>JSON 是字符串，Dart 对象是"模型类"。解析 = 把 JSON 字符串变成 Dart 对象。</p>
+<p><strong>手动解析（小数据够用）：</strong></p>
+<pre class="codehilite"><code class="language-dart">// JSON 长这样：{&quot;city&quot;:&quot;北京&quot;,&quot;temp&quot;:28}
+class Weather {
+  final String city;
+  final int temp;
+
+  Weather({required this.city, required this.temp});
+
+  // 手动从 Map 构造
+  factory Weather.fromJson(Map&lt;String, dynamic&gt; json) {
+    return Weather(
+      city: json['city'] as String,
+      temp: json['temp'] as int,
+    );
+  }
+}
+
+// 使用
+final data = await ApiClient.instance.get('/weather', query: {'city': '北京'});
+final weather = Weather.fromJson(data);
+print('${weather.city} ${weather.temp}°C');
+</code></pre>
+
+<p><strong>自动生成（项目大了用 json_serializable）：</strong></p>
+<pre class="codehilite"><code class="language-dart">// 第一步：定义模型类，加注解
+import 'package:json_annotation/json_annotation.dart';
+
+part 'weather.g.dart';  // 生成的代码文件（build_runner 自动生成）
+
+@JsonSerializable()  // 告诉工具&quot;帮我生成解析代码&quot;
+class Weather {
+  final String city;
+  final int temp;
+  Weather({required this.city, required this.temp});
+
+  // 这两个方法由 build_runner 自动生成，不用手写
+  factory Weather.fromJson(Map&lt;String, dynamic&gt; json) =&gt; _$WeatherFromJson(json);
+  Map&lt;String, dynamic&gt; toJson() =&gt; _$WeatherToJson(this);
+}
+</code></pre>
+
+<pre class="codehilite"><code class="language-bash"># 第二步：在项目目录运行命令，自动生成 weather.g.dart
+flutter pub run build_runner build
+</code></pre>
+
+<blockquote>
+<p>大白话：你只写模型类（字段 + 注解），<code>build_runner</code> 帮你自动生成"解析代码"，字段多了也不用手写，省时且不易出错。<br>
+对 iOS 工程师：≈ Codable 的 <code>Codable</code> 协议 + 自动合成，但 Flutter 需要额外跑一次代码生成命令。</p>
+</blockquote>
+<h3>3.5 缓存与加载态（实战落地）</h3>
+<p><strong>缓存（用 shared_preferences 存最近一次数据）：</strong></p>
+<pre class="codehilite"><code class="language-dart">import 'package:shared_preferences/shared_preferences.dart';
+
+// 存：请求成功后把原始 JSON 字符串存本地
+Future&lt;void&gt; saveCache(String key, String jsonString) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString(key, jsonString);
+}
+
+// 取：没网或请求失败时，读上次的缓存兜底
+Future&lt;String?&gt; readCache(String key) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString(key);
+}
+</code></pre>
+
+<p><strong>完整加载态（加载中 → 成功 / 失败重试）：</strong></p>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: WeatherPage()));
+
+class WeatherPage extends StatefulWidget {
+  const WeatherPage({super.key});
+  @override
+  State&lt;WeatherPage&gt; createState() =&gt; _WeatherPageState();
+}
+
+class _WeatherPageState extends State&lt;WeatherPage&gt; {
+  bool _loading = true;      // 是否加载中
+  String? _error;            // 错误信息（null 表示没错误）
+  String _weather = '';      // 成功后的数据
+
+  @override
+  void initState() {
+    super.initState();
+    _load();  // 页面一进来就开始加载
+  }
+
+  // 加载数据
+  Future&lt;void&gt; _load() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      // 模拟请求
+      await Future.delayed(const Duration(seconds: 2));
+      final data = '北京 28°C';
+      setState(() =&gt; _weather = data);  // 成功：更新数据
+    } catch (e) {
+      setState(() =&gt; _error = '加载失败，请重试');  // 失败：记下错误
+    } finally {
+      setState(() =&gt; _loading = false);  // 无论如何：关闭加载态
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('天气')),
+      body: Center(
+        child: _buildContent(),  // 根据状态渲染不同内容
+      ),
+    );
+  }
+
+  // 根据状态决定显示什么（三态：加载 / 失败 / 成功）
+  Widget _buildContent() {
+    if (_loading) {
+      return const CircularProgressIndicator();  // 转圈圈
+    }
+    if (_error != null) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(_error!),
+          const SizedBox(height: 12),
+          ElevatedButton(onPressed: _load, child: const Text('重试')),  // 重试按钮
+        ],
+      );
+    }
+    return Text(_weather, style: const TextStyle(fontSize: 24));  // 成功展示数据
+  }
+}
+</code></pre>
+
+<hr>
+<h2>四、iOS 开发者视角（老司机对照表）</h2>
+<table>
+<thead>
+<tr>
+<th>iOS 原生</th>
+<th>Flutter</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Alamofire / URLSession</td>
+<td>dio</td>
+<td>网络请求库</td>
+</tr>
+<tr>
+<td>async / await</td>
+<td>async / await</td>
+<td>异步写法（几乎一样）</td>
+</tr>
+<tr>
+<td>Codable / JSONDecoder</td>
+<td>json_serializable + fromJson</td>
+<td>JSON 解析</td>
+</tr>
+<tr>
+<td>UserDefaults</td>
+<td>shared_preferences</td>
+<td>轻量本地缓存</td>
+</tr>
+<tr>
+<td>Result<T, Error></td>
+<td>try-catch / Future</td>
+<td>错误处理</td>
+</tr>
+<tr>
+<td>LoadingView + 重试</td>
+<td>三态切换（loading/error/success）</td>
+<td>加载态</td>
+</tr>
+<tr>
+<td>拦截器（Alamofire interceptor）</td>
+<td>dio 拦截器</td>
+<td>统一加 token</td>
+</tr>
+<tr>
+<td>URLCache / NSCache</td>
+<td>手动缓存 / cached_network_image</td>
+<td>缓存策略</td>
+</tr>
+<tr>
+<td>URLSessionConfiguration.timeoutInterval</td>
+<td>BaseOptions 超时</td>
+<td>请求超时设置</td>
+</tr>
+</tbody>
+</table>
+<p><strong>给 iOS 工程师的真心话：</strong><br>
+- 异步写法和你熟悉的一模一样：<code>async</code> 函数 + <code>await</code> 调用 + <code>try-catch</code>，零学习成本。<br>
+- <code>Codable</code> 对应 Flutter 的 <code>json_serializable</code>，只是 Flutter 需要跑一次 <code>build_runner</code> 生成代码，多一步但原理相同。<br>
+- dio 拦截器就是 Alamofire 的 RequestInterceptor，用来统一加 token、处理 401 跳登录，思路完全一致。<br>
+- 加载态三态（loading / error / success）在任何平台都是通用套路，你直接用。</p>
+<hr>
+<h2>五、小节小结</h2>
+<ol>
+<li>网络流程：发请求 → 异步等待 → 收到 JSON → 解析 → 展示。</li>
+<li><code>Future</code> / <code>async</code> / <code>await</code> 是异步三兄弟；<code>Future.wait</code> 并发、<code>try-catch</code> 容错。</li>
+<li>网络库选 dio：自带拦截器、超时、进度，实战首选；要封装成单例工具类。</li>
+<li>JSON 解析：小数据手写 <code>fromJson</code>，大数据用 <code>json_serializable</code> + <code>build_runner</code> 自动生成。</li>
+<li>缓存：<code>shared_preferences</code> 存最近数据，断网/失败时兜底。</li>
+<li>加载态：loading（转圈）/ success（数据）/ error（重试）三态切换，是生产级页面的标配。</li>
+</ol>
+<hr>
+<h2>六、本节动手练习（含答案提示）</h2>
+<p><strong>练习 1：判断异步</strong></p>
+<blockquote>
+<p>为什么网络请求必须用 async/await，而不能直接同步等待？</p>
+<p>✅ 答案提示：网络请求耗时不定（可能几秒）。如果同步等待，界面会卡死（阻塞主线程），用户无法操作。异步让界面保持流畅，数据到了再刷新。</p>
+</blockquote>
+<p><strong>练习 2：补全错误处理</strong></p>
+<blockquote>
+<p>在 <code>try { await request(); }</code> 后面补上捕获异常并打印的代码。</p>
+<p>✅ 答案提示：<code>catch (e) { print('请求失败：$e'); }</code>（还可加 <code>finally { ... }</code> 处理收尾）。</p>
+</blockquote>
+<p><strong>练习 3：理解 Future.wait</strong></p>
+<blockquote>
+<p><code>Future.wait([f1, f2])</code> 和 <code>await f1; await f2;</code> 有什么区别？</p>
+<p>✅ 答案提示：<code>Future.wait</code> 是<strong>并行</strong>（两个同时跑，都完成才继续），更快；<code>await f1; await f2;</code> 是<strong>串行</strong>（先等 f1 完成再等 f2），更慢。互不依赖的请求用 Future.wait。</p>
+</blockquote>
+<p><strong>练习 4：JSON 解析</strong></p>
+<blockquote>
+<p>服务器返回 <code>{"name":"iPhone 15","price":5999}</code>，请写出对应的 Dart 模型类的 <code>fromJson</code> 工厂方法。</p>
+<p>✅ 答案提示：<br>
+<code>dart
+factory Product.fromJson(Map&lt;String, dynamic&gt; json) {
+  return Product(
+    name: json['name'] as String,
+    price: json['price'] as int,
+  );
+}</code></p>
+</blockquote>
+<p><strong>练习 5：设计三态</strong></p>
+<blockquote>
+<p>一个商品详情页需要哪些"状态"？分别对应什么界面？</p>
+<p>✅ 答案提示：三态——加载中（转圈/骨架屏）、成功（展示商品信息）、失败（错误提示 + 重试按钮）；可选"缓存态"（先用缓存数据，再静默刷新）。</p>
+</blockquote>
+<hr>
+<h2>下一步</h2>
+<p>恭喜！你已经完成了 <strong>Flutter 中级进阶</strong> 的全部 4 篇课程：</p>
+<ol>
+<li>✅ 布局与页面</li>
+<li>✅ 状态管理</li>
+<li>✅ 路由导航</li>
+<li>✅ 网络与异步</li>
+</ol>
+<p>你已具备独立开发一个完整 Flutter App 的核心能力（搭页面、管状态、跳页面、请求数据）。接下来可以进入 <strong>Flutter/03-高级进阶/</strong> 模块，深入学习动画、手势、主题与国际化、性能优化等硬核内容，继续保持"大白话 + 示例 + 练习"的节奏。</p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

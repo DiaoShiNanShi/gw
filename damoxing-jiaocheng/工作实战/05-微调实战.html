@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 05：微调实战（用你的数据定制模型） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 05：微调实战（用你的数据定制模型）</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：掌握微调的完整流程：什么时候该微调、数据怎么准备、LoRA 怎么跑、效果怎么评估。<br />
+<strong>微调 = 给模型"补课"，教它你行业的专属知识或专属风格。</strong></p>
+</blockquote>
+<hr />
+<h2>1. 什么时候该微调？（决策树）</h2>
+<pre><code>需求 → 模型不知道？ → RAG（查资料）
+     → 模型不会做？ → Prompt 试试 → 还不行 → 微调
+     → 要专属风格/人设？ → System Prompt 试试 → 还不行 → 微调
+     → 要更准/更快/更便宜？ → 微调小模型替代大模型
+</code></pre>
+<p><strong>微调的 4 个典型场景：</strong><br />
+1. <strong>风格定制</strong>：让模型说话像你的品牌（"像董宇辉一样带货"）<br />
+2. <strong>格式定制</strong>：让模型严格输出你公司的表单格式<br />
+3. <strong>小模型替代大模型</strong>：用 7B 微调做到接近 70B 的效果 → 省 10 倍成本<br />
+4. <strong>领域能力</strong>：法律文书、医疗术语、代码规范等专业领域</p>
+<p><strong>什么时候不该微调：</strong><br />
+- 只是"模型不知道某个信息"→ 用 RAG<br />
+- 数据少于几百条 → 效果不明显，先用 Prompt<br />
+- 需要频繁更新知识 → 用 RAG</p>
+<h2>2. 微调的数据准备（决定 80% 的效果）</h2>
+<p><strong>微调的本质：给模型喂"你希望它怎么回答"的例子。</strong></p>
+<h3>对话格式（主流格式）</h3>
+<pre><code class="language-json">{&quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;推荐一款适合新手的咖啡&quot;}, {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;推荐挂耳咖啡，不用买设备，热水一冲就能喝，最适合新手入门。&quot;}]}
+{&quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;手冲咖啡难吗？&quot;}, {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不难，只要掌握水温90度、粉水比1:15，多练几次就能稳定出品。&quot;}]}
+</code></pre>
+<h3>数据质量规则（记住这 5 条）</h3>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>宁少勿滥</td>
+<td>500 条高质量 &gt; 5000 条凑数</td>
+</tr>
+<tr>
+<td>一条一意</td>
+<td>每条回答聚焦一个问题，别让模型学跑偏</td>
+</tr>
+<tr>
+<td>多样性</td>
+<td>覆盖不同问法、不同场景，别全是一个句式</td>
+</tr>
+<tr>
+<td>干净无错</td>
+<td>有错别字/错误知识的数据会教坏模型</td>
+</tr>
+<tr>
+<td>标注来源</td>
+<td>数据从哪来的记清楚，避免版权/隐私问题</td>
+</tr>
+</tbody>
+</table>
+<h3>数据清洗脚本</h3>
+<pre><code class="language-python">&quot;&quot;&quot;清洗训练数据：去重、去空、过滤超长&quot;&quot;&quot;
+import json
+
+def clean_data(input_path, output_path, min_len=10, max_len=2048):
+    seen = set()
+    cleaned = []
+    with open(input_path, encoding=&quot;utf-8&quot;) as f:
+        for line in f:
+            try:
+                item = json.loads(line)
+                text = json.dumps(item, ensure_ascii=False)
+                if text in seen:
+                    continue
+                # 过滤过短/过长
+                if len(item[&quot;messages&quot;][-1][&quot;content&quot;]) &lt; min_len:
+                    continue
+                if len(text) &gt; max_len:
+                    continue
+                seen.add(text)
+                cleaned.append(item)
+            except Exception:
+                continue
+    with open(output_path, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+        for item in cleaned:
+            f.write(json.dumps(item, ensure_ascii=False) + &quot;\n&quot;)
+    print(f&quot;清洗完成：{len(cleaned)} 条&quot;)
+</code></pre>
+<h2>3. LoRA / QLoRA 实战（你的 M2 16GB 能跑）</h2>
+<p><strong>你的配置建议微调 0.5B~3B 的小模型</strong>，7B 也能跑但要耐心（或先量化）。</p>
+<h3>方式一：MLX 微调（Apple Silicon 首选，推荐）</h3>
+<pre><code class="language-bash"># 安装
+pip install mlx-lm
+
+# 准备数据 train.jsonl（上面格式）
+# 训练（0.5B 模型，16GB 内存约 15~30 分钟）
+python -m mlx_lm.lora \
+  --model Qwen/Qwen2.5-0.5B-Instruct-4bit \
+  --train \
+  --data ./train.jsonl \
+  --iters 300 \
+  --batch-size 4 \
+  --learning-rate 1e-5 \
+  --adapter-path ./my-adapter
+
+# 测试微调效果
+python -m mlx_lm.generate \
+  --model Qwen/Qwen2.5-0.5B-Instruct-4bit \
+  --adapter-path ./my-adapter \
+  --prompt &quot;你的测试问题&quot;
+
+# 合并 LoRA 到完整模型（可选，部署用）
+python -m mlx_lm.fuse --model Qwen/Qwen2.5-0.5B-Instruct-4bit --adapter-path ./my-adapter
+</code></pre>
+<h3>方式二：LLaMA-Factory（最流行的微调工具，图形界面）</h3>
+<pre><code class="language-bash"># 安装（国内镜像快）
+git clone https://github.com/hiyouga/LLaMA-Factory.git
+cd LLaMA-Factory
+pip install -e . -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 启动图形界面
+CUDA_VISIBLE_DEVICES=&quot;&quot; llamafactory-cli webui
+# 浏览器打开 http://localhost:7860
+# 在界面上：模型选 Qwen2.5-0.5B → 方法选 LoRA → 数据集选你的 jsonl → 开始训练
+</code></pre>
+<blockquote>
+<p>说明：LLaMA-Factory 默认走 PyTorch（CPU 会很慢），你的 Mac 上推荐用 MLX 方式一；LLaMA-Factory 适合以后有 NVIDIA 显卡的机器。</p>
+</blockquote>
+<h3>方式三：Ollama 加载微调后的模型</h3>
+<pre><code class="language-bash"># 把微调好的 GGUF 模型导入 Ollama
+ollama create my-custom-model -f Modelfile
+# Modelfile 内容：
+# FROM ./my-model-q4.gguf
+# SYSTEM &quot;你是一个咖啡知识专家...&quot;
+</code></pre>
+<h2>4. 训练参数怎么看、怎么调</h2>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+<th>新手推荐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>learning_rate</td>
+<td>学习步长</td>
+<td>1e-5（太大了学飞，太小了学不动）</td>
+</tr>
+<tr>
+<td>iters / epochs</td>
+<td>训练轮数</td>
+<td>先 300 iters 试水，看 loss</td>
+</tr>
+<tr>
+<td>batch_size</td>
+<td>一次喂几条</td>
+<td>4~8（内存允许范围内）</td>
+</tr>
+<tr>
+<td>adapter_path</td>
+<td>LoRA 保存位置</td>
+<td>独立文件夹</td>
+</tr>
+</tbody>
+</table>
+<p><strong>训练中看什么？</strong><br />
+- <strong>loss（损失）</strong>：训练时打印，从 1.x 降到 0.5 以下说明在学<br />
+- 如果 loss 不降 → 学习率太大/数据太乱<br />
+- 如果 loss 降到 0.1 以下 → 可能过拟合（背答案了，换新问题就废）</p>
+<h2>5. 过拟合（背答案）怎么判断</h2>
+<p><strong>大白话：模型把训练数据"背"下来了，而不是"学会"了。</strong></p>
+<blockquote>
+<p>现象：<br />
+- 训练集问题回答 100 分<br />
+- 换一个"同类型但没见过"的问题 → 答得稀烂</p>
+<p>类比：学生把练习册答案背下来了，考试出同一本练习册的原题满分，换道新题就不会。</p>
+</blockquote>
+<p><strong>防过拟合：</strong><br />
+1. 训练数据够多样<br />
+2. 训练轮数别太多<br />
+3. 用验证集监控（每轮看验证集 loss，涨了就停）</p>
+<h2>6. 微调效果评估（别凭感觉）</h2>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>测试集问答</strong></td>
+<td>留 20% 数据不训练，训练完测这 20%</td>
+</tr>
+<tr>
+<td><strong>A/B 对比</strong></td>
+<td>同一批问题，微调前 vs 微调后，人工打分</td>
+</tr>
+<tr>
+<td><strong>自动化评测</strong></td>
+<td>用 GPT-4/DeepSeek 当裁判，给两版回答打分</td>
+</tr>
+<tr>
+<td><strong>业务指标</strong></td>
+<td>客服场景看"问题解决率"，代码场景看"通过率"</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-python">&quot;&quot;&quot;用 LLM 当裁判评估微调效果&quot;&quot;&quot;
+from openai import OpenAI
+client = OpenAI(api_key=&quot;sk-你的key&quot;, base_url=&quot;https://api.deepseek.com&quot;)
+
+def evaluate(before, after, question):
+    resp = client.chat.completions.create(
+        model=&quot;deepseek-chat&quot;,
+        messages=[{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;&quot;&quot;你是严格评委。对比两个回答，从&quot;准确性、风格符合度、完整性&quot;打分(1-10)，输出JSON：{&quot;before&quot;: 分数, &quot;after&quot;: 分数, &quot;reason&quot;: &quot;一句话理由&quot;}&quot;&quot;&quot;},
+                  {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: f&quot;问题：{question}\n微调前：{before}\n微调后：{after}&quot;}],
+        response_format={&quot;type&quot;: &quot;json_object&quot;},
+    )
+    return resp.choices[0].message.content
+</code></pre>
+<h2>7. 微调 vs RAG vs Prompt（终极对比）</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Prompt</th>
+<th>RAG</th>
+<th>微调</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>成本</td>
+<td>最低</td>
+<td>中</td>
+<td>高</td>
+</tr>
+<tr>
+<td>见效速度</td>
+<td>立刻</td>
+<td>1~2 天</td>
+<td>1~2 周</td>
+</tr>
+<tr>
+<td>适合</td>
+<td>调整语气/格式</td>
+<td>注入新知识</td>
+<td>学会新能力/风格</td>
+</tr>
+<tr>
+<td>维护</td>
+<td>改文字</td>
+<td>改文档</td>
+<td>重训练</td>
+</tr>
+<tr>
+<td>代码量</td>
+<td>无</td>
+<td>中</td>
+<td>多</td>
+</tr>
+<tr>
+<td><strong>工作优先级</strong></td>
+<td><strong>先试</strong></td>
+<td><strong>次之</strong></td>
+<td><strong>最后</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>小结</h2>
+<ol>
+<li><strong>决策</strong>：Prompt → RAG → 微调，微调是最后手段</li>
+<li><strong>数据决定成败</strong>：宁少勿滥、一条一意、干净多样</li>
+<li><strong>工具</strong>：Mac 用 MLX，有 N 卡用 LLaMA-Factory</li>
+<li><strong>盯 loss 防过拟合</strong>：验证集 + 控制轮数</li>
+<li><strong>评估</strong>：测试集 + A/B 对比 + LLM 裁判，别凭感觉</li>
+</ol>
+<hr />
+<p><strong>下一步：</strong> 学 <a href="06-部署与工程化.html">06-部署与工程化.html</a> ——把 AI 应用真正上线。<br />
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

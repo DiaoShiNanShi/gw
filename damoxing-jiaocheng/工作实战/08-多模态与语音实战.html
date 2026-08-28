@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 08：多模态与语音实战（看图、听声、说话） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 08：多模态与语音实战（看图、听声、说话）</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：搞懂「能看图、能听声、能说话」的 AI 怎么用。<br>
+<strong>大白话：</strong>以前 AI 只认字，现在还能认图、认声音——多模态就是「多种感官」。</p>
+</blockquote>
+<hr>
+<h2>1. 多模态是什么？（一张表看懂）</h2>
+<table>
+<thead><tr><th>模态</th><th>输入</th><th>输出</th><th>典型模型/API</th></tr></thead>
+<tbody>
+<tr><td>纯文本</td><td>文字</td><td>文字</td><td>GPT-4、DeepSeek、Qwen</td></tr>
+<tr><td>视觉理解</td><td>图片+文字</td><td>文字</td><td>GPT-4o、Qwen-VL、Gemini</td></tr>
+<tr><td>语音输入</td><td>音频</td><td>文字</td><td>Whisper、Apple Speech</td></tr>
+<tr><td>语音输出</td><td>文字</td><td>音频</td><td>TTS API、AVSpeechSynthesizer</td></tr>
+</tbody>
+</table>
+<p><strong>企业场景：</strong>拍照识物、票据 OCR、语音客服、会议纪要、视频内容理解。</p>
+<hr>
+<h2>2. 视觉 API 实战（Python，OpenAI 兼容）</h2>
+<pre><code class="language-python"># vision_demo.py — 让 AI「看」一张图并描述
+import base64
+from openai import OpenAI
+
+client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
+
+# 本地用 llava 等多模态模型：ollama pull llava
+with open("photo.jpg", "rb") as f:
+    b64 = base64.b64encode(f.read()).decode()
+
+resp = client.chat.completions.create(
+    model="llava",  # 或 gpt-4o / qwen-vl-max
+    messages=[{
+        "role": "user",
+        "content": [
+            {"type": "text", "text": "这张图里有什么？用中文简短描述。"},
+            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}"}}
+        ]
+    }]
+)
+print(resp.choices[0].message.content)
+</code></pre>
+<p><strong>注意：</strong>图片越大 Token 越贵，生产环境先压缩到 1024px 以内。</p>
+<hr>
+<h2>3. iOS 端多模态（Swift 思路）</h2>
+<pre><code class="language-swift">// 拍照 → 转 Base64 → 调多模态 API
+import UIKit
+
+func imageToBase64(_ image: UIImage) -> String? {
+    guard let data = image.jpegData(compressionQuality: 0.7) else { return nil }
+    return data.base64EncodedString()
+}
+
+// UIImagePickerController 选图 → base64 → 和你的 AIClient 一样 POST
+// 端侧纯本地视觉：Vision 框架做人脸/文字检测；复杂理解仍走云端或 Core ML 自定义模型
+</code></pre>
+<hr>
+<h2>4. 语音：Whisper 转文字 + TTS 播报</h2>
+<pre><code class="language-python"># 语音转文字（OpenAI Whisper API 或本地 faster-whisper）
+# pip install openai
+from openai import OpenAI
+client = OpenAI()
+
+with open("meeting.mp3", "rb") as audio:
+    transcript = client.audio.transcriptions.create(model="whisper-1", file=audio)
+print(transcript.text)
+</code></pre>
+<p><strong>iOS 本地方案：</strong><code>Speech</code> 框架识别 + <code>AVSpeechSynthesizer</code> 播报，不花钱、可离线，精度略低于云端 Whisper。</p>
+<div class="demo-card" data-demo="voice-loop-demo"></div>
+<hr>
+<h2>5. 多模态 RAG（文档里有图怎么办？）</h2>
+<ol>
+<li><strong>OCR 提取文字</strong> → 和普通 RAG 一样入库（最简单）</li>
+<li><strong>多模态 Embedding</strong> → 图片也向量化，和文字一起检索（CLIP 类模型）</li>
+<li><strong>图片描述</strong> → 先用视觉模型生成文字描述，再存向量库</li>
+</ol>
+<blockquote><p><strong>示例：</strong>产品手册 PDF 里有大量示意图 → 先 OCR + 视觉模型补描述 → 切片 → RAG。</p></blockquote>
+<hr>
+<h2>小结</h2>
+<ol>
+<li>多模态 = 不止文字，还有图、声</li>
+<li>视觉/语音大多走 API；iOS 本地用 Speech + Vision 做轻量场景</li>
+<li>文档 RAG 遇到图：OCR 或「先描述再入库」</li>
+</ol>
+<p><strong>下一步：</strong> <a href="09-LLM评测与可观测性.html">09-LLM评测与可观测性</a></p>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

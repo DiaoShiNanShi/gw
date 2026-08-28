@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 逆向面试题大全（39 题） - 大模型学习教程</title>
+<style>
+.card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; margin-bottom:14px; overflow:hidden; }
+.card-head { display:flex; gap:12px; padding:14px 18px; cursor:pointer; align-items:flex-start; }
+.q-num { flex-shrink:0; min-width:34px; height:34px; background:linear-gradient(135deg, #b45309, #dc2626); color:#fff; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; }
+.q-title { flex:1; font-size:15px; font-weight:700; margin:0; line-height:1.5; }
+.toggle-btn { flex-shrink:0; border:1px solid #e2e8f0; background:#f8fafc; border-radius:8px; padding:4px 10px; cursor:pointer; font-size:12px; }
+.card-body { padding:0 18px 14px; border-top:1px dashed #e2e8f0; }
+.plain-talk { background:#ecfdf5; border-left:4px solid #16a34a; border-radius:8px; padding:10px 14px; margin:10px 0; color:#14532d; font-size:14px; line-height:1.7; }
+.plain-talk .label { background:#16a34a; color:#fff; font-size:11px; padding:2px 8px; border-radius:999px; }
+.answer-label { font-size:12px; font-weight:700; color:#1e40af; margin:10px 0 4px; }
+.answer { font-size:14.5px; line-height:1.75; color:#334155; }
+.tag { background:#f1f5f9; padding:3px 10px; border-radius:6px; font-size:12px; color:#475569; }
+.nav-filter { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0; }
+.nav-filter button { border:1px solid #e2e8f0; background:#fff; padding:6px 14px; border-radius:999px; cursor:pointer; font-size:12.5px; }
+.nav-filter button.active { background:#2563eb; color:#fff; border-color:#2563eb; }
+.stats { display:flex; flex-wrap:wrap; gap:12px; margin:12px 0; font-size:13px; color:#64748b; }
+.stat-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 14px; }
+.search-box { width:100%; padding:10px 14px; border:1px solid #e2e8f0; border-radius:10px; font-size:14px; margin:12px 0; }
+</style>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> / 面试题</div>
+    <h1>iOS 逆向 · 面试题大全（39 题）</h1>
+    <span class="header-tag">砸壳 · Hook · Frida · 静态分析 · 抓包 · 加固 · 合规</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote>
+<p>⚠️ <strong>仅用于合法安全研究和自有 App 审计。</strong><br>
+覆盖逆向基础、Hook/Frida、静态分析、加密抓包、越狱加固、安全审计。<br>
+原生开发题见 <a href="iOS原生面试题大全.html">iOS 原生面试题</a>。配合 <a href="../iOS逆向/01-逆向基础与环境.html">iOS 逆向教程</a> 使用。</p>
+</blockquote>
+<div class="stats">
+  <span class="stat-box">共 <strong>39</strong> 题</span>
+  <span class="stat-box">🔥 高频 <strong>28</strong> 题</span>
+  <span class="stat-box">6 个分类</span>
+</div>
+<input type="text" class="search-box" id="searchBox" placeholder="搜索：Frida、砸壳、Mach-O、SSL Pinning、反调试…">
+<div class="nav-filter" id="filters">
+<button class="active" data-cat="all">全部 39</button>
+  <button data-cat="Hook调试">Hook调试 10</button>
+  <button data-cat="逆向基础">逆向基础 8</button>
+  <button data-cat="静态分析">静态分析 6</button>
+  <button data-cat="加密抓包">加密抓包 5</button>
+  <button data-cat="越狱加固">越狱加固 5</button>
+  <button data-cat="安全审计">安全审计 5</button>
+</div>
+
+<article class="card" data-cat="逆向基础" data-num="1">
+  <div class="card-head"><span class="q-num">1</span>
+    <h3 class="q-title">IPA 是什么结构？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">逆向基础</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>zip 包，Payload/App.app/ 里有 Mach-O、Info.plist、Frameworks。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">YourApp.app/YourApp 主二进制 + Info.plist + embedded.mobileprovision + Frameworks/ + 资源。</div>
+  </div>
+</article>
+<article class="card" data-cat="逆向基础" data-num="2">
+  <div class="card-head"><span class="q-num">2</span>
+    <h3 class="q-title">Mach-O 文件结构？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">逆向基础</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Header + Load Commands + __TEXT/__DATA 段 + Symbol Table。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">__TEXT 代码只读；__DATA 全局变量。可执行文件格式类似 Linux ELF。</div>
+  </div>
+</article>
+<article class="card" data-cat="逆向基础" data-num="3">
+  <div class="card-head"><span class="q-num">3</span>
+    <h3 class="q-title">为什么要砸壳？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">逆向基础</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>App Store 包 FairPlay 加密，不砸壳静态分析是乱码。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">运行时内存解密，从内存 dump 明文 Mach-O。frida-ios-dump / clutch。</div>
+  </div>
+</article>
+<article class="card" data-cat="逆向基础" data-num="4">
+  <div class="card-head"><span class="q-num">4</span>
+    <h3 class="q-title">class-dump 原理？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">逆向基础</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>读 Mach-O 中 ObjC 元数据，导出 @interface。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">快速了解 App 类结构。Swift 类需 demangle。</div>
+  </div>
+</article>
+<article class="card" data-cat="逆向基础" data-num="5">
+  <div class="card-head"><span class="q-num">5</span>
+    <h3 class="q-title">Hopper 和 IDA 区别？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">逆向基础</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Hopper 便宜 Mac 友好；IDA 业界标准功能更强。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">反汇编看伪代码、Strings、交叉引用 Xrefs。</div>
+  </div>
+</article>
+<article class="card" data-cat="逆向基础" data-num="6">
+  <div class="card-head"><span class="q-num">6</span>
+    <h3 class="q-title">LLDB 常用命令？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">逆向基础</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>po 打印对象、bt 调用栈、br set 断点、memory read 读内存。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Xcode 调试器，逆向动态分析必备。</div>
+  </div>
+</article>
+<article class="card" data-cat="逆向基础" data-num="7">
+  <div class="card-head"><span class="q-num">7</span>
+    <h3 class="q-title">ASLR 和 PIE 是什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">逆向基础</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>地址空间随机化，每次启动基址不同，增加分析难度。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">PIE（Position Independent Executable）可执行文件支持 ASLR。</div>
+  </div>
+</article>
+<article class="card" data-cat="逆向基础" data-num="8">
+  <div class="card-head"><span class="q-num">8</span>
+    <h3 class="q-title">逆向合法边界？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">逆向基础</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>仅审计自己 App、授权渗透测试、CTF、负责任披露。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">未授权分析他人 App 可能违法。</div>
+  </div>
+</article>
+<article class="card" data-cat="Hook调试" data-num="9">
+  <div class="card-head"><span class="q-num">9</span>
+    <h3 class="q-title">Hook 是什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Hook调试</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>拦路虎：函数执行前插一脚，改跑你的代码。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Method Swizzling、Fishhook、Frida 都是 Hook。</div>
+  </div>
+</article>
+<article class="card" data-cat="Hook调试" data-num="10">
+  <div class="card-head"><span class="q-num">10</span>
+    <h3 class="q-title">Method Swizzling 原理？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Hook调试</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Runtime 交换两个方法的 IMP 指针。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">method_exchangeImplementations。仅 audit 自己 App。</div>
+  </div>
+</article>
+<article class="card" data-cat="Hook调试" data-num="11">
+  <div class="card-head"><span class="q-num">11</span>
+    <h3 class="q-title">Fishhook 能 Hook 什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Hook调试</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>C 函数/系统库符号，如 open、stat、SSL 函数。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">修改符号表 GOT 指向自定义函数。</div>
+  </div>
+</article>
+<article class="card" data-cat="Hook调试" data-num="12">
+  <div class="card-head"><span class="q-num">12</span>
+    <h3 class="q-title">Frida 注入原理？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Hook调试</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>ptrace 附加进程，注入 frida-agent.dylib，JS 引擎调 native。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">frida-ps -U 列进程；frida -U -f bundleId -l hook.js</div>
+  </div>
+</article>
+<article class="card" data-cat="Hook调试" data-num="13">
+  <div class="card-head"><span class="q-num">13</span>
+    <h3 class="q-title">Frida 和 Cycript 区别？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Hook调试</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Frida 跨平台活跃；Cycript 老牌 iOS 工具已过时。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">现在主流 Frida + objection。</div>
+  </div>
+</article>
+<article class="card" data-cat="Hook调试" data-num="14">
+  <div class="card-head"><span class="q-num">14</span>
+    <h3 class="q-title">objc_msgSend 流程？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Hook调试</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>查缓存 → 类 method list → 父类链 → 消息转发。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">动态派发核心，Hook 网络/加密常从这里入手。</div>
+  </div>
+</article>
+<article class="card" data-cat="Hook调试" data-num="15">
+  <div class="card-head"><span class="q-num">15</span>
+    <h3 class="q-title">消息转发三步？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Hook调试</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>resolveInstanceMethod → forwardingTargetForSelector → forwardInvocation。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">unrecognized selector 之前的三道挽回。</div>
+  </div>
+</article>
+<article class="card" data-cat="Hook调试" data-num="16">
+  <div class="card-head"><span class="q-num">16</span>
+    <h3 class="q-title">Block 和 Hook 关系？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Hook调试</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Block 是 OC 对象，可 Hook _Block_invoke 或替换 Block 指针。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Block 捕获变量导致循环引用也常被逆向脚本利用。</div>
+  </div>
+</article>
+<article class="card" data-cat="Hook调试" data-num="17">
+  <div class="card-head"><span class="q-num">17</span>
+    <h3 class="q-title">如何 bypass ptrace 反调试？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Hook调试</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Frida 拦截 ptrace 调用返回 0，或 patch 检测逻辑。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">常见反调试：ptrace(PT_DENY_ATTACH)、sysctl 查 P_TRACED。</div>
+  </div>
+</article>
+<article class="card" data-cat="Hook调试" data-num="18">
+  <div class="card-head"><span class="q-num">18</span>
+    <h3 class="q-title">LLDB 动态调试步骤？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Hook调试</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Attach 进程 → 下断点 → 触发逻辑 → po/bt 分析。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">非越狱真机需 debug 证书；越狱机权限更大。</div>
+  </div>
+</article>
+<article class="card" data-cat="静态分析" data-num="19">
+  <div class="card-head"><span class="q-num">19</span>
+    <h3 class="q-title">静态分析和动态分析区别？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">静态分析</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>静态：不运行，看二进制/反汇编。动态：运行时 Hook/调试。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">先静态摸结构，再动态验证。</div>
+  </div>
+</article>
+<article class="card" data-cat="静态分析" data-num="20">
+  <div class="card-head"><span class="q-num">20</span>
+    <h3 class="q-title">Strings 窗口干什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">静态分析</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>列出二进制中所有可读字符串，常发现 URL、Key、日志。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">审计 AI App 第一步搜 sk-、api_key、Bearer。</div>
+  </div>
+</article>
+<article class="card" data-cat="静态分析" data-num="21">
+  <div class="card-head"><span class="q-num">21</span>
+    <h3 class="q-title">如何定位加密函数？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">静态分析</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Strings 搜 key/password → Xrefs 追踪调用链 → 断点验证。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">CommonCrypto CCCrypt 是常见加密入口。</div>
+  </div>
+</article>
+<article class="card" data-cat="静态分析" data-num="22">
+  <div class="card-head"><span class="q-num">22</span>
+    <h3 class="q-title">Swift 逆向难点？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">静态分析</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>符号 mangled、部分静态派发、无 class-dump 头文件。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">swift demangle；Hopper 4+ 支持 Swift；找符号地址 Hook。</div>
+  </div>
+</article>
+<article class="card" data-cat="静态分析" data-num="23">
+  <div class="card-head"><span class="q-num">23</span>
+    <h3 class="q-title">符号表 Symbol Table 作用？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">静态分析</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>函数名/变量名到地址映射。strip 后符号减少，分析变难。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Release 包常 strip，需动态分析补充。</div>
+  </div>
+</article>
+<article class="card" data-cat="静态分析" data-num="24">
+  <div class="card-head"><span class="q-num">24</span>
+    <h3 class="q-title">Otool 常用命令？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">静态分析</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>otool -L 看依赖库；otool -ov 看 ObjC 类信息。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Mach-O 分析命令行工具。</div>
+  </div>
+</article>
+<article class="card" data-cat="加密抓包" data-num="25">
+  <div class="card-head"><span class="q-num">25</span>
+    <h3 class="q-title">Code Signing 流程？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">加密抓包</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>证书 + 私钥签名 App，iOS 只运行信任链上的包。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Development/Distribution 证书 + Provisioning Profile。</div>
+  </div>
+</article>
+<article class="card" data-cat="加密抓包" data-num="26">
+  <div class="card-head"><span class="q-num">26</span>
+    <h3 class="q-title">HTTPS 和 SSL Pinning？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">加密抓包</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Pinning = App 只信任指定证书，防 Charles 中间人。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">NSURLSessionDelegate 校验证书哈希。objection ssl pin disable 测试自己 App。</div>
+  </div>
+</article>
+<article class="card" data-cat="加密抓包" data-num="27">
+  <div class="card-head"><span class="q-num">27</span>
+    <h3 class="q-title">Charles/mitmproxy 抓包步骤？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">加密抓包</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Mac 代理 + 手机信任证书 + 配置 WiFi 代理。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">抓 HTTPS 需装根证书。仅分析自己 App。</div>
+  </div>
+</article>
+<article class="card" data-cat="加密抓包" data-num="28">
+  <div class="card-head"><span class="q-num">28</span>
+    <h3 class="q-title">CommonCrypto 常见用法？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">加密抓包</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>AES 加解密、SHA 哈希、Keychain 配套。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">逆向时搜 CCCrypt、SecItemCopyMatching。</div>
+  </div>
+</article>
+<article class="card" data-cat="加密抓包" data-num="29">
+  <div class="card-head"><span class="q-num">29</span>
+    <h3 class="q-title">Keychain 逆向注意什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">加密抓包</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>SecItemCopyMatching 可读钥匙串；越狱机更易导出。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">审计自己 App 是否明文存 token。</div>
+  </div>
+</article>
+<article class="card" data-cat="越狱加固" data-num="30">
+  <div class="card-head"><span class="q-num">30</span>
+    <h3 class="q-title">越狱是什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">越狱加固</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>获取 root，突破沙盒，可装 Cydia、Frida Server。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">完美越狱 vs 非完美越狱；TrollStore 免越狱装部分 IPA。</div>
+  </div>
+</article>
+<article class="card" data-cat="越狱加固" data-num="31">
+  <div class="card-head"><span class="q-num">31</span>
+    <h3 class="q-title">越狱检测常见手段？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">越狱加固</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>查 /Applications/Cydia.app、stat 系统文件、fork 测试、沙盒写测试。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Frida Hook stat/access 绕过。App 可拒绝在越狱机运行。</div>
+  </div>
+</article>
+<article class="card" data-cat="越狱加固" data-num="32">
+  <div class="card-head"><span class="q-num">32</span>
+    <h3 class="q-title">App 加固手段有哪些？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">越狱加固</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>字符串加密、控制流混淆、反调试、完整性校验、模拟器检测。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">梆梆、爱加密等。脱壳可从内存 dump decrypted。</div>
+  </div>
+</article>
+<article class="card" data-cat="越狱加固" data-num="33">
+  <div class="card-head"><span class="q-num">33</span>
+    <h3 class="q-title">反调试常见 API？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">越狱加固</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>ptrace(PT_DENY_ATTACH)、sysctl、isatty、syscall 直接调用。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Frida 批量 Hook 这些 API。</div>
+  </div>
+</article>
+<article class="card" data-cat="越狱加固" data-num="34">
+  <div class="card-head"><span class="q-num">34</span>
+    <h3 class="q-title">完整性校验怎么做？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">越狱加固</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>启动时 hash 自身 __TEXT 段，被 patch 则 exit。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">重签后 hash 变，需 patch 校验逻辑。</div>
+  </div>
+</article>
+<article class="card" data-cat="安全审计" data-num="35">
+  <div class="card-head"><span class="q-num">35</span>
+    <h3 class="q-title">如何审计 AI App Key 泄露？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">安全审计</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Strings 搜 sk- → 抓包看 Authorization → Frida Hook Keychain/网络。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Key 必须服务端，客户端只持短期 token。</div>
+  </div>
+</article>
+<article class="card" data-cat="安全审计" data-num="36">
+  <div class="card-head"><span class="q-num">36</span>
+    <h3 class="q-title">MobSF 干什么？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">安全审计</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>自动化移动安全扫描平台，静态分析 IPA/APK。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">上传 IPA 出报告：权限、硬编码、不安全 API。</div>
+  </div>
+</article>
+<article class="card" data-cat="安全审计" data-num="37">
+  <div class="card-head"><span class="q-num">37</span>
+    <h3 class="q-title">移动安全审计清单？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">安全审计</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>传输安全、存储安全、反调试、代码混淆、日志脱敏、输入验证。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">输出高/中/低危 + 复现步骤 + 修复建议。</div>
+  </div>
+</article>
+<article class="card" data-cat="安全审计" data-num="38">
+  <div class="card-head"><span class="q-num">38</span>
+    <h3 class="q-title">重打包流程？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">安全审计</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>改 binary → 用开发者证书 codesign 重签 → 安装。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">非越狱需个人/企业证书。仅测试自己 App。</div>
+  </div>
+</article>
+<article class="card" data-cat="安全审计" data-num="39">
+  <div class="card-head"><span class="q-num">39</span>
+    <h3 class="q-title">Cycript 还能用吗？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">安全审计</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>基本被 Frida 取代，了解即可。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">历史工具。</div>
+  </div>
+</article>
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 教程首页</a> · <a href="iOS原生面试题大全.html">iOS 原生题</a> · <a href="../iOS逆向/01-逆向基础与环境.html">iOS 逆向教程</a></p></div>
+<script>
+function toggleCard(btn) {
+  var b = btn.closest('.card').querySelector('.card-body');
+  b.style.display = b.style.display === 'none' ? '' : 'none';
+  btn.textContent = b.style.display === 'none' ? '展开' : '收起';
+}
+document.querySelectorAll('#filters button').forEach(function(btn) {
+  btn.onclick = function() {
+    document.querySelectorAll('#filters button').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    filterCards(btn.dataset.cat, document.getElementById('searchBox').value);
+  };
+});
+document.getElementById('searchBox').oninput = function() {
+  var active = document.querySelector('#filters button.active');
+  filterCards(active ? active.dataset.cat : 'all', this.value);
+};
+function filterCards(cat, kw) {
+  kw = (kw || '').toLowerCase();
+  document.querySelectorAll('.card').forEach(function(card) {
+    var matchCat = cat === 'all' || card.dataset.cat === cat;
+    var text = card.textContent.toLowerCase();
+    var matchKw = !kw || text.indexOf(kw) >= 0;
+    card.style.display = matchCat && matchKw ? '' : 'none';
+  });
+}
+</script>
+<script src="../_assets/site.js" defer></script>
+</body></html>

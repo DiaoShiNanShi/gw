@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>中级 02：训练原理——大模型怎么"学会"的 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 中级模块</div>
+    <h1>中级 02：训练原理——大模型怎么"学会"的</h1>
+    <span class="header-tag">中级模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：搞懂大模型的知识从哪来、怎么来的。<br />
+一句话总结全章：<strong>训练 = 给它看海量的文字，让它一遍遍"猜下一个字"，猜错了就调整那几亿个参数，直到越猜越准。</strong></p>
+</blockquote>
+<hr />
+<h2>1. 预训练（Pre-training）：海量文字 + 猜下一个字</h2>
+<p>训练的本质就一句话：</p>
+<blockquote>
+<p><strong>给它看海量的文字，让它一遍遍"猜下一个字"，猜错了就微调参数，直到越猜越准。</strong></p>
+<p><strong>示例</strong><br />
+训练时喂给模型一句话（遮住后半段）：<br />
+<code>输入："床前明月"
+正确答案："光"
+模型猜："亮" → 错了 → 调整参数
+再试："光" → 对了
+继续："床前明月光，疑是地上"
+正确答案："霜"
+模型猜："水" → 错了 → 调整参数
+再试："霜" → 对了</code></p>
+<p>就这么一个接一个地猜，反复几十万次、上百万次。<br />
+训练数据 = 整个互联网的公开文字（维基百科、书籍、论文、代码、论坛……）。<br />
+这就是为什么大模型"知道"很多事——它不是真懂，是"背"过这些文字的模式。</p>
+</blockquote>
+<p><strong>训练数据的量级（感受一下）：</strong><br />
+- 现在的主流大模型，训练数据都是<strong>几万亿个 token</strong><br />
+- 相当于把整个中文维基百科读 1000 遍<br />
+- 这就是为什么它"上知天文下知地理"——它"背"过</p>
+<h2>2. 损失函数（Loss Function）：考试的"扣分标准"</h2>
+<p>模型猜错了，错得有多离谱？需要一个数字来量化——这就是<strong>损失（Loss）</strong>，损失越小说明猜得越准。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+正确答案是"光"，模型给了这样的概率：<br />
+<code>"光" → 80%  （损失小，接近满分）
+"亮" → 10%
+"水" → 8%</code><br />
+损失 = 0.2 左右，很小，说明模型学得不错。</p>
+<p>如果模型给：<br />
+<code>"光" → 1%    （损失很大，错得离谱）
+"水" → 90%</code><br />
+损失 = 4.5 左右，很大，必须狠狠调整参数。</p>
+<p>训练的目标就是：<strong>把损失一路压到最低。</strong></p>
+</blockquote>
+<p><strong>相关名词：</strong><br />
+- <strong>交叉熵（Cross-Entropy）</strong>：语言模型最常用的损失函数，专门衡量"预测概率 vs 正确答案"的差距。<br />
+- <strong>困惑度（Perplexity）</strong>：损失的一种变形，越低代表模型越"不困惑"。</p>
+<h2>3. 反向传播（Backpropagation）：错哪改哪</h2>
+<p>损失算出来了，接下来要回答："这个错误，是谁造成的？每个参数该背多少锅、该往哪个方向调？"——这就是<strong>反向传播</strong>。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+一句话里的 5 亿个参数，都参与了"猜'光'"这个动作。<br />
+猜错了，算法从输出层往回走，<strong>逐层计算每个参数的责任</strong>：<br />
+<code>参数 A（负责"明"和"光"关联）→ 责任 0.8 → 往对的方向调 0.8
+参数 B（负责"月"和"光"关联）→ 责任 0.5 → 往对的方向调 0.5
+参数 C（负责"床"和"光"关联）→ 责任 0.1 → 轻微调一下
+参数 D（负责"光"和"霜"关联）→ 责任 0.3 → 往对的方向调 0.3</code><br />
+就像考试错题分析：不是整本书重背，而是<strong>哪道题错了，就重点复习那部分知识点</strong>。</p>
+</blockquote>
+<h2>4. 梯度下降（Gradient Descent）：下山找最低点</h2>
+<p>"往对的方向调 0.8"——这个"方向"和"步长"怎么定？用<strong>梯度下降</strong>。</p>
+<p><strong>比喻：雾天摸黑下山。</strong></p>
+<blockquote>
+<p>你在浓雾弥漫的山上，看不见全貌，只知道<strong>脚下哪个方向是下坡</strong>。<br />
+你每走一步，就感受一下坡度，朝着最陡的下坡方向迈一步，反复走，最终走到山谷最低点。</p>
+<ul>
+<li>山 = 损失函数的图像</li>
+<li>山谷最低点 = 损失最小 = 模型最优</li>
+<li>每次迈的步子大小 = <strong>学习率（Learning Rate）</strong></li>
+<li>步子太大 → 一步跨过山谷，在谷底来回震荡，永远到不了</li>
+<li>步子太小 → 走得太慢，训练几个月都下不了山</li>
+</ul>
+</blockquote>
+<p><strong>相关名词：</strong><br />
+- <strong>学习率（Learning Rate）</strong>：每次调整参数的"步长"。大模型训练常用的学习率约 1e-5 ~ 1e-4（0.00001~0.0001，步子非常小）。<br />
+- <strong>Epoch（轮次）</strong>：把整个训练数据集完整过一遍 = 1 个 epoch。一般要训练好几个 epoch。<br />
+- <strong>Batch（批次）</strong>：一次喂给模型多少条数据。显卡内存大就能一次喂多些。</p>
+<h2>5. 微调（Fine-tuning）：因材施教</h2>
+<p>预训练完的模型，只是"会接话"，但<strong>不一定会好好回答问题</strong>（它可能接出"中国首都是中国"这种废话）。所以要<strong>微调</strong>：用高质量的人写问答对，再训练一遍，教它"像个助手一样说话"。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+预训练完的模型看到"中国的首都是？"可能接："中国是一个拥有悠久历史的国家……"<br />
+（跑题了，因为它的训练数据里大多是百科式的文字）</p>
+<p>微调时喂它：<br />
+<code>问：中国的首都是？
+答：北京。
+问：1+1 等于几？
+答：等于 2。
+（几十万条这种高质量问答）</code><br />
+微调后，模型学会"被问问题时要直接回答"。</p>
+</blockquote>
+<p><strong>相关名词：</strong><br />
+- <strong>SFT（Supervised Fine-Tuning，监督微调）</strong>：用"问题-标准答案"对来教模型，最基础也最有效。<br />
+- <strong>Instruct 版本</strong>：模型名里的 "Instruct"（如 Qwen2.5-0.5B-<strong>Instruct</strong>-GGUF）就代表它是"微调过、会好好听话的版本"。聊天、问答必须用 Instruct 版。<br />
+- <strong>Base 版本</strong>：纯预训练版，只会接话不会聊天，是给研究者继续训练用的。</p>
+<h2>6. RLHF：用"人类的喜好"当最后的老师</h2>
+<p>SFT 之后，还有更高级的一步：<strong>RLHF（基于人类反馈的强化学习）</strong>——让人类给 AI 的回答打分，AI 学会"人类喜欢什么样的回答"。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+同一个问题，模型给了 3 个回答，让人类排序：<br />
+<code>回答 A："北京。"                          → 排第 1（简洁正确）
+回答 B："中国的首都是北京，一个有着三千年历史的古都。" → 排第 2
+回答 C："北京，你呢？你问我这个干嘛？"    → 排第 3（莫名其妙）</code><br />
+收集几万条这样的"人类偏好"数据，训练一个"评分老师"（奖励模型），<br />
+再用这个老师去训练大模型——这就是 ChatGPT 变好用的关键一步。</p>
+</blockquote>
+<h2>7. 训练一次到底要花多少钱？（感受一下）</h2>
+<table>
+<thead>
+<tr>
+<th>模型规模</th>
+<th>训练硬件</th>
+<th>大概成本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.5B（手机小模型）</td>
+<td>1 块消费级显卡</td>
+<td>几千块</td>
+</tr>
+<tr>
+<td>7B（家用电脑能跑）</td>
+<td>8 块 A100 专业显卡</td>
+<td>几十万</td>
+</tr>
+<tr>
+<td>70B（大厂级）</td>
+<td>上百块 H100</td>
+<td>几百万~上千万</td>
+</tr>
+<tr>
+<td>GPT-4 级别</td>
+<td>整个数据中心</td>
+<td>数亿</td>
+</tr>
+</tbody>
+</table>
+<p><strong>所以你下载的模型文件为什么免费？因为训练费已经由大公司烧完了，推理（使用）很便宜。</strong></p>
+<hr />
+<h2>小结（训练全流程）</h2>
+<pre><code>随机参数（啥都不会）
+  → 预训练：喂海量文字 + 猜下一个字（学会&quot;接话&quot;）
+  → 微调 SFT：喂高质量问答对（学会&quot;回答问题&quot;）
+  → RLHF：人类打分当老师（学会&quot;说人话、讨人喜欢&quot;）
+  → 最终模型文件（你下载的那个）
+</code></pre>
+<hr />
+<p><strong>下一步：</strong> 进入高级模块，学 <a href="../高级/01-核心技术名词（上）.html">高级/01-核心技术名词（上）.html</a>。<br />
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

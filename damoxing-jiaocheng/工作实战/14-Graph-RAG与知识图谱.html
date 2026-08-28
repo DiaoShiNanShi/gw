@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 14：Graph RAG 与知识图谱 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 14：Graph RAG 与知识图谱</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>企业级实战章节。</p></blockquote><hr>
+<h2>1. 普通 RAG 的局限</h2>
+<p>切片丢失结构关系。「A 的老板的老婆的部门」这类多跳问题，向量检索常失败。</p>
+<hr>
+<h2>2. Graph RAG 思路</h2>
+<p>先建知识图谱（实体-关系），检索时走图遍历 + 向量，把子图喂给模型。</p>
+<hr>
+<h2>3. 流程</h2>
+<pre>文档 → NER 抽实体 → 建关系 → 存图数据库(Neo4j)
+提问 → 实体识别 → 图查询扩展 → LLM 生成</pre>
+<hr>
+<h2>4. 工具</h2>
+<p>Microsoft GraphRAG、LlamaIndex KnowledgeGraph、Neo4j + LangChain。</p>
+<hr>
+<h2>5. 何时用</h2>
+<p>关系复杂、多跳推理、企业知识图谱已有基础时。简单 FAQ 用普通 RAG 就够。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

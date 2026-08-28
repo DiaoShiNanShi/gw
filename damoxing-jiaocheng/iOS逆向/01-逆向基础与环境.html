@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 逆向 01：逆向基础与环境搭建 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 逆向模块</div>
+    <h1>iOS 逆向 01：逆向基础与环境搭建</h1>
+    <span class="header-tag">iOS 逆向模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>⚠️ <strong>法律声明：</strong>本教程仅用于安全研究、学习和自己 App 的调试。未经授权逆向他人 App 可能违法，请遵守当地法规和用户协议。</p>
+<p>学习目标：搞懂 iOS 逆向在干什么、需要什么环境、核心名词什么意思。</p>
+</blockquote>
+<hr>
+<h2>1. 逆向是干什么的？（大白话）</h2>
+<table>
+<thead><tr><th>目的</th><th>例子</th></tr></thead>
+<tbody>
+<tr><td>安全审计</td><td>查自己 App 的 API Key 是否能被扒出来</td></tr>
+<tr><td>竞品分析</td><td>看对方用了什么网络协议（注意法律边界）</td></tr>
+<tr><td>调试加固</td><td>越狱环境下 Hook 自己的 App 看加密逻辑</td></tr>
+<tr><td>恶意分析</td><td>安全公司分析木马 App</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>2. 越狱 vs 非越狱</h2>
+<table>
+<thead><tr><th></th><th>非越狱（Stock iOS）</th><th>越狱（Jailbreak）</th></tr></thead>
+<tbody>
+<tr><td>权限</td><td>沙盒严格，不能改系统</td><td>root 权限，可装 Cydia 插件</td></tr>
+<tr><td>逆向能力</td><td>静态分析 IPA、有限动态调试</td><td>Frida Hook、Cycript、全内存读写</td></tr>
+<tr><td>适用</td><td>砸壳后的静态分析、企业证书包</td><td>深度 Hook、实时改逻辑</td></tr>
+</tbody>
+</table>
+<p><strong>现状：</strong>新版本 iOS 越狱越来越难，很多分析转向「砸壳 + 静态分析 + 模拟器调试」。</p>
+<hr>
+<h2>3. 核心名词</h2>
+<table>
+<thead><tr><th>名词</th><th>大白话</th></tr></thead>
+<tbody>
+<tr><td>IPA</td><td>iOS 安装包，本质是 zip</td></tr>
+<tr><td>Mach-O</td><td>iOS 可执行文件格式（类似 Linux 的 ELF）</td></tr>
+<tr><td>砸壳</td><td>去掉 App Store 加密的壳，得到可分析的 binary</td></tr>
+<tr><td>class-dump</td><td>从 Mach-O 导出 Objective-C 头文件（类、方法名）</td></tr>
+<tr><td>Hopper / IDA</td><td>反汇编器，看汇编和伪代码</td></tr>
+<tr><td>Frida</td><td>动态插桩框架，运行时 Hook 任意函数</td></tr>
+<tr><td>LLDB</td><td>苹果官方调试器，Xcode 内置</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>4. 环境搭建（Mac）</h2>
+<pre><code class="language-bash"># 常用工具（按需安装）
+# class-dump: 导出 OC 头文件
+# Hopper Disassembler / IDA Pro: 反汇编
+# frida-tools: pip install frida-tools
+# objection: pip install objection  # Frida 封装，上手快
+# iproxy: usbmuxd 端口转发，真机调试
+
+# 砸壳常用：frida-ios-dump（需越狱设备安装 Frida Server）
+# 或使用已脱壳的 IPA（仅用于合法授权的分析）
+</code></pre>
+<hr>
+<h2>5. IPA 结构（解压看看）</h2>
+<pre><code>Payload/
+  YourApp.app/
+    YourApp          ← Mach-O 主二进制
+    Info.plist       ← 版本、Bundle ID、权限
+    embedded.mobileprovision
+    Frameworks/      ← 动态库
+</code></pre>
+<p><strong>下一步：</strong> <a href="02-Hook与动态调试.html">02-Hook与动态调试</a></p>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

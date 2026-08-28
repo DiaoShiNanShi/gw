@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 20：iOS 端侧 RAG 与语音助手完整方案 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 20：iOS 端侧 RAG 与语音助手完整方案</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>企业级实战章节。</p></blockquote><hr>
+<h2>1. 端侧 RAG 架构</h2>
+<pre>本地 Embedding 模型 → SQLite/向量索引 → 本地 LLM → UI
+数据全程不出手机</pre>
+<hr>
+<h2>2. 语音闭环</h2>
+<pre>Speech 框架识别 → 文本 → 本地/云端 LLM → AVSpeechSynthesizer 播报</pre>
+<hr>
+<h2>3. 关键技术点</h2>
+<table><thead><tr><th>环节</th><th>方案</th></tr></thead><tbody><tr><td>ASR</td><td>Speech / Whisper.cpp</td></tr><tr><td>TTS</td><td>AVSpeechSynthesizer / 云端</td></tr><tr><td>Embedding</td><td>端侧小模型</td></tr><tr><td>向量存储</td><td>sqlite-vec / 内存</td></tr><tr><td>LLM</td><td>MLX / llama.cpp</td></tr></tbody></table>
+<hr>
+<h2>4. 内存预算</h2>
+<p>iPhone 同时跑 ASR + Embedding + 7B LLM 会爆。要分时加载或用小模型。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

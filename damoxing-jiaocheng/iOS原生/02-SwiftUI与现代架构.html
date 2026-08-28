@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生 02：SwiftUI 与现代架构（MVVM） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 原生模块</div>
+    <h1>iOS 原生 02：SwiftUI 与现代架构（MVVM）</h1>
+    <span class="header-tag">iOS 原生模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：SwiftUI 声明式 UI + MVVM 架构——新项目和 AI 聊天页的主流写法。</p>
+</blockquote>
+<hr>
+<h2>1. SwiftUI vs UIKit</h2>
+<table>
+<thead><tr><th></th><th>UIKit</th><th>SwiftUI</th></tr></thead>
+<tbody>
+<tr><td>写法</td><td>命令式：create → addSubview → 设约束</td><td>声明式：描述「长什么样」</td></tr>
+<tr><td>状态</td><td>手动 reloadData</td><td>@State / @Observable 自动刷新</td></tr>
+<tr><td>适用</td><td>老项目、复杂自定义控件</td><td>新项目、原型、AI 聊天 UI</td></tr>
+</tbody>
+</table>
+<pre><code class="language-swift">import SwiftUI
+
+struct ChatView: View {
+    @StateObject private var vm = ChatViewModel()
+
+    var body: some View {
+        VStack {
+            ScrollView {
+                ForEach(vm.messages) { msg in
+                    Text(msg.content)
+                        .padding(8)
+                        .background(msg.isUser ? Color.blue.opacity(0.2) : Color.gray.opacity(0.2))
+                        .cornerRadius(8)
+                }
+            }
+            HStack {
+                TextField("输入...", text: $vm.input)
+                Button("发送") { Task { await vm.send() } }
+            }.padding()
+        }
+    }
+}
+</code></pre>
+<hr>
+<h2>2. MVVM 架构（大白话）</h2>
+<p><strong>View</strong> 只负责显示；<strong>ViewModel</strong> 管业务逻辑和网络；<strong>Model</strong> 是数据结构。</p>
+<pre><code class="language-swift">@MainActor
+class ChatViewModel: ObservableObject {
+    @Published var messages: [ChatMessage] = []
+    @Published var input = ""
+
+    func send() async {
+        let userMsg = ChatMessage(role: "user", content: input)
+        messages.append(userMsg)
+        input = ""
+        // 调 AIClient…
+        let reply = try? await AIClient.shared.chat(messages: messages)
+        if let r = reply { messages.append(.init(role: "assistant", content: r)) }
+    }
+}
+</code></pre>
+<hr>
+<h2>3. 混编（UIKit 项目里加 SwiftUI）</h2>
+<pre><code class="language-swift">// UIKit 里弹出 SwiftUI 页面
+let chatView = ChatView()
+let host = UIHostingController(rootView: chatView)
+navigationController?.pushViewController(host, animated: true)
+</code></pre>
+<hr>
+<h2>4. 依赖注入与模块化</h2>
+<ul>
+<li>网络层、AI 服务单独成 <code>AIModule</code>，方便单测和替换 mock</li>
+<li>用 Protocol 抽象 <code>LLMServiceProtocol</code>，云端/端侧实现可切换</li>
+</ul>
+<p><strong>下一步：</strong> <a href="03-网络存储与系统框架.html">03-网络存储与系统框架</a></p>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生 01：Swift 语言与 UIKit 基础 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 原生模块</div>
+    <h1>iOS 原生 01：Swift 语言与 UIKit 基础</h1>
+    <span class="header-tag">iOS 原生模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：iOS 工程师必备底座——Swift 语法 + UIKit 界面体系。<br>
+<strong>和大模型教程的关系：</strong>做 AI App、做逆向分析，都得先懂 Swift 和 UIKit 对象模型。</p>
+</blockquote>
+<hr>
+<h2>1. Swift 速成（和 Objective-C 比）</h2>
+<table>
+<thead><tr><th>概念</th><th>大白话</th><th>代码示例</th></tr></thead>
+<tbody>
+<tr><td>可选型 Optional</td><td>可能有值可能没有</td><td><code>var name: String?</code></td></tr>
+<tr><td>结构体 vs 类</td><td>Struct 值拷贝，Class 引用传递</td><td>ViewModel 常用 class</td></tr>
+<tr><td>协议 Protocol</td><td>「能干什么」的接口</td><td><code>UITableViewDataSource</code></td></tr>
+<tr><td>闭包 Closure</td><td>可以当参数传的函数</td><td>网络回调、动画 completion</td></tr>
+<tr><td>async/await</td><td>异步写法和同步一样</td><td><code>let data = try await URLSession.shared.data(from: url)</code></td></tr>
+<tr><td>@MainActor</td><td>UI 更新必须在主线程</td><td>SwiftUI / UIKit 改 UI 都要主线程</td></tr>
+</tbody>
+</table>
+<pre><code class="language-swift">// Swift 基础示例（可对照 Dart/JS）
+struct User: Codable {
+    let id: Int
+    let name: String
+}
+
+func greet(_ name: String) -> String {
+    return "Hello, \(name)"
+}
+
+// 可选绑定
+if let n = optionalName {
+    print(greet(n))
+}
+</code></pre>
+<hr>
+<h2>2. UIKit 核心（MVC 怎么转起来）</h2>
+<p><strong>大白话：</strong>UIKit = 苹果传统的界面积木。Controller 当「包工头」，View 是砖块，Model 是数据。</p>
+<table>
+<thead><tr><th>类</th><th>干什么</th></tr></thead>
+<tbody>
+<tr><td>UIViewController</td><td>管一个屏幕的生命周期（viewDidLoad…）</td></tr>
+<tr><td>UIView / UILabel / UIButton</td><td>界面元素</td></tr>
+<tr><td>UITableView / UICollectionView</td><td>列表（聊天消息列表就是它）</td></tr>
+<tr><td>UINavigationController</td><td>页面栈，push/pop</td></tr>
+<tr><td>Auto Layout</td><td>约束布局，适配不同屏幕</td></tr>
+</tbody>
+</table>
+<pre><code class="language-swift">// 最小 UITableView 数据源
+class ChatListVC: UIViewController, UITableViewDataSource {
+    let table = UITableView()
+    var messages: [String] = []
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        table.dataSource = self
+        table.frame = view.bounds
+        view.addSubview(table)
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        messages.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "c") ??
+            UITableViewCell(style: .default, reuseIdentifier: "c")
+        cell.textLabel?.text = messages[indexPath.row]
+        return cell
+    }
+}
+</code></pre>
+<hr>
+<h2>3. 生命周期（面试常问）</h2>
+<pre><code>viewDidLoad      → 视图加载完，只调一次，适合初始化
+viewWillAppear   → 每次即将显示（刷新数据）
+viewDidAppear    → 已经显示（开动画、埋点）
+viewWillDisappear→ 即将离开
+viewDidDisappear → 已经离开（停定时器）
+</code></pre>
+<hr>
+<h2>4. 和 AI App 的结合点</h2>
+<ul>
+<li>聊天界面：UITableView / UICollectionView + 流式刷新 cell</li>
+<li>网络层：URLSession + async/await 调 LLM API</li>
+<li>老项目多是 UIKit，AI 功能常做成独立 Module 再嵌入</li>
+</ul>
+<p><strong>下一步：</strong> <a href="02-SwiftUI与现代架构.html">02-SwiftUI与现代架构</a></p>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

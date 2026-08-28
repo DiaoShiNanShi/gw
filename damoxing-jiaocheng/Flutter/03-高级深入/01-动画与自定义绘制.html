@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>01-动画与自定义绘制 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 高级深入</div>
+    <h1>01-动画与自定义绘制</h1>
+    <span class="header-tag">高级深入</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>01-动画与自定义绘制</h1>
+<blockquote>
+<p>大白话版 · 动画与自定义绘制（小白向）<br>
+目标：搞懂隐式动画/显式动画（AnimationController/Tween）、Hero 转场，以及用 CustomPainter 画出自定义内容。</p>
+</blockquote>
+<hr>
+<h2>一、先讲"是什么"：动画到底是怎么"动"起来的？</h2>
+<p><strong>一句话版本：动画 = 在一段时间里，让某个属性（位置/大小/颜色/透明度）连续地、平滑地变化。</strong></p>
+<p>打个比方：</p>
+<blockquote>
+<p>你看的动画片，其实是一张张静止的图片快速播放（每秒 24 帧以上，人眼就觉得"动起来了"）。<br>
+Flutter 动画也是这个原理：<strong>在每一帧刷新时，把"属性"的值变一点点</strong>，连续变很多次，就形成了动画。</p>
+<p>比如让一个按钮变大：<br>
+- 第 1 帧：宽 100<br>
+- 第 2 帧：宽 103<br>
+- 第 3 帧：宽 106<br>
+- …… 一直变到宽 200</p>
+<p>60 帧/秒地变，看起来就是"按钮平滑地长大了"。</p>
+</blockquote>
+<h3>Flutter 动画的两大家族</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>大白话</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>隐式动画</strong>（Implicit）</td>
+<td>"你只要告诉我目标，我自己慢慢变过去"</td>
+<td>AnimatedContainer、AnimatedOpacity</td>
+</tr>
+<tr>
+<td><strong>显式动画</strong>（Explicit）</td>
+<td>"你全程手动控制我从哪到哪、变多快"</td>
+<td>AnimationController + Tween</td>
+</tr>
+</tbody>
+</table>
+<p><strong>一句话选型：</strong><br>
+- 简单动画（变大变小、变透明、换颜色）→ 用<strong>隐式动画</strong>，一行代码搞定。<br>
+- 复杂动画（连续控制、循环、联动、自定义曲线）→ 用<strong>显式动画</strong>，手动掌控一切。</p>
+<hr>
+<h2>二、再讲"为什么"：为什么分隐式和显式？</h2>
+<ul>
+<li><strong>隐式动画为什么存在</strong>：因为 90% 的动画需求其实很简单（"变到某个值"）。Flutter 帮你把"从当前值慢慢变到新值"这套逻辑封装好了，你只改目标值就行，省心。</li>
+<li><strong>显式动画为什么需要</strong>：隐式动画只能做"变化到目标"，做不了"绕圈转""来回弹""精确控制在第几帧做什么"。这些需要你亲自控制"进度"，所以要有 AnimationController。</li>
+</ul>
+<blockquote>
+<p>对 iOS 工程师：隐式动画 ≈ UIView 的 <code>animate(withDuration:)</code> 简单动画；显式动画 ≈ 自己控制 CADisplayLink 每帧更新，或 CAAnimation 的完整控制。</p>
+</blockquote>
+<hr>
+<h2>三、怎么用：三类动画逐个击破</h2>
+<h3>3.1 隐式动画（最简单，先学这个）</h3>
+<p><strong>AnimatedContainer</strong> 是最常用的隐式动画容器：它里面的属性（颜色、大小、圆角）变化时，会自动播放过渡动画。</p>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: ImplicitDemo()));
+
+class ImplicitDemo extends StatefulWidget {
+  const ImplicitDemo({super.key});
+  @override
+  State&lt;ImplicitDemo&gt; createState() =&gt; _ImplicitDemoState();
+}
+
+class _ImplicitDemoState extends State&lt;ImplicitDemo&gt; {
+  bool _big = false;  // 是否放大
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('隐式动画')),
+      body: Center(
+        child: GestureDetector(
+          onTap: () =&gt; setState(() =&gt; _big = !_big),  // 点击切换状态
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 500),  // 动画时长：0.5 秒
+            curve: Curves.easeInOut,                     // 动画曲线：先慢后快再慢
+            width: _big ? 200 : 100,                      // 宽：100 ↔ 200
+            height: _big ? 200 : 100,                     // 高：100 ↔ 200
+            decoration: BoxDecoration(
+              color: _big ? Colors.orange : Colors.blue,  // 颜色也过渡
+              borderRadius: BorderRadius.circular(_big ? 100 : 10),  // 圆角：方形 ↔ 圆形
+            ),
+            child: const Center(child: Text('点我')),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<p><strong>常见隐式动画组件速查：</strong></p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>动画什么</th>
+<th>类比 iOS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AnimatedContainer</td>
+<td>大小/颜色/圆角/边距</td>
+<td>UIView 属性动画</td>
+</tr>
+<tr>
+<td>AnimatedOpacity</td>
+<td>透明度</td>
+<td>UIView alpha 动画</td>
+</tr>
+<tr>
+<td>AnimatedPadding</td>
+<td>内边距</td>
+<td>约束动画</td>
+</tr>
+<tr>
+<td>AnimatedPositioned</td>
+<td>位置（Stack 内）</td>
+<td>frame 动画</td>
+</tr>
+<tr>
+<td>AnimatedSwitcher</td>
+<td>切换子组件时交叉淡入淡出</td>
+<td>转场过渡</td>
+</tr>
+</tbody>
+</table>
+<h3>3.2 显式动画（AnimationController + Tween）</h3>
+<p><strong>大白话理解两个核心类：</strong><br>
+- <code>AnimationController</code>：一个"节拍器"。它把 0→1 的时间段细分成很多帧，每帧告诉你"现在到哪了"（value 从 0 到 1）。<br>
+- <code>Tween</code>：一个"翻译官"。把控制器给的 0→1 的进度，翻译成你需要的值（比如 0→300 像素、颜色从红到蓝）。</p>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: ExplicitDemo()));
+
+class ExplicitDemo extends StatefulWidget {
+  const ExplicitDemo({super.key});
+  @override
+  State&lt;ExplicitDemo&gt; createState() =&gt; _ExplicitDemoState();
+}
+
+class _ExplicitDemoState extends State&lt;ExplicitDemo&gt;
+    with SingleTickerProviderStateMixin {  // 提供 vsync（垂直同步信号）
+
+  // 节拍器：控制动画进度 0→1，时长 2 秒
+  late final AnimationController _controller = AnimationController(
+    vsync: this,                                   // 绑定屏幕刷新
+    duration: const Duration(seconds: 2),
+  );
+
+  // 翻译官：把 0→1 翻译成 0→300（位移距离）
+  late final Animation&lt;double&gt; _offset = Tween&lt;double&gt;(
+    begin: 0,
+    end: 300,
+  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+  @override
+  void dispose() {
+    _controller.dispose();  // 记得释放（相当于 iOS 的 deinit 清理）
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('显式动画')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // AnimatedBuilder：监听动画值变化，每帧重建内部
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                return Transform.translate(
+                  offset: Offset(_offset.value, 0),  // 水平位移 = 动画当前值
+                  child: child,
+                );
+              },
+              child: const Icon(Icons.rocket_launch, size: 60, color: Colors.blue),
+            ),
+            const SizedBox(height: 40),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // 从头播放
+                ElevatedButton(
+                  onPressed: () =&gt; _controller.forward(from: 0),
+                  child: const Text('发射'),
+                ),
+                const SizedBox(width: 12),
+                // 倒放
+                ElevatedButton(
+                  onPressed: () =&gt; _controller.reverse(),
+                  child: const Text('回来'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<p><strong>显式动画核心 API（背下来）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>作用</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_controller.forward()</code></td>
+<td>从 0 播放到 1</td>
+<td>正放</td>
+</tr>
+<tr>
+<td><code>_controller.reverse()</code></td>
+<td>从 1 播放回 0</td>
+<td>倒放</td>
+</tr>
+<tr>
+<td><code>_controller.repeat()</code></td>
+<td>一直循环</td>
+<td>无限循环</td>
+</tr>
+<tr>
+<td><code>_controller.value</code></td>
+<td>当前进度（0~1）</td>
+<td>节拍器走到哪了</td>
+</tr>
+<tr>
+<td><code>Tween(begin: 0, end: 300)</code></td>
+<td>把进度翻译成目标范围</td>
+<td>翻译官</td>
+</tr>
+</tbody>
+</table>
+<h3>3.3 Hero 转场（页面间"共享元素"动画）</h3>
+<p><strong>大白话：</strong> 从列表页点一张图片，图片"飞"到详情页继续显示——同一个元素在两个页面间"华丽地搬家"。</p>
+<pre class="codehilite"><code class="language-dart">// 列表页：图片用 Hero 包起来，tag 是&quot;门牌号&quot;
+Hero(
+  tag: 'cat_1',                    // 唯一标识，两个页面要一致
+  child: Image.network('https://example.com/cat.png'),
+)
+
+// 详情页：同一张图片，同一个 tag
+// 跳转时 Flutter 会自动让它们&quot;飞过去&quot;
+Hero(
+  tag: 'cat_1',
+  child: Image.network('https://example.com/cat.png'),
+)
+</code></pre>
+
+<blockquote>
+<p>大白话：<code>Hero</code> 就是给元素贴一张"搬家单"，Flutter 看到两页有同一张单子，就自动做"飞行动画"。<br>
+对 iOS 工程师：≈ 自定义转场里最常见的"共享元素转场"（放大过渡效果）。</p>
+</blockquote>
+<h3>3.4 CustomPainter（自定义绘制，画板/图表）</h3>
+<p><strong>大白话：</strong> 当自带组件画不出你要的东西时（比如折线图、仪表盘、涂鸦画板），就用 <code>CustomPainter</code>——给你一支"画笔"，你想画什么画什么。</p>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: PaintDemo()));
+
+// 页面：显示一个 CustomPaint 画布
+class PaintDemo extends StatelessWidget {
+  const PaintDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('自定义绘制')),
+      body: Center(
+        child: CustomPaint(
+          size: const Size(300, 200),       // 画布大小
+          painter: MyChartPainter(),        // 画师：负责画什么
+        ),
+      ),
+    );
+  }
+}
+
+// 画师类：继承 CustomPainter，重写 paint 方法
+class MyChartPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // canvas 就是&quot;画布&quot;，size 是画布大小
+
+    // 1. 画坐标轴（灰色线）
+    final axisPaint = Paint()
+      ..color = Colors.grey
+      ..strokeWidth = 2;
+
+    // 画一条横线：从 (20, 180) 到 (280, 180)
+    canvas.drawLine(const Offset(20, 180), const Offset(280, 180), axisPaint);
+    // 画一条竖线：从 (20, 180) 到 (20, 20)
+    canvas.drawLine(const Offset(20, 180), const Offset(20, 20), axisPaint);
+
+    // 2. 画折线（蓝色，代表数据趋势）
+    final linePaint = Paint()
+      ..color = Colors.blue
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;  // 只描边
+
+    final path = Path()
+      ..moveTo(30, 160)   // 起点
+      ..lineTo(90, 100)   // 连到第二个点
+      ..lineTo(150, 120)  // 第三个点
+      ..lineTo(210, 60)   // 第四个点
+      ..lineTo(270, 80);  // 终点
+    canvas.drawPath(path, linePaint);
+
+    // 3. 画数据点（红色圆点）
+    final dotPaint = Paint()..color = Colors.red;
+    canvas.drawCircle(const Offset(30, 160), 4, dotPaint);
+    canvas.drawCircle(const Offset(90, 100), 4, dotPaint);
+    canvas.drawCircle(const Offset(150, 120), 4, dotPaint);
+    canvas.drawCircle(const Offset(210, 60), 4, dotPaint);
+    canvas.drawCircle(const Offset(270, 80), 4, dotPaint);
+  }
+
+  // 告诉 Flutter 什么时候需要重绘（一般返回 false 即可）
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+
+<p><strong>CustomPainter 核心概念（大白话）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>paint(canvas, size)</code></td>
+<td>"开工"方法：所有绘制代码都写这</td>
+</tr>
+<tr>
+<td><code>Paint</code></td>
+<td>你的"画笔"（颜色/粗细/样式）</td>
+</tr>
+<tr>
+<td><code>canvas.drawLine / drawCircle / drawPath</code></td>
+<td>画线/画圆/画路径</td>
+</tr>
+<tr>
+<td><code>Path</code></td>
+<td>一条"路线"（多个点连起来）</td>
+</tr>
+<tr>
+<td><code>shouldRepaint</code></td>
+<td>要不要重画（属性没变就 false）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>做画板（手指涂鸦）的思路：</strong> 在 <code>GestureDetector</code> 的 onPanUpdate 里记录手指位置，存到 List，然后 <code>setState</code> 触发重绘，paint 里把所有点连起来。</p>
+<hr>
+<h2>四、iOS 开发者视角（老司机对照表）</h2>
+<table>
+<thead>
+<tr>
+<th>iOS 原生</th>
+<th>Flutter</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UIView.animate(withDuration:)</td>
+<td>AnimatedContainer 等隐式动画</td>
+<td>一句代码做简单动画</td>
+</tr>
+<tr>
+<td>CAAnimation / CADisplayLink</td>
+<td>AnimationController + Tween</td>
+<td>手动控制每帧</td>
+</tr>
+<tr>
+<td>UIViewPropertyAnimator</td>
+<td>AnimationController</td>
+<td>可控制进度、可倒放的动画器</td>
+</tr>
+<tr>
+<td>共享元素转场（放大过渡）</td>
+<td>Hero</td>
+<td>页面间元素飞行动画</td>
+</tr>
+<tr>
+<td>CoreGraphics / draw(_:)</td>
+<td>CustomPainter + Canvas</td>
+<td>自定义绘制</td>
+</tr>
+<tr>
+<td>CAShapeLayer + UIBezierPath</td>
+<td>Path + canvas.drawPath</td>
+<td>路径绘制</td>
+</tr>
+<tr>
+<td>CAMediaTimingFunction</td>
+<td>Curves（easeInOut 等）</td>
+<td>动画曲线</td>
+</tr>
+<tr>
+<td>setNeedsDisplay</td>
+<td>shouldRepaint</td>
+<td>触发重绘</td>
+</tr>
+</tbody>
+</table>
+<p><strong>给 iOS 工程师的真心话：</strong><br>
+- 隐式动画 ≈ <code>UIView.animate</code>，显式动画 ≈ 用 <code>CADisplayLink</code> 每帧自己更新（但 Flutter 封装得更舒服）。<br>
+- <code>CustomPainter</code> 的 <code>paint(canvas, size)</code> ≈ 你重写 UIView 的 <code>draw(_:)</code>，用 CoreGraphics 画；<code>Paint</code> ≈ UIGraphics 的画笔设置。<br>
+- 动画曲线 <code>Curves.easeInOut</code> 就是 <code>CAMediaTimingFunction</code> 的现成版，概念 1:1。</p>
+<hr>
+<h2>五、小节小结</h2>
+<ol>
+<li>动画本质：一段时间内连续改变属性值。</li>
+<li>隐式动画：<code>AnimatedContainer</code> 等，只改目标值就自动过渡，简单需求首选。</li>
+<li>显式动画：<code>AnimationController</code>（节拍器）+ <code>Tween</code>（翻译官），控制力强，复杂动画必备。</li>
+<li><code>Hero</code> 做页面间共享元素转场，贴个 tag 就行。</li>
+<li><code>CustomPainter</code> 自定义绘制：重写 <code>paint</code>，用 Canvas/Paint/Path 画任意内容（图表、画板）。</li>
+</ol>
+<hr>
+<h2>六、本节动手练习（含答案提示）</h2>
+<p><strong>练习 1：选型判断</strong></p>
+<blockquote>
+<p>想让一个图片"点击后透明度从 1 慢慢变到 0"，用隐式还是显式动画？写出组件名。</p>
+<p>✅ 答案提示：隐式动画即可，用 <code>AnimatedOpacity</code>（<code>opacity: 0</code> + <code>duration</code>），点击时 setState 改变 opacity 值。</p>
+</blockquote>
+<p><strong>练习 2：理解两个类</strong></p>
+<blockquote>
+<p><code>AnimationController</code> 和 <code>Tween</code> 各自负责什么？</p>
+<p>✅ 答案提示：<code>AnimationController</code> 是"节拍器"，负责把时间细分成 0→1 的进度；<code>Tween</code> 是"翻译官"，负责把进度翻译成具体数值（如 0→300 像素、颜色变化）。</p>
+</blockquote>
+<p><strong>练习 3：实现循环动画</strong></p>
+<blockquote>
+<p>让一个图标一直转圈，应该调用控制器的哪个方法？需要什么设置？</p>
+<p>✅ 答案提示：<code>_controller.repeat()</code> 让动画无限循环；配合 <code>RotateTransition</code> 或 <code>Transform.rotate(angle: _controller.value * 2 * pi)</code> 实现旋转。</p>
+</blockquote>
+<p><strong>练习 4：Hero 连线</strong></p>
+<blockquote>
+<p>Hero 动画需要满足什么条件才能生效？</p>
+<p>✅ 答案提示：两个页面里各有一个 <code>Hero</code>，且 <code>tag</code> 值必须完全一致（如同为 <code>'cat_1'</code>）；跳转时 Flutter 自动做共享元素动画。</p>
+</blockquote>
+<p><strong>练习 5：自定义绘制</strong></p>
+<blockquote>
+<p>用 CustomPainter 画一个红色实心圆，圆心在 (50, 50)，半径 30。写出关键代码。</p>
+<p>✅ 答案提示：<br>
+<code>dart
+final paint = Paint()..color = Colors.red;
+canvas.drawCircle(const Offset(50, 50), 30, paint);</code></p>
+</blockquote>
+<hr>
+<h2>下一步</h2>
+<p>动画和绘制已经入门，接下来学习"App 卡顿、启动慢"怎么排查和优化。</p>
+<p>👉 下一篇：<a href="02-性能优化.html">02-性能优化.html</a></p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

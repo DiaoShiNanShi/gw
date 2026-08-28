@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>高级 03：架构与性能优化——本地推理、llama.cpp、端侧 AI - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 高级模块</div>
+    <h1>高级 03：架构与性能优化——本地推理、llama.cpp、端侧 AI</h1>
+    <span class="header-tag">高级模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：搞懂"本地跑大模型"这件事的完整图景：用什么工具、为什么快、端侧 AI 是怎么回事。<br />
+读完这章，你能理解自己电脑上跑 AI 的每一步在干什么。</p>
+</blockquote>
+<hr />
+<h2>1. 本地推理引擎：谁在帮你跑模型？</h2>
+<p><strong>大白话：推理引擎 = 负责把模型文件"加载进内存、跑推理、吐文字"的软件。你下载的模型不会自己跑，需要一个"引擎"来驱动。</strong></p>
+<p>主流本地推理引擎对比：</p>
+<table>
+<thead>
+<tr>
+<th>引擎</th>
+<th>平台</th>
+<th>特点</th>
+<th>适合谁</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>llama.cpp</strong></td>
+<td>全平台</td>
+<td>纯 C++ 实现，超轻量，CPU 也能跑，GGUF 格式鼻祖</td>
+<td>追求极致性能和命令行玩家</td>
+</tr>
+<tr>
+<td><strong>Ollama</strong></td>
+<td>全平台</td>
+<td>基于 llama.cpp，一键安装、命令简单，自动管理模型</td>
+<td><strong>新手首选</strong></td>
+</tr>
+<tr>
+<td><strong>LM Studio</strong></td>
+<td>全平台</td>
+<td>图形界面，点鼠标就能用，自带模型下载</td>
+<td>完全不想碰命令行的</td>
+</tr>
+<tr>
+<td><strong>MLX</strong></td>
+<td>Apple Silicon 专属</td>
+<td>苹果官方框架，专门优化 M 系列芯片</td>
+<td>Mac 用户进阶首选</td>
+</tr>
+<tr>
+<td><strong>llama.cpp + llama-server</strong></td>
+<td>全平台</td>
+<td>llama.cpp 自带 HTTP 服务</td>
+<td>想自己写代码调 API</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>示例（你的 Mac M2 上跑 7B 模型的速度参考）</strong><br />
+- Ollama / llama.cpp：约 10~20 token/秒（打字速度的 2~3 倍，流畅）<br />
+- MLX：同模型还能再快一些，因为专门为 Apple Silicon 优化</p>
+</blockquote>
+<h2>2. llama.cpp 为什么是"本地之王"？</h2>
+<p><strong>大白话：llama.cpp 把"在普通电脑上跑大模型"这件事做到了极致轻量。</strong></p>
+<ul>
+<li>纯 C/C++ 编写，不依赖 Python 和重型框架</li>
+<li>内存占用极小，笔记本都能跑</li>
+<li>支持 CPU 推理（没独显也能用）</li>
+<li>GGUF 格式的创造者（就是它定义了量化格式标准）</li>
+<li>手机、树莓派都能跑小模型</li>
+</ul>
+<p><strong>它怎么做到快的？</strong><br />
+1. 极致的内存优化（mmap 直接映射模型文件，省内存）<br />
+2. 自动选择最优计算后端（CPU 用 AVX/NEON 指令集、Apple Silicon 用 Metal GPU）<br />
+3. 支持 KV Cache、Flash Attention 等全部优化<br />
+4. 量化后的模型直接读，无需解压</p>
+<h2>3. 端侧 AI（On-device AI）：AI 装进手机/电脑</h2>
+<p><strong>大白话：端侧 AI = 不联网、不靠云端，直接在你自己设备上跑大模型。手机上的 AI 助手、你的 Mac 本地模型，都属于端侧 AI。</strong></p>
+<table>
+<thead>
+<tr>
+<th>对比</th>
+<th>云端 AI</th>
+<th>端侧 AI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据</td>
+<td>发到服务器</td>
+<td>不出设备，<strong>隐私安全</strong></td>
+</tr>
+<tr>
+<td>速度</td>
+<td>受网络影响</td>
+<td>本地即时响应</td>
+</tr>
+<tr>
+<td>成本</td>
+<td>按调用付费</td>
+<td>一次买断，免费使用</td>
+</tr>
+<tr>
+<td>能力</td>
+<td>大模型（几百亿参数）</td>
+<td>小模型（0.5B~8B，受硬件限制）</td>
+</tr>
+<tr>
+<td>断网</td>
+<td>用不了</td>
+<td><strong>离线可用</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>端侧 AI 的应用场景：</strong><br />
+- 输入法 AI 助手（苹果、百度、搜狗都在做）<br />
+- 手机语音助手（Siri 本地化）<br />
+- 智能家居、车载语音<br />
+- 隐私敏感场景（医疗、金融）<br />
+- <strong>你之前分析的 ITPhone 项目（SwiftUI + 本地 LLM）就是典型端侧 AI</strong></p>
+<p><strong>Apple Silicon 的端侧优势：</strong><br />
+- <strong>统一内存</strong>：CPU 和 GPU 共享 16GB 内存，模型参数直接放内存里，CPU/GPU 都能访问，不用来回拷贝——这是 Mac 跑大模型比普通 Windows 笔记本快的重要原因<br />
+- <strong>Metal GPU</strong>：苹果自家 GPU 加速 API<br />
+- <strong>MLX 框架</strong>：苹果官方为 AI 专门推出的框架，对 M 系列芯片深度优化</p>
+<h2>4. MLX：Mac 上训练和跑模型的最佳选择</h2>
+<p><strong>大白话：MLX = 苹果官方出的"AI 计算框架"，专门给 Apple Silicon 优化。想在 Mac 上做正经的 AI 开发，用 MLX 比 PyTorch 更快更省内存。</strong></p>
+<blockquote>
+<p><strong>示例（M2 16GB 上用 MLX 能干什么）</strong><br />
+- 跑 Qwen2.5-7B（4bit 量化）：流畅对话<br />
+- 微调小模型（LoRA）：几分钟就能跑一轮<br />
+- 跑各种 HuggingFace 上的 MLX 版模型：几乎全覆盖</p>
+<p>安装就一句话：<br />
+<code>bash
+pip install mlx-lm</code><br />
+用起来也简单：<br />
+<code>bash
+python -m mlx_lm.generate --model Qwen/Qwen2.5-1.5B-Instruct-4bit</code></p>
+</blockquote>
+<h2>5. 硬件常识：跑模型到底吃什么配置？</h2>
+<p><strong>大白话：跑大模型最看重的不是 CPU 多强，而是"内存多大、内存多快"。因为模型参数要整个装进内存，每生成一个字要把全部参数读一遍。</strong></p>
+<table>
+<thead>
+<tr>
+<th>配置</th>
+<th>能流畅跑</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8GB 内存</td>
+<td>≤ 3B 量化模型</td>
+<td>模型 2GB 以内才舒服</td>
+</tr>
+<tr>
+<td>16GB 内存</td>
+<td>≤ 7B 量化模型</td>
+<td>模型 4~5GB 以内流畅（<strong>你的配置</strong>）</td>
+</tr>
+<tr>
+<td>32GB 内存</td>
+<td>13B~14B 量化模型</td>
+<td>模型 8~10GB</td>
+</tr>
+<tr>
+<td>64GB+</td>
+<td>30B 以上模型</td>
+<td>大内存的春天</td>
+</tr>
+<tr>
+<td>专业显卡 24GB 显存</td>
+<td>70B 量化</td>
+<td>但要买得起</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>示例（你的 Mac M2 16GB）</strong><br />
+- ✅ Qwen2.5-1.5B、7B（Q4）→ 流畅<br />
+- ✅ Llama 3.2-3B → 流畅<br />
+- ⚠️ 13B（Q4 约 8GB）→ 能跑但很慢、内存告急<br />
+- ❌ 70B → 内存直接不够</p>
+<p>经验法则：<strong>模型文件大小不要超过内存的 1/3~1/2</strong>。16GB 内存 → 模型别超过 5GB（即 7B Q4 就是上限了）。</p>
+</blockquote>
+<h2>6. 生成速度怎么算出来的？</h2>
+<p><strong>大白话：每生成一个字，都要把模型的全部参数"读"一遍。所以速度 ≈ 内存带宽 ÷ 参数量。</strong></p>
+<pre><code>你的 M2 内存带宽约 100GB/s
+7B Q4 模型 = 约 4.5GB
+理论速度 ≈ 100 ÷ 4.5 ≈ 22 token/秒
+</code></pre>
+<p>（实际还要扣除各种开销，大约 10~15 token/秒，依然流畅）</p>
+<p>这就是为什么：<br />
+- 模型越小、量化越狠 → 越快<br />
+- 内存带宽越大的芯片 → 越快（M 系列 Pro/Max/Ultra 更快就是因为带宽大）</p>
+<hr />
+<h2>小结（本地跑模型的完整链条）</h2>
+<pre><code>下载 GGUF 模型文件（已量化，几百 MB~几 GB）
+  → 用 Ollama / llama.cpp / MLX 加载进内存
+  → CPU/GPU 用矩阵乘法做推理（KV Cache + Flash Attention 加速）
+  → 一个字一个字吐出来（流式输出）
+  → 配合 RAG 能查资料、配合 LoRA 能微调定制
+</code></pre>
+<hr />
+<p><strong>下一步：</strong> 进入练习模块，开始动手！先看 <a href="../练习/01-环境搭建指南.html">练习/01-环境搭建指南.html</a>。<br />
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>中级 05：对齐技术（SFT / RLHF / DPO 一条线讲清） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 中级模块</div>
+    <h1>中级 05：对齐技术（SFT / RLHF / DPO 一条线讲清）</h1>
+    <span class="header-tag">中级模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>预训练让模型「会说话」，对齐让模型「说人话、听指令」。</p></blockquote><hr>
+<h2>1. 三阶段全景</h2>
+<pre>预训练（读万卷书）→ SFT（学会听指令）→ RLHF/DPO（学会讨人喜欢）</pre>
+<hr>
+<h2>2. SFT 监督微调</h2>
+<p><strong>数据：</strong>「用户问题 → 理想回答」对，几千~几万条就够起步。</p><p><strong>作用：</strong>从「续写」变成「问答」。</p>
+<hr>
+<h2>3. RLHF</h2>
+<ol><li>训练奖励模型（人打分好/坏回答）</li><li>用 PPO 强化学习，让模型拿高奖励</li></ol><p><strong>缺点：</strong>流程复杂、训练不稳定、贵。</p>
+<hr>
+<h2>4. DPO / GRPO</h2>
+<p><strong>DPO：</strong>直接对比好答案和坏答案，不用单独训奖励模型。</p><p><strong>GRPO：</strong>DeepSeek R1 用的，组内采样对比，更稳。</p>
+<hr>
+<h2>5. 你需不需要微调？</h2>
+<table><thead><tr><th>场景</th><th>建议</th></tr></thead><tbody><tr><td>通用问答</td><td>Prompt + RAG 够了</td></tr><tr><td>特定格式/语气</td><td>SFT 或 DPO</td></tr><tr><td>私有领域知识</td><td>RAG 优先，不够再 Continue PT</td></tr><tr><td>资源有限</td><td>LoRA，别全参</td></tr></tbody></table>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

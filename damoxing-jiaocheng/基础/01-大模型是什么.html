@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 01：大模型是什么 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础模块</div>
+    <h1>基础 01：大模型是什么</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：用 10 分钟建立对大模型的整体认知，不再"听着高大上，其实啥也不懂"。</p>
+</blockquote>
+<hr />
+<h2>1. 一句话说清大模型</h2>
+<p><strong>大模型 = 一个用海量文字"喂"出来的超级预测机器。它的全部本事，就是根据你给的文字，预测下一段最可能出现的文字。</strong></p>
+<p>它不"懂"你，它只是从海量数据里学会了"人类在这种语境下，一般会接着说什么"。</p>
+<h2>2. 核心比喻：大模型 = 会接话的超级输入法</h2>
+<p>你手机上的输入法，你打一个"你"，它会联想"好""们""在"……大模型就是把这个能力放大了一亿倍：</p>
+<table>
+<thead>
+<tr>
+<th>对比</th>
+<th>输入法</th>
+<th>大模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>依据</td>
+<td>只看最后几个字</td>
+<td>看你全部的话 + 它学过的所有知识</td>
+</tr>
+<tr>
+<td>输出</td>
+<td>联想几个字</td>
+<td>一个字一个字地联想出整段话</td>
+</tr>
+<tr>
+<td>词汇量</td>
+<td>几千</td>
+<td>几万甚至十几万</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>示例</strong><br />
+你问："中国的首都是？"<br />
+大模型的思考过程（本质）：<br />
+"中国的"后面 → 最可能接"首都"<br />
+"首都"后面 → 最可能接"是"<br />
+"是"后面 → 最可能接"北京"<br />
+→ 输出："中国的首都是北京"</p>
+<p>就这么朴素。它就是这么"接话"接出来的。</p>
+</blockquote>
+<h2>3. 大模型"大"在哪里？</h2>
+<p>"大"指的是三个维度：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>大白话</th>
+<th>数值感受</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>参数多</td>
+<td>大脑容量大</td>
+<td>从几亿到上万亿个参数</td>
+</tr>
+<tr>
+<td>数据多</td>
+<td>读的书多</td>
+<td>基本读完了整个互联网的公开文字</td>
+</tr>
+<tr>
+<td>算力大</td>
+<td>训练费电</td>
+<td>训练一次要烧掉几百万电费</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>示例</strong><br />
+训练一个 GPT-4 级别的大模型：<br />
+- 需要几万块顶级显卡同时跑几个月<br />
+- 电费+硬件成本数以亿计<br />
+- 只有大公司玩得起<br />
+而<strong>用</strong>（推理）大模型很便宜——这就是"训练贵、使用便宜"。</p>
+</blockquote>
+<h2>4. 训练 vs 推理（上学 vs 考试）</h2>
+<p>大模型的一生只有两个阶段：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>比喻</th>
+<th>干什么</th>
+<th>谁来干</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>训练（Training）</strong></td>
+<td>上学</td>
+<td>喂海量文字，反复练习"猜下一个字"，猜错就调整内部参数</td>
+<td>大公司，几千块顶级显卡，烧几个月电费</td>
+</tr>
+<tr>
+<td><strong>推理（Inference）</strong></td>
+<td>考试</td>
+<td>拿着学好的"知识"，回答用户的新问题</td>
+<td>你我他，手机电脑都行</td>
+</tr>
+</tbody>
+</table>
+<p><strong>你电脑上跑的所有 AI（包括本地模型），全部是"推理"阶段。</strong> 训练早就完成了，你下载的那个模型文件（几百 MB 到几 GB），就是"上完学的成果"。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+你下载了一个 400MB 的模型文件：<br />
+- 这个文件 = 训练完毕的"大脑"（5 亿个数字）<br />
+- 你在电脑上跟它聊天 = 让它"考试"<br />
+- 你不需要重新训练它——就像你不会让小学生重新学一遍 1+1 才回答你</p>
+</blockquote>
+<h2>5. 大模型能干什么？（应用全景）</h2>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>大白话</th>
+<th>典型应用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>聊天</td>
+<td>陪你说话</td>
+<td>客服、AI 助手</td>
+</tr>
+<tr>
+<td>写作</td>
+<td>帮你写东西</td>
+<td>写文章、写邮件、写文案</td>
+</tr>
+<tr>
+<td>翻译</td>
+<td>语言互译</td>
+<td>中英互译</td>
+</tr>
+<tr>
+<td>编程</td>
+<td>帮你写代码</td>
+<td>Copilot、Cursor</td>
+</tr>
+<tr>
+<td>总结</td>
+<td>长文提炼重点</td>
+<td>文档摘要、会议纪要</td>
+</tr>
+<tr>
+<td>问答</td>
+<td>知识查询</td>
+<td>百科式问答</td>
+</tr>
+</tbody>
+</table>
+<p><strong>注意：这些能力不是"装了 6 个不同的 AI"，而是同一个大模型把任务都变成了"接话"问题（第 5 章会讲 Decoder-only 架构）。</strong></p>
+<h2>6. 大模型 vs 传统软件（本质区别）</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>传统软件</th>
+<th>大模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>逻辑来源</td>
+<td>程序员一行行写死的 if-else</td>
+<td>从数据里自己"学"出来的概率</td>
+</tr>
+<tr>
+<td>能不能处理没见过的情况</td>
+<td>不能，会崩溃</td>
+<td>能"编"一个答案（也可能编错，见"幻觉"）</td>
+</tr>
+<tr>
+<td>更新方式</td>
+<td>发新版本</td>
+<td>重新训练/微调</td>
+</tr>
+<tr>
+<td>可解释性</td>
+<td>完全清楚</td>
+<td>黑盒，说不清为什么这么答</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>示例</strong><br />
+传统软件问"1+1=？" → 程序里写死返回 2<br />
+大模型问"1+1=？" → 它没"算"，它是根据海量训练数据"预测"出最可能是 2<br />
+（这就是为什么大模型偶尔会把 1+1 答成 3——它是在"猜"，不是在"算"）</p>
+</blockquote>
+<hr />
+<h2>小结（记住这 3 句就够）</h2>
+<ol>
+<li><strong>大模型 = 超级接话机</strong>，靠"预测下一个字"工作</li>
+<li><strong>训练 = 上学</strong>（烧钱），<strong>推理 = 考试</strong>（便宜，你我都能跑）</li>
+<li><strong>它不"懂"，它在"猜"</strong>——所以偶尔胡说八道是正常的（那是"幻觉"，后面会讲）</li>
+</ol>
+<hr />
+<p><strong>下一步：</strong> 学 <a href="03-AI发展脉络与模型选型.html">03-AI发展脉络与模型选型</a> ——知道 2026 年该选哪个模型。</p>
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

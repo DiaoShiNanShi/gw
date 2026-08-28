@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 09：LLM 评测与可观测性（怎么知道 AI 好不好） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 09：LLM 评测与可观测性（怎么知道 AI 好不好）</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：上线不是终点——要知道 AI 答得好不好、慢不慢、贵不贵。<br>
+<strong>大白话：</strong>评测 = 考试；可观测性 = 给 AI 装仪表盘。</p>
+</blockquote>
+<hr>
+<h2>1. 为什么要评测？</h2>
+<table>
+<thead><tr><th>不评测的后果</th><th>例子</th></tr></thead>
+<tbody>
+<tr><td>Prompt 改坏了不知道</td><td>上线新版本后用户投诉变多</td></tr>
+<tr><td>RAG 召回变差</td><td>文档更新了但检索还搜旧片段</td></tr>
+<tr><td>成本悄悄暴涨</td><td>某个接口 Token 用量翻倍</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>2. 三层评测体系</h2>
+<table>
+<thead><tr><th>层级</th><th>测什么</th><th>工具/方法</th></tr></thead>
+<tbody>
+<tr><td><strong>模型层</strong></td><td>通用智商、代码、推理</td><td>MMLU、HumanEval、C-Eval</td></tr>
+<tr><td><strong>应用层</strong></td><td>你的 Prompt + RAG 效果</td><td>自建测试集、RAGAS、DeepEval</td></tr>
+<tr><td><strong>线上层</strong></td><td>真实用户满意度</td><td>点赞率、人工抽检、A/B 测试</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>3. RAG 专项评测（RAGAS 思路）</h2>
+<pre><code class="language-python"># 简化版 RAG 评测逻辑（理解指标即可，生产可用 ragas 库）
+test_cases = [
+    {"question": "年假几天？", "expected_contains": "5天", "context": "入职满1年享5天年假"},
+    {"question": "报销流程？", "expected_contains": "发票", "context": "附发票，经理审批"},
+]
+
+def eval_rag(question, answer, context):
+    # faithfulness：答案是否忠于检索内容（不能瞎编）
+    faithful = all(word in answer or word in context for word in question.split()[:2])
+    # relevancy：答案是否切题
+    relevancy = len(answer) > 10 and "不知道" not in answer
+    return {"faithful": faithful, "relevant": relevancy}
+
+for case in test_cases:
+    # 模拟：你的 RAG 系统返回答案
+    fake_answer = "入职满1年享5天年假"
+    print(case["question"], eval_rag(case["question"], fake_answer, case["context"]))
+</code></pre>
+<hr>
+<h2>4. 可观测性：Trace + 指标</h2>
+<p><strong>每次 AI 调用应记录：</strong></p>
+<ul>
+<li>request_id、用户 id、模型名、Prompt Token、Completion Token、延迟 ms、是否报错</li>
+<li>RAG 额外记录：检索到的 doc_id、相似度分数</li>
+</ul>
+<p><strong>常用工具：</strong>Langfuse、LangSmith、Helicone、自建 ELK + Prometheus。</p>
+<pre><code class="language-python"># 最小化日志示例
+import time, json, logging
+log = logging.getLogger("llm")
+
+def call_llm(messages):
+    t0 = time.time()
+    # ... 调 API ...
+    latency = (time.time() - t0) * 1000
+    log.info(json.dumps({
+        "event": "llm_call", "latency_ms": latency,
+        "prompt_tokens": 120, "completion_tokens": 80, "model": "deepseek-chat"
+    }))
+</code></pre>
+<hr>
+<h2>5. CI 里跑评测（防退化）</h2>
+<ol>
+<li>维护 <code>eval_set.jsonl</code>（50~200 条业务问答 + 标准答案要点）</li>
+<li>每次改 Prompt / 换模型 → CI 跑一遍 → 通过率低于 90% 则阻断合并</li>
+<li>每周定时跑全量评测，出报告</li>
+</ol>
+<hr>
+<h2>小结</h2>
+<ol>
+<li>模型评测看 MMLU 等；业务评测看自建测试集 + RAGAS</li>
+<li>线上必须打日志：延迟、Token、错误率</li>
+<li>改 Prompt 必跑评测，别靠感觉</li>
+</ol>
+<p><strong>下一步：</strong> <a href="10-AI安全与合规实战.html">10-AI安全与合规实战</a></p>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

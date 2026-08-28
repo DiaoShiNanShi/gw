@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 08：算力、硬件与成本入门（GPU/ANE/钱从哪烧） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础模块</div>
+    <h1>基础 08：算力、硬件与成本入门（GPU/ANE/钱从哪烧）</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>训练烧钱，推理省钱。搞懂硬件才能选对部署方案。</p></blockquote><hr>
+<h2>1. 硬件对比</h2>
+<table><thead><tr><th>硬件</th><th>特点</th><th>场景</th></tr></thead><tbody><tr><td>NVIDIA GPU</td><td>CUDA 生态，训练推理王者</td><td>云端、训练</td></tr><tr><td>Apple ANE/GPU</td><td>统一内存，端侧友好</td><td>Mac/iPhone 本地</td></tr><tr><td>AMD GPU</td><td>ROCm，性价比</td><td>部分推理</td></tr><tr><td>NPU/TPU</td><td>专用 AI 芯片</td><td>手机、云 TPU</td></tr></tbody></table>
+<hr>
+<h2>2. 显存估算（FP16）</h2>
+<pre>7B 模型 ≈ 14GB（参数）+ KV Cache + 激活
+13B ≈ 26GB
+70B ≈ 140GB（需多卡）
+
+Q4 量化：显存约 ÷ 4
+7B Q4 ≈ 4~6GB 可推理</pre>
+<hr>
+<h2>3. API 成本怎么算</h2>
+<p>按 Token 计费：输入 + 输出分开算。DeepSeek 约 ¥1/百万输入 Token（2026 参考价，以官网为准）。</p><pre><code class="language-python"># 估算：1000 次对话，每次 500 input + 300 output token
+input_cost = 1000 * 500 / 1e6 * 1  # 元
+output_cost = 1000 * 300 / 1e6 * 2
+print(f'月成本约 {input_cost+output_cost:.1f} 元')</code></pre>
+<hr>
+<h2>4. Mac M2 16GB 能干什么</h2>
+<ul><li>✅ 7B Q4 流畅推理</li><li>✅ RAG + LoRA 微调小模型</li><li>⚠️ 13B+ 吃力</li><li>⚠️ 磁盘要留 10GB+ 给模型</li></ul>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 逆向 04：逆向实战案例与合规边界 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 逆向模块</div>
+    <h1>iOS 逆向 04：逆向实战案例与合规边界</h1>
+    <span class="header-tag">iOS 逆向模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>⚠️ <strong>合规第一：</strong>逆向他人 App 用于破解内购、窃取数据、绕过鉴权 → 违法。本章案例仅限<strong>自有 App 安全自检</strong>。</p>
+</blockquote>
+<hr>
+<h2>1. 实战：审计 AI App 的 Key 是否泄露</h2>
+<ol>
+<li>Archive 导出 IPA，解压看二进制</li>
+<li>Strings 搜索 <code>sk-</code>、<code>api.</code>、<code>deepseek</code></li>
+<li>Frida Hook Keychain 读取、网络层 Authorization 头</li>
+<li>若 App 内能直接看到 Key → 必须改架构（走服务端中转）</li>
+</ol>
+<pre><code class="language-javascript">// Frida：打印所有带 Authorization 的请求头（自有 App 测试）
+Interceptor.attach(ObjC.classes.NSURLRequest["- allHTTPHeaderFields"].implementation, {
+    onLeave: function(retval) {
+        var dict = new ObjC.Object(retval);
+        console.log(dict.toString());
+    }
+});
+</code></pre>
+<hr>
+<h2>2. 实战：Hook 自己的加密函数</h2>
+<p>若 App 对本地缓存的聊天记录做了加密，Hook 加解密函数确认密钥来源和强度。</p>
+<hr>
+<h2>3. 签名与重打包（概念）</h2>
+<ul>
+<li>iOS 每个 App 必须有效签名才能运行</li>
+<li>改 binary 后需用开发者证书重签：<code>codesign -f -s "iPhone Developer" YourApp.app</code></li>
+<li>非越狱机只能装自己的开发证书签的包</li>
+</ul>
+<hr>
+<h2>4. 和大模型工程师的关系</h2>
+<table>
+<thead><tr><th>逆向能力</th><th>AI 工程价值</th></tr></thead>
+<tbody>
+<tr><td>会看 Mach-O / Strings</td><td>快速发现 Key 泄露、Prompt 硬编码</td></tr>
+<tr><td>会 Frida Hook 网络</td><td>验证服务端鉴权是否可 bypass</td></tr>
+<tr><td>懂加固</td><td>知道端侧模型文件如何防提取</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>5. 合法学习资源</h2>
+<ul>
+<li>Apple 官方 Security Guide、LLDB 文档</li>
+<li>iOS App Reverse Engineering（社区电子书）</li>
+<li>CTF 移动安全题（合法靶场）</li>
+<li>对自己 App 做渗透测试报告</li>
+</ul>
+<hr>
+<h2>小结</h2>
+<ol>
+<li>逆向核心技能：砸壳 → 静态分析 → 动态 Hook</li>
+<li>AI 工程师最该用逆向<strong>查自己的 App</strong>有没有 Key/Prompt 泄露</li>
+<li>未经授权分析竞品有法律风险，别碰红线</li>
+</ol>
+<p><strong>关联：</strong> <a href="../工作实战/10-AI安全与合规实战.html">工作实战 10 AI 安全</a></p>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

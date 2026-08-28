@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>中级 01：推理原理——大模型到底怎么"运行" - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 中级模块</div>
+    <h1>中级 01：推理原理——大模型到底怎么"运行"</h1>
+    <span class="header-tag">中级模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<div class="demo-card" data-demo="next-token-demo"></div>
+<blockquote>
+<p>学习目标：彻底搞懂大模型收到你的问题后，内部发生了什么。<blockquote>
+<p>学习目标：彻底搞懂大模型收到你的问题后，内部发生了什么。<br />
+一句话总结全章：<strong>大模型推理 = 一个字一个字地"猜"下一个字，猜完拼回去，再猜下一个，循环往复。</strong></p>
+</blockquote>
+<p>拆成 4 步：</p>
+<hr />
+<div class="demo-card" data-demo="token-demo"></div>
+<h2>第 1 步：拆词（Tokenization）</h2>
+<p>电脑不认识完整的句子，它只认识"小块"。把句子拆成小块的动作叫<strong>分词（Tokenize）</strong>，拆出来的小块叫 <strong>Token</strong>。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+<code>"电池要不要换" → ["电池", "要不要", "换"]   （3 个 token）
+"I love you"   → ["I", " love", " you"]      （3 个 token）</code></p>
+<p>为什么不能一个字一个字算？<br />
+- 单个字信息太少："电"字单独出现，可能是电池、电脑、电话……<br />
+- 而且太碎，效率低。所以大模型一般按"常用词/词组"来拆。</p>
+</blockquote>
+<p><strong>相关名词：</strong><br />
+- <strong>词表（Vocabulary）</strong>：模型认识的所有 token 的清单。Qwen 的词表大约有 15 万个 token。<br />
+- <strong>上下文窗口（Context Window）</strong>：模型一次最多能"记住"多少 token。常见 1024~128K。</p>
+<blockquote>
+<p><strong>示例（上下文窗口）</strong><br />
+你和 AI 聊了 50 轮，总字数超过 2000 token，但窗口只有 1024。<br />
+结果：AI 只记得最近的 1024 个 token，老早聊的它全忘了。<br />
+所以工程上要主动"截断"：只保留最近几轮对话。</p>
+</blockquote>
+<div class="demo-card" data-demo="embed-demo"></div>
+<h2>第 2 步：变成数字（Embedding 向量化）</h2>
+<p>电脑不认识"电池"，只认识数字。所以每个 token 都要变成<strong>一串数字（向量）</strong>。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+<code>"电池"  → [0.32, -0.87, 1.02, 0.45, ...]   （假设共 1536 个数字）
+"电量"  → [0.35, -0.82, 0.98, 0.44, ...]   （和"电池"很像）
+"香蕉"  → [-0.91, 0.12, -0.55, 0.87, ...]  （和"电池"差很远）</code></p>
+<p>关键规律：<strong>意思相近的词，它们的数字列表也相近</strong>。<br />
+数学上算一下"两个向量的距离"，就知道两个词意思近不近。<br />
+这一步让模型有了"词义"概念——这就是 <strong>Embedding（嵌入）</strong>。</p>
+</blockquote>
+<p><strong>相关名词：</strong><br />
+- <strong>向量（Vector）</strong>：一串数字。在 AI 里，万物皆可向量：词、句子、图片都能变成向量。<br />
+- <strong>维度（Dimension）</strong>：一个向量里有多少个数字。维度越高，能表达的信息越丰富。<br />
+- <strong>语义距离</strong>：两个向量差多远 = 两个词意思差多远。</p>
+<h2>第 3 步：注意力机制（Attention）——大模型的灵魂</h2>
+<p>这是 Transformer 架构的核心，也是大模型"聪明"的根本原因。</p>
+<p><strong>比喻：在图书馆找答案。</strong></p>
+<blockquote>
+<p>想象你进了一间堆满书的图书馆，要回答"电池寿命和什么有关"。<br />
+你不会一本本翻，而是<strong>快速扫一眼所有书架，然后死死盯住最相关的几本书猛看</strong>。<br />
+注意力机制就是让模型学会"该盯着谁看"。</p>
+</blockquote>
+<p>具体到文字处理：</p>
+<blockquote>
+<p><strong>示例</strong><br />
+处理句子"电池要不要换"时，每个 token 都会"关注"句子里其他所有 token，并给每个"关注对象"打个分（注意力权重）：</p>
+<p><code>"电池" 对 "换" 的关注度：0.85  ← 关系密切（换的是电池）
+"电池" 对 "要不要" 的关注度：0.60  ← 有关系（在问电池的事）
+"电池" 对 "电池" 的关注度：0.40  ← 自己看自己
+"要不要" 对 "换" 的关注度：0.75  ← 关系密切（要不要换？）</code></p>
+<p>模型根据这些"关注度"，把相关的词的信息<strong>加权混合</strong>在一起，<br />
+从而知道"哦，这句话的核心是：用户在问'要不要换电池'"。</p>
+</blockquote>
+<p><strong>关键点：</strong><br />
+- 注意力是<strong>动态</strong>的：同一句话在不同语境下，关注对象不同。比如"苹果很好吃"和"苹果发布了新手机"里，"苹果"关注的词完全不同。<br />
+- 这个"互相看"的过程会<strong>重复几十层</strong>（比如 Qwen 有 24~32 层），每层都在更高层面提炼关系。所以叫<strong>深层网络（Deep）</strong>。<br />
+- 注意力机制的学名：<strong>Self-Attention（自注意力）</strong>——句子里每个词看句子里其他所有词。<br />
+- 还有 <strong>Multi-Head Attention（多头注意力）</strong>：相当于"同时派好几个图书管理员去找答案"，每个管理员关注不同角度（一个管语法、一个管语义、一个管情感……），最后汇总。</p>
+<p><strong>为什么 GPU 快？</strong> 因为"每个词看所有词"本质上是大量<strong>矩阵乘法</strong>，而 GPU 天生就是矩阵乘法加速器（见高级模块）。</p>
+<h2>第 4 步：预测下一个字（概率 + 采样）</h2>
+<p>经过几十层注意力计算后，模型对"下一个字是啥"有了结论——不是直接给答案，而是给<strong>所有候选字各自的概率</strong>。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+输入"电池要不要换"后，模型算出下一个字的概率分布：<br />
+<code>"建议" → 45%
+"考虑" → 20%
+"去"   → 8%
+"先"   → 5%
+"睡觉" → 2%
+...（词表里每个字/词都有个概率，加起来 = 100%）</code></p>
+<p>然后<strong>不是</strong>每次选概率最高的（那样回答太死板），<br />
+而是<strong>按概率抽签</strong>：45% 概率抽中"建议"，但也有小概率抽到别的。</p>
+</blockquote>
+<p><strong>相关名词：</strong><br />
+- <strong>Softmax</strong>：把一堆原始分数变成"加起来=100% 的概率"的数学操作。<br />
+- <strong>采样（Sampling）</strong>：按概率"抽签"选下一个字的过程。<br />
+- <strong>Greedy Decoding（贪心解码）</strong>：永远选概率最高的字。结果稳定但死板、容易重复。<br />
+- <strong>Temperature（温度）</strong>：控制"抽签的随机程度"（见下）。</p>
+<div class="demo-card" data-demo="temp-demo"></div>
+<h2>温度（Temperature）：随机程度的旋钮</h2>
+<p>温度是生成回答时最重要的"手感旋钮"。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+<code>温度 = 0.1（很冷）→ 几乎每次选概率最高的字 → 回答稳定、准确、但死板
+温度 = 0.7（适中）→ 偶尔选冷门字 → 回答自然、有变化
+温度 = 1.5（很热）→ 经常乱选 → 回答有创意，但容易胡说八道</code></p>
+<p>生活里的类比：温度低 = 每次都点同一个招牌菜（稳）；温度高 = 闭眼乱点（刺激但可能踩雷）。</p>
+</blockquote>
+<h2>流式输出（Streaming）：打字机效果</h2>
+<p>大模型生成是一字一字来的，如果要等整段生成完再显示，用户要干等十几秒。所以有了<strong>流式输出</strong>：<strong>生成一个字，立刻显示一个字</strong>，像打字机一样。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+你问完问题，屏幕上是这样的：<br />
+<code>第 0.1 秒："建"
+第 0.3 秒："建议"
+第 0.6 秒："建议你"
+第 1.0 秒："建议你先"
+...最后完整出现："建议你先观察几天，如果持续掉电再考虑换电池。"</code></p>
+</blockquote>
+<h2>上下文窗口（Context Window）</h2>
+<p><strong>模型一次能"看在眼里"的最长内容长度</strong>，单位是 token。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+- 窗口 1024 → 大约能记住 700~1000 个汉字<br />
+- 窗口 128K（如 GPT-4 Turbo）→ 能"读"完一整本 200 页的书</p>
+<p>超出窗口的内容，模型<strong>根本看不见</strong>，不是"忘了"，是"没看到过"。</p>
+</blockquote>
+<hr />
+<h2>全章串一遍（终极示例）</h2>
+<pre><code>你打字：&quot;电池要不要换？&quot;
+  → 第 1 步：拆成 [&quot;电池&quot;,&quot;要不要&quot;,&quot;换&quot;,&quot;？&quot;]（token 化）
+  → 第 2 步：每个 token 变成一串数字（向量化）
+  → 第 3 步：层层注意力扫描——&quot;电池&quot;和&quot;换&quot;关系最密切
+  → 第 4 步：算出所有候选字的概率表
+  → 按概率抽一个：&quot;建&quot;
+  → 拼回去，再算下一个：&quot;议&quot;
+  → 再算：&quot;你&quot;
+  → ……循环，屏幕上就一个字一个字蹦出完整回答
+</code></pre>
+<p><strong>本质：大模型就是个超级复杂的"概率预测机"。它不是"懂"你，它是从参数里总结出的模式里，算出"人类听到这句话，最可能接着说什么"。</strong></p>
+<hr />
+<p><strong>下一步：</strong> 学 <a href="02-训练原理.html">02-训练原理.html</a> ——大模型是怎么"学会"的。<br />
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生 03：网络、存储与系统框架 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 原生模块</div>
+    <h1>iOS 原生 03：网络、存储与系统框架</h1>
+    <span class="header-tag">iOS 原生模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：App 的「水电煤」——网络请求、本地存储、权限、推送。AI App 的 Key 安全也在这章。</p>
+</blockquote>
+<hr>
+<h2>1. URLSession 网络（AI API 就靠它）</h2>
+<pre><code class="language-swift">// GET 请求
+let (data, response) = try await URLSession.shared.data(from: url)
+
+// POST JSON（LLM API）
+var request = URLRequest(url: apiURL)
+request.httpMethod = "POST"
+request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+request.httpBody = try JSONEncoder().encode(body)
+</code></pre>
+<p><strong>生产架构：</strong>App → 你的后端 → 大模型 API。Key 永远在后端。</p>
+<hr>
+<h2>2. 本地存储选型</h2>
+<table>
+<thead><tr><th>方案</th><th>适合</th><th>AI 场景</th></tr></thead>
+<tbody>
+<tr><td>UserDefaults</td><td>小配置</td><td>用户偏好、上次选的模型</td></tr>
+<tr><td>Keychain</td><td>敏感信息</td><td>短期 token（不是 API Key！）</td></tr>
+<tr><td>Core Data / SwiftData</td><td>结构化数据</td><td>聊天记录持久化</td></tr>
+<tr><td>FileManager</td><td>大文件</td><td>下载的 GGUF 模型、缓存</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>3. 常用系统框架（和 AI 相关）</h2>
+<table>
+<thead><tr><th>框架</th><th>干什么</th></tr></thead>
+<tbody>
+<tr><td>Speech</td><td>语音识别（语音输入 AI）</td></tr>
+<tr><td>AVFoundation</td><td>TTS 播报、音频播放</td></tr>
+<tr><td>Vision</td><td>本地 OCR、人脸检测</td></tr>
+<tr><td>Core ML</td><td>端侧模型推理</td></tr>
+<tr><td>NaturalLanguage</td><td>分词、语言识别</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>4. 权限与隐私（上架必查）</h2>
+<ul>
+<li>Info.plist 声明：麦克风、相册、网络用途说明</li>
+<li>App Tracking Transparency（跟踪用户要弹窗）</li>
+<li>AI 生成内容需在隐私政策中说明数据如何使用</li>
+</ul>
+<p><strong>下一步：</strong> <a href="04-Instruments性能与调试.html">04-Instruments性能与调试</a></p>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>练习 04：工作实战项目（企业级大项目，面试作品集） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 练习模块</div>
+    <h1>练习 04：工作实战项目（企业级大项目，面试作品集）</h1>
+    <span class="header-tag">练习模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：把「工作实战」模块的技能串起来，做出 3 个拿得出手的企业级项目。<br />
+<strong>这 3 个项目做完，你可以写进简历，面试时随便深挖都能聊。</strong></p>
+</blockquote>
+<hr />
+<h2>项目 6：企业知识库问答机器人（RAG 完整落地）</h2>
+<p><strong>难度</strong>：⭐⭐⭐⭐  <strong>耗时</strong>：2~3 天<br />
+<strong>技能点</strong>：RAG + API + 后端 + 前端</p>
+<h3>需求</h3>
+<p>做一个"公司制度问答机器人"：上传 PDF/Word 文档，用户提问，机器人基于文档回答并标注来源。</p>
+<h3>技术栈</h3>
+<ul>
+<li>后端：FastAPI</li>
+<li>向量库：ChromaDB（本地）→ 可换 Milvus</li>
+<li>Embedding：bge-m3 或 nomic-embed-text</li>
+<li>LLM：DeepSeek API 或本地 Ollama</li>
+<li>前端：简单 HTML 页面即可</li>
+</ul>
+<h3>功能清单</h3>
+<pre><code>✅ 上传文档（PDF/Word/TXT）
+✅ 文档入库（切分 + 向量化）
+✅ 问答（检索 + 生成 + 引文标注）
+✅ 管理页面（看已入库文档、删除）
+✅ 效果优化：查询改写 + 混合检索 + Rerank
+</code></pre>
+<h3>验收标准</h3>
+<pre><code>1. 上传 3 份你熟悉的文档（如《大模型学习教程》里的章节）
+2. 问 5 个文档里有明确答案的问题 → 全部答对且带出处
+3. 问 2 个文档里没有的问题 → 机器人说&quot;资料中未提及&quot;而不是瞎编
+</code></pre>
+<h3>加分项</h3>
+<ul>
+<li>接入企业微信/钉钉机器人（企微群 @机器人 提问）</li>
+<li>权限控制（不同用户只能查自己部门的文档）</li>
+<li>流式输出打字机效果</li>
+</ul>
+<hr />
+<h2>项目 7：AI 工作流助手（Agent + Function Calling）</h2>
+<p><strong>难度</strong>：⭐⭐⭐⭐⭐  <strong>耗时</strong>：3~5 天<br />
+<strong>技能点</strong>：Agent + Function Calling + 工具设计 + 安全</p>
+<h3>需求</h3>
+<p>做一个"运营助理 Agent"：用户用自然语言下指令，Agent 自动完成多步操作。</p>
+<h3>功能清单</h3>
+<pre><code>✅ 工具 1：查天气（天气 API）
+✅ 工具 2：查/记日程（本地 JSON 存储）
+✅ 工具 3：生成文案（LLM）
+✅ 工具 4：发邮件（smtplib，先模拟）
+✅ 多步任务：&quot;帮我看明天北京的天气，如果下雨就生成一条带伞提醒文案，并记到日程里&quot;
+✅ 最大轮数限制 + 日志记录
+</code></pre>
+<h3>验收标准</h3>
+<pre><code>输入：&quot;帮我查北京后天天气，超过 30 度就生成防晒提醒，记到日程&quot;
+观察 Agent 是否自动：
+1. 调用天气工具
+2. 判断条件（&gt;30 度）
+3. 生成提醒文案
+4. 调用日程工具写入
+全程不需要你手动分步
+</code></pre>
+<h3>加分项</h3>
+<ul>
+<li>用 Dify 拖一个可视化版本对比体验</li>
+<li>接 MCP：写一个自己的 MCP server（查数据库）</li>
+<li>加"确认环节"：危险操作（发邮件）先问用户</li>
+</ul>
+<hr />
+<h2>项目 8：iOS AI 聊天 App（原生 AI 应用）</h2>
+<p><strong>难度</strong>：⭐⭐⭐⭐  <strong>耗时</strong>：3~5 天<br />
+<strong>技能点</strong>：Swift + SwiftUI + API + 上架意识（结合你的主业）</p>
+<h3>需求</h3>
+<p>做一个功能完整的 iOS AI 聊天 App，上架思路清晰。</p>
+<h3>功能清单</h3>
+<pre><code>✅ 聊天界面（气泡、流式打字机效果、自动滚动）
+✅ 多轮对话（历史消息管理）
+✅ System Prompt 设置页（用户可自定义人设）
+✅ 温度调节（滑杆控制随机性）
+✅ 历史会话列表（本地存储）
+✅ 深色模式适配
+</code></pre>
+<h3>验收标准</h3>
+<pre><code>1. App 能流畅聊天（流式输出）
+2. 修改人设后行为立即变化
+3. 杀 App 重开能恢复历史会话
+4. 写清楚 PrivacyInfo.xcprivacy 和隐私政策文案
+</code></pre>
+<h3>加分项</h3>
+<ul>
+<li>加语音输入（Speech 框架）</li>
+<li>加图片理解（多模态 API，拍照提问）</li>
+<li>加端侧降级：断网时用本地小模型兜底（llama.cpp）</li>
+<li>完整走一遍"功能清单 → 上架文档"流程，形成上架 Checklist</li>
+</ul>
+<hr />
+<h2>项目 9（挑战）：本地 LLM 聊天 App（端侧模型集成）</h2>
+<p><strong>难度</strong>：⭐⭐⭐⭐⭐⭐  <strong>耗时</strong>：1~2 周<br />
+<strong>技能点</strong>：llama.cpp / MLX Swift + 原生开发（你之前的 ITPhone 就是这个路线）</p>
+<h3>需求</h3>
+<p>做一个完全离线可用的 AI 聊天 App，模型打包或首次下载。</p>
+<h3>功能清单</h3>
+<pre><code>✅ 集成 llama.cpp（或 MLX Swift）
+✅ 内置 Qwen2.5-0.5B / 1.5B 量化模型
+✅ 流式生成（逐 token 显示）
+✅ 设备信息注入（类似 ITPhone 的最简 RAG）
+✅ 三级降级：本地模型 → Apple FoundationModels（iOS 26+）
+✅ 性能监控：显示 token/秒
+</code></pre>
+<h3>加分项</h3>
+<ul>
+<li>模型商店（从 HuggingFace 下载不同模型）</li>
+<li>对话历史导出</li>
+<li>App 瘦身（模型分包下载）</li>
+</ul>
+<hr />
+<h2>项目组合建议（简历怎么写）</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>简历描述方向</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>项目 6 知识库问答</td>
+<td>"负责企业知识库 RAG 系统，支持文档上传与溯源问答"</td>
+</tr>
+<tr>
+<td>项目 7 Agent</td>
+<td>"设计多工具 Agent 工作流，支持自然语言驱动的多步任务"</td>
+</tr>
+<tr>
+<td>项目 8/9 iOS App</td>
+<td>"独立开发 iOS AI 应用，实现流式对话与端侧模型集成"</td>
+</tr>
+</tbody>
+</table>
+<p><strong>如果只想做 2 个</strong>：项目 6（RAG）+ 项目 8（iOS）——覆盖面最广，一个是后端 AI 落地，一个是前端原生应用。</p>
+<hr />
+<h2>做项目的通用方法论（避坑指南）</h2>
+<ol>
+<li><strong>先跑通再优化</strong>：第一版全用最简实现（本地 Ollama + 单文件脚本），跑通流程再上生产组件</li>
+<li><strong>写 README</strong>：项目做完写 README（架构图 + 运行步骤 + 技术决策），面试官第一眼看这个</li>
+<li><strong>录演示视频</strong>：30 秒演示视频放 GitHub，效果远超文字</li>
+<li><strong>记录踩坑</strong>：遇到的 bug 和解决过程写进文档，面试时"你遇到最难的问题是什么"就有素材了</li>
+<li><strong>部署上线</strong>：至少一个项目部署到云服务器（哪怕是最便宜的），简历写"已上线"<br />
+<em>（内容由AI生成，仅供参考）</em></li>
+</ol>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

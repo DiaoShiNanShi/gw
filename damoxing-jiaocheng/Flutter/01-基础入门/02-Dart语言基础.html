@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>02-Dart语言基础 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 基础入门</div>
+    <h1>02-Dart语言基础</h1>
+    <span class="header-tag">基础入门</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>02-Dart 语言基础</h1>
+<blockquote>
+<p>大白话版 · Dart 语法速成（小白向）<br>
+目标：学完本篇，你能看懂并写出最基本的 Dart 代码，为学 Widget 打好地基。</p>
+</blockquote>
+<hr>
+<h2>一、先讲"是什么"：Dart 是一门什么样的语言？</h2>
+<p><strong>一句话版本：Dart 是谷歌开发的编程语言，也是 Flutter 的"官方母语"——写 Flutter App 用的就是 Dart。</strong></p>
+<p>打个比方：</p>
+<blockquote>
+<p>Flutter 是一座装修精美的房子（App 界面），Dart 就是盖房子用的"钢筋水泥"（代码）。<br>
+你想让 Flutter 干活，就得用 Dart 跟它说话，就像你想让 Siri 干活，得说它能听懂的话一样。</p>
+</blockquote>
+<p>Dart 的特点（大白话版）：</p>
+<ul>
+<li><strong>好学</strong>：语法长得像 C / Java / JavaScript / Swift 的混合体，你只要会任何一门主流语言，上手极快。</li>
+<li><strong>强类型 + 类型推断</strong>：既能明确写类型，也能让电脑自己猜。</li>
+<li><strong>面向对象</strong>：万物皆对象，所有东西都是"类"的实例。</li>
+<li><strong>自带异步</strong>：<code>Future</code> + <code>async/await</code>，写网络请求、读文件这些"等一等"的操作非常顺手。</li>
+<li><strong>能编译成两种东西</strong>：开发时用 JIT（快，支持热重载），发布时用 AOT（编译成机器码，跑得快）。</li>
+</ul>
+<hr>
+<h2>二、变量与类型（Dart 的"抽屉和盒子"）</h2>
+<h3>2.1 怎么声明一个变量</h3>
+<p>在 Dart 里，变量就像一个"贴了标签的盒子"，你要往里面放东西，先说清楚盒子里放什么（或者让 Dart 自己猜）。</p>
+<pre class="codehilite"><code class="language-dart">void main() {
+  // 1. 明确指定类型（最严谨，推荐新手用）
+  int age = 18;              // 整数：年龄
+  double price = 9.9;        // 小数：价格
+  String name = '小明';       // 字符串：名字（单引号双引号都行）
+  bool isStudent = true;     // 布尔：是/否
+
+  // 2. 用 var 让 Dart 自己猜类型（省事）
+  var city = '北京';          // Dart 自动推断出 city 是 String
+  var count = 100;           // Dart 自动推断出 count 是 int
+
+  // 3. 用 final / const 表示&quot;以后不能改&quot;（安全，推荐）
+  final String birthday = '2000-01-01';  // final：运行时才确定，但确定后不可改
+  const double pi = 3.14159;             // const：编译时就确定，永远不可改
+
+  // 打印输出（相当于 Swift 的 print）
+  print('我叫$name，今年$age岁，住在$city');
+  // 上面用了字符串插值：$变量名 或 ${表达式}
+}
+</code></pre>
+
+<p><strong>大白话解释几个概念：</strong></p>
+<table>
+<thead>
+<tr>
+<th>关键字</th>
+<th>意思</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int</code> / <code>double</code> / <code>String</code> / <code>bool</code></td>
+<td>基础类型</td>
+<td>不同尺寸的盒子</td>
+</tr>
+<tr>
+<td><code>var</code></td>
+<td>让 Dart 猜类型</td>
+<td>"你先看着放，反正装对就行"</td>
+</tr>
+<tr>
+<td><code>final</code></td>
+<td>只能赋值一次</td>
+<td>贴了封条的盒子，打开后不能换内容</td>
+</tr>
+<tr>
+<td><code>const</code></td>
+<td>编译期常量</td>
+<td>出厂就印死的铭牌，永不改变</td>
+</tr>
+</tbody>
+</table>
+<h3>2.2 常用内置类型速览</h3>
+<pre class="codehilite"><code class="language-dart">void main() {
+  // 数字
+  int a = 10;
+  double b = 3.14;
+  // 字符串
+  String s1 = '你好';
+  String s2 = &quot;世界&quot;;
+  String s3 = '可以拼接 $s1 $s2';   // 插值
+  // 布尔
+  bool ok = true;
+  // 列表 List（相当于 Swift 的数组 Array）
+  List&lt;String&gt; fruits = ['苹果', '香蕉', '橘子'];
+  print(fruits[0]);              // 苹果（下标从 0 开始）
+  fruits.add('西瓜');             // 追加一个元素
+  // 映射 Map（相当于 Swift 的字典 Dictionary）
+  Map&lt;String, int&gt; scores = {'语文': 90, '数学': 95};
+  print(scores['语文']);          // 90
+  // 集合 Set（去重）
+  Set&lt;int&gt; nums = {1, 2, 2, 3};  // 里面只有 1,2,3（2 自动去重）
+}
+</code></pre>
+
+<blockquote>
+<p>对 iOS 工程师：<code>List</code> ≈ <code>Array</code>，<code>Map</code> ≈ <code>Dictionary</code>，<code>Set</code> ≈ <code>Set</code>，几乎一一对应。</p>
+</blockquote>
+<hr>
+<h2>三、函数（Dart 的"小机器"）</h2>
+<p>函数就像一个"小机器"：你塞进去原料（参数），它吐出成品（返回值）。</p>
+<pre class="codehilite"><code class="language-dart">// 1. 最普通的函数：有返回值
+int add(int x, int y) {
+  return x + y;
+}
+
+// 2. 没有返回值：用 void
+void sayHello(String name) {
+  print('你好，$name！');
+}
+
+// 3. 箭头函数：只有一行代码时的简写（=&gt; 后面就是返回值）
+int multiply(int x, int y) =&gt; x * y;
+
+// 4. 可选命名参数：调用时可以传也可以不传（用 { } 包起来）
+void makeCoffee({String type = '美式', int sugar = 0}) {
+  print('做了一杯$type，加$sugar块糖');
+}
+
+// 5. 可选位置参数：用 [ ] 包起来
+void greet(String name, [String? title]) {
+  // 这里的 ? 表示 title 可以为空（null）
+  if (title != null) {
+    print('$title $name');
+  } else {
+    print('你好，$name');
+  }
+}
+
+void main() {
+  print(add(1, 2));          // 3
+  sayHello('小红');           // 你好，小红！
+  print(multiply(3, 4));     // 12
+  makeCoffee();               // 做了一杯美式，加0块糖
+  makeCoffee(type: '拿铁', sugar: 2);  // 做了一杯拿铁，加2块糖
+  greet('小王');              // 你好，小王
+  greet('老王', '张');         // 张 老王
+}
+</code></pre>
+
+<p><strong>对 iOS 工程师：</strong> <code>void</code> 相当于 Swift 的 <code>Void</code>；可选命名参数有点像 Swift 的默认参数；<code>=&gt;</code> 就是 Swift 里单表达式函数的简化写法。</p>
+<hr>
+<h2>四、类（Dart 的"图纸"）</h2>
+<p>类是"生产对象的图纸"。你先画一张图纸（class），然后用它造出一个个具体对象（实例）。</p>
+<pre class="codehilite"><code class="language-dart">// 定义一个&quot;狗&quot;类
+class Dog {
+  // 属性（成员变量）
+  String name;
+  int age;
+
+  // 构造函数：造狗的时候必须提供名字和年龄
+  // 这里的 this.name = name 简写成了 this.name（Dart 特有简写）
+  Dog(this.name, this.age);
+
+  // 方法：狗会叫
+  void bark() {
+    print('$name 汪汪叫！今年 $age 岁了');
+  }
+
+  // 方法：返回一个描述字符串
+  String describe() =&gt; '一只叫$name的狗，$age岁';
+}
+
+void main() {
+  // 用图纸造出两只狗
+  Dog dog1 = Dog('旺财', 2);
+  Dog dog2 = Dog('来福', 3);
+
+  dog1.bark();      // 旺财 汪汪叫！今年 2 岁了
+  print(dog2.describe());  // 一只叫来福的狗，3岁
+}
+</code></pre>
+
+<h3>4.1 继承（儿子继承老爸的家产）</h3>
+<pre class="codehilite"><code class="language-dart">// 父类：动物
+class Animal {
+  String name;
+  Animal(this.name);
+
+  void speak() {
+    print('$name 发出声音');
+  }
+}
+
+// 子类：猫，继承动物
+class Cat extends Animal {
+  // 调用父类构造函数
+  Cat(String name) : super(name);
+
+  // 重写父类方法（覆盖 speak）
+  @override
+  void speak() {
+    print('$name 喵喵叫');
+  }
+}
+
+void main() {
+  Cat cat = Cat('咪咪');
+  cat.speak();  // 咪咪 喵喵叫
+}
+</code></pre>
+
+<blockquote>
+<p>对 iOS 工程师：<code>class</code>、<code>extends</code>、<code>@override</code> 和 Swift 的 class / 继承 / override 概念一模一样。</p>
+</blockquote>
+<hr>
+<h2>五、异步（Dart 的"点外卖"）</h2>
+<p>异步就是：<strong>先下单（发出请求），不傻等，该干嘛干嘛，外卖到了再处理</strong>。</p>
+<ul>
+<li><code>Future</code> ≈ 一个"将来会送到的外卖单子"</li>
+<li><code>async</code> ≈ 标记"这个函数会点外卖（有异步操作）"</li>
+<li><code>await</code> ≈ "站在这等外卖送到再继续往下走"</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">// 模拟一个网络请求：2 秒后返回数据
+Future&lt;String&gt; fetchData() async {
+  // Future.delayed 就是&quot;等 2 秒&quot;
+  await Future.delayed(Duration(seconds: 2));
+  return '服务器返回的数据';
+}
+
+// async 函数：里面可以用 await 等待
+Future&lt;void&gt; loadPage() async {
+  print('开始加载...');
+  String data = await fetchData();  // 在这里等 2 秒
+  print('拿到数据：$data');
+  print('加载完成！');
+}
+
+void main() {
+  loadPage();
+  print('主流程继续执行，不会卡住');  // 这行会先打印出来！
+}
+</code></pre>
+
+<p><strong>大白话理解运行顺序：</strong></p>
+<pre class="codehilite"><code>开始加载...            ← loadPage 开始执行
+主流程继续执行，不会卡住   ← main 不等待，立刻继续
+（等待 2 秒...）
+拿到数据：服务器返回的数据   ← await 等到了结果，继续往下
+加载完成！
+</code></pre>
+
+<blockquote>
+<p>对 iOS 工程师：<code>Future</code> ≈ Swift 的 <code>async</code> 函数返回值（<code>Task</code>），<code>async/await</code> 和 Swift 5.5+ 的 <code>async/await</code> 几乎一模一样，你完全可以照搬思维。</p>
+</blockquote>
+<hr>
+<h2>六、iOS 开发者视角（Swift vs Dart 对照表）</h2>
+<table>
+<thead>
+<tr>
+<th>Swift 概念</th>
+<th>Dart 对应</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>let</code> / <code>var</code></td>
+<td><code>final</code> / <code>var</code></td>
+<td>常量 / 变量</td>
+</tr>
+<tr>
+<td><code>Int</code> / <code>Double</code> / <code>String</code> / <code>Bool</code></td>
+<td><code>int</code> / <code>double</code> / <code>String</code> / <code>bool</code></td>
+<td>基础类型（首字母大小写注意）</td>
+</tr>
+<tr>
+<td><code>Array&lt;Int&gt;</code></td>
+<td><code>List&lt;int&gt;</code></td>
+<td>数组</td>
+</tr>
+<tr>
+<td><code>Dictionary&lt;String, Int&gt;</code></td>
+<td><code>Map&lt;String, int&gt;</code></td>
+<td>字典</td>
+</tr>
+<tr>
+<td><code>func</code></td>
+<td>函数直接写</td>
+<td>函数定义</td>
+</tr>
+<tr>
+<td><code>class</code> / <code>override</code></td>
+<td><code>class</code> / <code>@override</code></td>
+<td>类和重写</td>
+</tr>
+<tr>
+<td><code>async</code> / <code>await</code></td>
+<td><code>async</code> / <code>await</code></td>
+<td>异步</td>
+</tr>
+<tr>
+<td><code>guard let</code> / 可选值</td>
+<td><code>?</code> / <code>!</code>（空安全）</td>
+<td>处理可能为空的值</td>
+</tr>
+<tr>
+<td><code>print</code></td>
+<td><code>print</code></td>
+<td>打印输出（同名）</td>
+</tr>
+<tr>
+<td><code>String(describing:)</code></td>
+<td><code>toString()</code> / <code>$插值</code></td>
+<td>转字符串</td>
+</tr>
+</tbody>
+</table>
+<p><strong>给你的三条忠告：</strong><br>
+1. Dart 用 <code>$变量名</code> 做字符串插值，比 Swift 的 <code>\()</code> 更省事，别写错成 Swift 语法。<br>
+2. Dart 的类型写在变量名<strong>后面</strong>（<code>int x</code>），不是 Swift 的 <code>x: Int</code>。<br>
+3. Dart 的 <code>List</code> / <code>Map</code> 是<strong>内置类型</strong>，不像 Swift 要写 <code>Array</code> / <code>Dictionary</code> 那么正式，随意用。</p>
+<hr>
+<h2>七、小节小结</h2>
+<ol>
+<li>Dart 是 Flutter 的官方语言，语法像 C/Java/JS/Swift 的混合体，很好上手。</li>
+<li>变量用 <code>int</code> / <code>double</code> / <code>String</code> / <code>bool</code> / <code>var</code> / <code>final</code> / <code>const</code> 声明。</li>
+<li>常用容器：<code>List</code>（数组）、<code>Map</code>（字典）、<code>Set</code>（去重集合）。</li>
+<li>函数支持默认参数、命名参数、箭头函数简写。</li>
+<li>类支持属性、构造函数、继承、方法重写。</li>
+<li>异步用 <code>Future</code> + <code>async/await</code>，和 Swift 的写法几乎一样。</li>
+</ol>
+<hr>
+<h2>八、本节动手练习（含答案提示）</h2>
+<p><strong>练习 1：修 Bug</strong></p>
+<blockquote>
+<p>下面的代码有一处错误，请找出来并修复：<br>
+<code>dart
+void main() {
+  var name = '小明';
+  name = 18;   // 这里报错了
+  print(name);
+}</code></p>
+<p>✅ 答案提示：<code>var name</code> 已经被推断为 <code>String</code> 类型，不能再赋值为数字 <code>18</code>。要么改成 <code>var name = 18;</code>，要么换一个变量存年龄。</p>
+</blockquote>
+<p><strong>练习 2：写一个函数</strong></p>
+<blockquote>
+<p>写一个函数 <code>double square(double x)</code>，返回 x 的平方，并在 main 里调用打印结果。</p>
+<p>✅ 答案提示：<br>
+<code>dart
+double square(double x) =&gt; x * x;
+void main() =&gt; print(square(5));  // 25</code></p>
+</blockquote>
+<p><strong>练习 3：创建类</strong></p>
+<blockquote>
+<p>定义一个 <code>Person</code> 类，有 <code>name</code> 和 <code>age</code> 两个属性，一个 <code>introduce()</code> 方法打印"我叫xxx，今年xx岁"，然后创建一个实例并调用。</p>
+<p>✅ 答案提示：<br>
+<code>dart
+class Person {
+  String name;
+  int age;
+  Person(this.name, this.age);
+  void introduce() =&gt; print('我叫$name，今年$age岁');
+}
+void main() {
+  Person p = Person('小红', 20);
+  p.introduce();
+}</code></p>
+</blockquote>
+<p><strong>练习 4：异步小实验</strong></p>
+<blockquote>
+<p>写一个 <code>Future&lt;String&gt; getWeather()</code>，等 1 秒后返回"晴天"，再用 <code>async/await</code> 打印结果。</p>
+<p>✅ 答案提示：<br>
+<code>dart
+Future&lt;String&gt; getWeather() async {
+  await Future.delayed(Duration(seconds: 1));
+  return '晴天';
+}
+Future&lt;void&gt; main() async {
+  print(await getWeather());
+}</code></p>
+</blockquote>
+<p><strong>练习 5：概念连线</strong></p>
+<blockquote>
+<p>把 Swift 概念和 Dart 概念连线：<code>let</code> ↔ ？　<code>Array</code> ↔ ？　<code>Dictionary</code> ↔ ？　<code>async/await</code> ↔ ？</p>
+<p>✅ 答案提示：<code>let</code> ↔ <code>final</code>；<code>Array</code> ↔ <code>List</code>；<code>Dictionary</code> ↔ <code>Map</code>；<code>async/await</code> ↔ <code>async/await</code>。</p>
+</blockquote>
+<hr>
+<h2>下一步</h2>
+<p>Dart 语法已经入门，接下来把 Dart 和 Flutter 装到你的电脑上，跑起第一个 App！</p>
+<p>👉 下一篇：<a href="03-环境搭建与第一个App.html">03-环境搭建与第一个App.html</a></p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

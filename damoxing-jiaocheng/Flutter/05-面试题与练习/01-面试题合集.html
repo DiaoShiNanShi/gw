@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>01-面试题合集 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 面试题与练习</div>
+    <h1>01-面试题合集</h1>
+    <span class="header-tag">面试题与练习</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>01-面试题合集</h1>
+<blockquote>
+<p>大白话版 · Flutter 面试题大全（按难度分级）<br>
+组织：基础 20 道 / 中级 20 道 / 高级 15 道 / 架构与实战 15 道<br>
+每题含：题目、考察点、大白话答案（带示例）、加分项/追问方向</p>
+</blockquote>
+<hr>
+<h2>一、基础题（20 道）</h2>
+<h3>1. Flutter 是什么？和 React Native 有什么区别？</h3>
+<ul>
+<li><strong>考察点</strong>：对 Flutter 本质的理解</li>
+<li><strong>大白话答案</strong>：Flutter 是 Google 的跨平台 UI 框架，用 Dart 语言写一套代码，同时跑在 iOS/Android/Web/桌面。核心区别是<strong>渲染方式</strong>：Flutter 用自带的引擎（Skia/Impeller）<strong>自己画 UI</strong>，不经过系统原生控件；RN 是<strong>桥接</strong>原生控件（把 JS 组件翻译成原生 View）。所以 Flutter 渲染一致性强、性能接近原生，RN 更依赖平台控件、一致性和性能略差。</li>
+<li><strong>加分项</strong>：能说出 Flutter "自绘引擎"的优势（跨端一致、不依赖平台控件更新）；RN 的桥接有性能损耗。</li>
+</ul>
+<h3>2. Dart 语言有哪些核心特性？</h3>
+<ul>
+<li><strong>考察点</strong>：Dart 基础</li>
+<li><strong>大白话答案</strong>：面向对象（一切皆对象）、强类型（也支持类型推断 var/final/const）、单线程 + 事件循环（异步用 Future/async-await）、Isolate 并发（不共享内存）、空安全（?/! 语法）、支持 mixin 混入。</li>
+<li><strong>加分项</strong>：提到空安全是 Dart 2.12 引入的，编译期就消灭空指针异常。</li>
+</ul>
+<h3>3. <code>const</code> 和 <code>final</code> 的区别？</h3>
+<ul>
+<li><strong>考察点</strong>：Dart 关键字</li>
+<li><strong>大白话答案</strong>：<code>final</code> 表示"只能赋值一次"，运行时可确定；<code>const</code> 表示"编译期常量"，值在编译时就固定。<code>const</code> 比 <code>final</code> 更严格（const 变量也是 final 的）。</li>
+<li><strong>代码示例</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">final a = DateTime.now();   // 可以：运行时确定
+// const b = DateTime.now(); // 报错：const 需要编译期常量
+const c = 3.14;             // 编译期就固定了
+</code></pre>
+
+<ul>
+<li><strong>加分项</strong>：<code>const</code> 构造的 Widget 会被复用，是 Flutter 性能优化手段之一。</li>
+</ul>
+<h3>4. Flutter 的 <code>StatefulWidget</code> 和 <code>StatelessWidget</code> 区别？</h3>
+<ul>
+<li><strong>考察点</strong>：Widget 基础</li>
+<li><strong>大白话答案</strong>：<code>StatelessWidget</code> 无状态，内容不变，build 一次就不变了；<code>StatefulWidget</code> 有状态（State 对象），可以 setState 触发重建。StatefulWidget 本体不可变，状态存在 State 里（State 跨帧存活）。</li>
+<li><strong>加分项</strong>：StatefulWidget 和 State 是分开的两个类，Widget 重建时 State 不重建（Element 复用）。</li>
+</ul>
+<h3>5. Widget 生命周期有哪些？</h3>
+<ul>
+<li><strong>考察点</strong>：State 生命周期</li>
+<li><strong>大白话答案</strong>：<code>initState</code>（创建，只一次）→ <code>didChangeDependencies</code>（依赖变化）→ <code>build</code>（构建，可多次）→ <code>didUpdateWidget</code>（父组件更新触发）→ <code>deactivate</code>（移出树）→ <code>dispose</code>（销毁，清理资源）。</li>
+<li><strong>加分项</strong>：<code>initState</code> 里不能调 BuildContext 相关异步操作；资源（控制器/定时器）必须在 dispose 释放。</li>
+</ul>
+<h3>6. <code>setState</code> 做了什么？为什么要调用它？</h3>
+<ul>
+<li><strong>考察点</strong>：状态更新机制</li>
+<li><strong>大白话答案</strong>：<code>setState</code> 标记当前 State 为"脏"，通知 Flutter 在下一帧重建 build 方法，刷新 UI。不调用它，数据变了界面不会更新。</li>
+<li><strong>加分项</strong>：setState 只是"标记"，真正重建是下一帧；频繁 setState 可能性能问题，应缩小范围。</li>
+</ul>
+<h3>7. <code>BuildContext</code> 是什么？</h3>
+<ul>
+<li><strong>考察点</strong>：三棵树理解</li>
+<li><strong>大白话答案</strong>：<code>BuildContext</code> 是 <strong>Element 的接口</strong>，代表 Widget 在树中的位置。用来向上/向下找祖先/后代、取主题（Theme.of）、路由（Navigator.of）、Provider 数据（context.watch）。</li>
+<li><strong>加分项</strong>：能说出"BuildContext 本质是 Element 的瘦身版"，Widget 是描述、Element 是真实节点。</li>
+</ul>
+<h3>8. Flutter 三棵树是什么？为什么是"三棵"？</h3>
+<ul>
+<li><strong>考察点</strong>：底层原理（高频）</li>
+<li><strong>大白话答案</strong>：Widget 树（描述/菜单）、Element 树（桥梁/服务员）、RenderObject 树（真实渲染/后厨）。Widget 重建便宜（只换描述），Element 复用（新旧对比 runtimeType+key），RenderObject 最小化更新（只重做变化部分），这套机制兼顾声明式写法和高性能。</li>
+<li><strong>加分项</strong>：能说 canUpdate 判断条件（runtimeType 和 key 都相同才复用）。</li>
+</ul>
+<h3>9. <code>key</code> 的作用是什么？<code>ValueKey</code>/<code>ObjectKey</code>/<code>UniqueKey</code> 区别？</h3>
+<ul>
+<li><strong>考察点</strong>：Element 复用</li>
+<li><strong>大白话答案</strong>：key 是 Element 复用的"身份标识"。列表增删、顺序变化时，没有 key 会导致状态错乱。<code>ValueKey</code>（值相等）、<code>ObjectKey</code>（对象相等）、<code>UniqueKey</code>（每次都不同，强制重建）。</li>
+<li><strong>加分项</strong>：列表项需要稳定唯一 id 时用 ValueKey(id)，而不是用 index（会错乱）。</li>
+</ul>
+<h3>10. Row 和 Column 的区别？</h3>
+<ul>
+<li><strong>考察点</strong>：布局基础</li>
+<li><strong>大白话答案</strong>：Row 水平排列子组件（主轴横向），Column 垂直排列（主轴纵向）。都有 mainAxisAlignment（主轴对齐）和 crossAxisAlignment（交叉轴对齐）。</li>
+<li><strong>加分项</strong>：子组件过多溢出时用 Expanded/Flexible 包裹，避免 RenderFlex overflow 报错。</li>
+</ul>
+<h3>11. <code>Expanded</code> 和 <code>Flexible</code> 的区别？</h3>
+<ul>
+<li><strong>考察点</strong>：弹性布局</li>
+<li><strong>大白话答案</strong>：都是让子组件按比例分配剩余空间。<code>Expanded</code> 强制占满分配的空间（flex 比例）；<code>Flexible</code> 允许子组件小于分配空间（fit: loose 时不强制填满）。</li>
+<li><strong>加分项</strong>：Flexible 默认 loose，Expanded 相当于 fit: tight。</li>
+</ul>
+<h3>12. <code>Stack</code> 是什么？怎么用？</h3>
+<ul>
+<li><strong>考察点</strong>：层叠布局</li>
+<li><strong>大白话答案</strong>：Stack 是层叠布局，子组件一层层叠放（后写的在上面），类似 iOS 的 ZStack。配合 <code>Positioned</code> 可以精确指定位置（top/left/right/bottom）。</li>
+<li><strong>加分项</strong>：能举例子：头像右上角加"小红点"就是 Stack + Positioned。</li>
+</ul>
+<h3>13. <code>ListView.builder</code> 和 <code>ListView</code> 的区别？</h3>
+<ul>
+<li><strong>考察点</strong>：列表性能</li>
+<li><strong>大白话答案</strong>：<code>ListView(children: [...])</code> 一次性创建所有子项；<code>ListView.builder</code> <strong>按需创建</strong>（滚动到哪建哪），适合大数据量。数据多必须用 builder。</li>
+<li><strong>加分项</strong>：加 <code>itemExtent</code> 固定行高可进一步优化滚动性能。</li>
+</ul>
+<h3>14. <code>Text</code> 如何显示多行、省略号？</h3>
+<ul>
+<li><strong>考察点</strong>：文本组件</li>
+<li><strong>大白话答案</strong>：<code>maxLines</code> 限制行数，<code>overflow: TextOverflow.ellipsis</code> 超出显示省略号。</li>
+<li><strong>代码示例</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">Text('很长很长的一段文字',
+  maxLines: 1,
+  overflow: TextOverflow.ellipsis,  // 超出省略
+)
+</code></pre>
+
+<h3>15. <code>Image</code> 加载网络图片用什么？要注意什么？</h3>
+<ul>
+<li><strong>考察点</strong>：图片加载</li>
+<li><strong>大白话答案</strong>：<code>Image.network(url)</code> 直接加载；生产环境推荐 <code>cached_network_image</code>（带缓存）。注意：占位图/错误图（loadingBuilder/errorBuilder）、缓存策略。</li>
+<li><strong>加分项</strong>：列表里大量图片用 cached_network_image 避免重复下载卡顿。</li>
+</ul>
+<h3>16. <code>Navigator.push</code> 和 <code>Navigator.pushNamed</code> 的区别？</h3>
+<ul>
+<li><strong>考察点</strong>：路由基础</li>
+<li><strong>大白话答案</strong>：push 直接传 Widget 跳转；pushNamed 按"路由名"跳转（需先在 routes 表注册）。命名路由适合统一管理、可传参数。</li>
+<li><strong>加分项</strong>：复杂项目用 go_router（支持深链、嵌套路由）。</li>
+</ul>
+<h3>17. 如何给页面传参数？如何回传结果？</h3>
+<ul>
+<li><strong>考察点</strong>：路由传参</li>
+<li><strong>大白话答案</strong>：push 时第二个参数传参（构造器参数或 arguments）；回传用 <code>Navigator.pop(context, result)</code>，接收端 <code>await Navigator.push(...)</code> 拿返回值。</li>
+<li><strong>加分项</strong>：能写出完整示例。</li>
+</ul>
+<h3>18. <code>main()</code> 里做了什么？</h3>
+<ul>
+<li><strong>考察点</strong>：入口</li>
+<li><strong>大白话答案</strong>：<code>runApp(MyApp())</code> 启动 App；可加 <code>WidgetsFlutterBinding.ensureInitialized()</code>（调用原生能力前），async 初始化（如读本地配置）再 runApp。</li>
+<li><strong>加分项</strong>：解释 ensureInitialized 是"确保 Flutter 引擎和平台绑定初始化完成"。</li>
+</ul>
+<h3>19. 什么是 <code>MaterialApp</code>？它提供了什么？</h3>
+<ul>
+<li><strong>考察点</strong>：App 壳</li>
+<li><strong>大白话答案</strong>：MaterialApp 是 Flutter 的"App 外壳"，提供：主题（theme）、路由表（routes）、本地化、标题、首页（home）。类似 iOS 里管理整个 App 的根控制器。</li>
+<li><strong>加分项</strong>：能说出 Material 设计风格和 Cupertino（iOS 风格）的区别。</li>
+</ul>
+<h3>20. <code>debugPrint</code> 和 <code>print</code> 的区别？</h3>
+<ul>
+<li><strong>考察点</strong>：调试基础</li>
+<li><strong>大白话答案</strong>：<code>print</code> 直接输出；<code>debugPrint</code> 在 debug 模式会截断超长输出（避免丢日志），release 模式两者都可被移除/禁用。</li>
+<li><strong>加分项</strong>：生产环境用 <code>kDebugMode</code> 判断是否打印，避免日志泄露。</li>
+</ul>
+<hr>
+<h2>二、中级题（20 道）</h2>
+<h3>21. 隐式动画和显式动画的区别？</h3>
+<ul>
+<li><strong>考察点</strong>：动画体系</li>
+<li><strong>大白话答案</strong>：隐式动画（AnimatedContainer/AnimatedOpacity）只需声明"目标值"，Flutter 自动做过渡；显式动画（AnimationController + Tween）手动控制进度（forward/reverse/repeat）、精确到每帧。简单变化用隐式，复杂/循环/联动用显式。</li>
+<li><strong>加分项</strong>：<code>AnimationController</code> 需要 <code>vsync</code>（TickerProviderStateMixin），用完必须 dispose。</li>
+</ul>
+<h3>22. <code>Tween</code> 的作用？</h3>
+<ul>
+<li><strong>考察点</strong>：动画</li>
+<li><strong>大白话答案</strong>：Tween 是"翻译官"，把 AnimationController 的 0→1 进度翻译成具体值（0→300 像素、颜色渐变、角度旋转）。配合 CurvedAnimation 可加缓动曲线。</li>
+<li><strong>加分项</strong>：能写 <code>Tween(begin: 0, end: 300).animate(CurvedAnimation(...))</code>。</li>
+</ul>
+<h3>23. Hero 动画是什么？怎么用？</h3>
+<ul>
+<li><strong>考察点</strong>：转场动画</li>
+<li><strong>大白话答案</strong>：Hero 是页面间"共享元素"转场：两个页面各有一个相同 tag 的 Hero 包裹组件，跳转时元素自动"飞过去"。类似 iOS 的共享元素转场。</li>
+<li><strong>加分项</strong>：tag 必须唯一且两端一致，否则不生效或报错。</li>
+</ul>
+<h3>24. 什么是 <code>RepaintBoundary</code>？什么时候用？</h3>
+<ul>
+<li><strong>考察点</strong>：性能优化</li>
+<li><strong>大白话答案</strong>：RepaintBoundary 是"重绘隔离区"：里面的组件重绘不会带动外面重绘。适合：动画/进度条/频繁变化的小区域，避免带动整页重绘。</li>
+<li><strong>加分项</strong>：能用 DevTools 的 Repaint Rainbow 定位重绘区域。</li>
+</ul>
+<h3>25. 如何优化列表性能？（说出至少 3 点）</h3>
+<ul>
+<li><strong>考察点</strong>：性能</li>
+<li><strong>大白话答案</strong>：①用 ListView.builder 按需创建；②itemExtent 固定行高；③能 const 就 const；④图片缓存；⑤避免 itemBuilder 里做耗时操作；⑥用 RepaintBoundary 隔离重绘。</li>
+<li><strong>加分项</strong>：提到 keepAlive（AddAutomaticKeepAlives）缓存滚出屏幕的条目。</li>
+</ul>
+<h3>26. 状态管理有哪些方案？各自的适用场景？</h3>
+<ul>
+<li><strong>考察点</strong>：状态管理（高频）</li>
+<li><strong>大白话答案</strong>：setState（页面局部）、Provider（中小项目，易上手）、Riverpod（中大型，编译期安全、可测试）、Bloc（大型复杂业务，事件驱动、可追踪）、GetX（全家桶，简单但侵入性强）。<strong>选型</strong>：小项目 setState+Provider；中项目 Provider/Riverpod；大项目 Riverpod/Bloc。</li>
+<li><strong>加分项</strong>：能对比 Provider 和 Riverpod（Riverpod 不依赖 BuildContext、编译期安全）。</li>
+</ul>
+<h3>27. Provider 的原理是什么？</h3>
+<ul>
+<li><strong>考察点</strong>：状态管理原理</li>
+<li><strong>大白话答案</strong>：Provider 基于 <code>InheritedWidget</code> + <code>ChangeNotifier</code>。ChangeNotifier 持有数据，<code>notifyListeners()</code> 通知监听者；Provider 把 ChangeNotifier 放到 Widget 树上，<code>context.watch&lt;T&gt;()</code> 找到并监听，数据变化时自动重建依赖它的组件。</li>
+<li><strong>加分项</strong>：watch 监听（build 里用）、read 不监听（事件里用）。</li>
+</ul>
+<h3>28. <code>Future</code> 和 <code>Stream</code> 的区别？</h3>
+<ul>
+<li><strong>考察点</strong>：异步</li>
+<li><strong>大白话答案</strong>：Future 返回<strong>一个</strong>结果（一次性，如网络请求）；Stream 是<strong>连续多个</strong>结果的事件流（如传感器数据、进度条）。Future 用 await 拿值，Stream 用 listen 监听。</li>
+<li><strong>加分项</strong>：能举例：网络请求用 Future，实时位置用 Stream。</li>
+</ul>
+<h3>29. <code>async</code> / <code>await</code> 的原理？</h3>
+<ul>
+<li><strong>考察点</strong>：异步原理</li>
+<li><strong>大白话答案</strong>：async 函数返回 Future；await 会"暂停"当前函数，把后续代码当作回调，等 Future 完成后继续执行。底层是 Dart 单线程事件循环 + 微任务队列。</li>
+<li><strong>加分项</strong>：能解释"Dart 是单线程，async/await 不会阻塞 UI"。</li>
+</ul>
+<h3>30. Dart 的事件循环（Event Loop）是什么？</h3>
+<ul>
+<li><strong>考察点</strong>：并发模型（重要）</li>
+<li><strong>大白话答案</strong>：Dart 单线程靠事件循环驱动：一个"事件队列"（如 IO、定时器、点击），循环不断取事件执行。异步就是往队列里扔任务。微任务（microtask）优先于事件队列执行。</li>
+<li><strong>加分项</strong>：能说出 Future 回调进微任务、Timer/IO 进事件队列，微任务先执行。</li>
+</ul>
+<h3>31. Isolate 是什么？和线程的区别？</h3>
+<ul>
+<li><strong>考察点</strong>：并发（高频）</li>
+<li><strong>大白话答案</strong>：Isolate 是 Dart 的"隔离区"：每个 Isolate 有独立内存、独立事件循环，<strong>不共享内存</strong>，只能通过消息（SendPort/ReceivePort）通信。比线程安全（无数据竞争），但通信有开销。</li>
+<li><strong>加分项</strong>：重活（大 JSON 解析、图片处理）用 <code>compute</code> / Isolate 跑，主 Isolate 只做 UI。</li>
+</ul>
+<h3>32. <code>compute</code> 函数怎么用？适合什么场景？</h3>
+<ul>
+<li><strong>考察点</strong>：并发</li>
+<li><strong>大白话答案</strong>：<code>compute(fn, data)</code> 把函数丢到后台 Isolate 执行，返回 Future 结果。适合一次性重活：解析大 JSON、复杂计算、图片压缩。</li>
+<li><strong>加分项</strong>：注意 compute 的函数必须是顶层/静态函数，不能闭包捕获。</li>
+</ul>
+<h3>33. 网络请求怎么做？常用的库？</h3>
+<ul>
+<li><strong>考察点</strong>：网络</li>
+<li><strong>大白话答案</strong>：用 <code>dio</code>（最流行）或 http 包。dio 支持拦截器（加 token）、超时、取消、文件上传下载、错误处理。请求结果用 json_serializable 转 Model。</li>
+<li><strong>加分项</strong>：能说出拦截器用法（日志拦截器、token 拦截器）。</li>
+</ul>
+<h3>34. JSON 序列化怎么做？</h3>
+<ul>
+<li><strong>考察点</strong>：数据解析</li>
+<li><strong>大白话答案</strong>：手动 <code>jsonDecode</code> + fromJson/toJson；或用 <code>json_serializable</code> + build_runner 自动生成。复杂项目推荐自动生成，省事不易错。</li>
+<li><strong>加分项</strong>：能写出 Model 的 fromJson/toJson 模板。</li>
+</ul>
+<h3>35. 本地存储有哪些方案？</h3>
+<ul>
+<li><strong>考察点</strong>：存储</li>
+<li><strong>大白话答案</strong>：shared_preferences（键值对，小数据，≈UserDefaults）；sqflite/drift（SQLite 数据库，结构化大数据）；path_provider（文件存储）；hive（NoSQL 轻量库）。</li>
+<li><strong>加分项</strong>：能按场景选型（登录态用 preferences，聊天记录用 sqflite）。</li>
+</ul>
+<h3>36. 如何实现"深色模式"？</h3>
+<ul>
+<li><strong>考察点</strong>：主题</li>
+<li><strong>大白话答案</strong>：MaterialApp 的 <code>themeMode</code>（system/light/dark）+ <code>darkTheme</code> 配置；用 <code>Theme.of(context).colorScheme</code> 取色，别写死颜色。</li>
+<li><strong>加分项</strong>：能监听系统主题变化（ThemeMode.system 自动跟随）。</li>
+</ul>
+<h3>37. 国际化怎么做？</h3>
+<ul>
+<li><strong>考察点</strong>：i18n</li>
+<li><strong>大白话答案</strong>：MaterialApp 配 <code>localizationsDelegates</code> + <code>supportedLocales</code>；用 intl 包管理文案（arb 文件），<code>AppLocalizations.of(context)</code> 取翻译文案。</li>
+<li><strong>加分项</strong>：提到 gen-l10n 自动生成本地化类。</li>
+</ul>
+<h3>38. 路由守卫/拦截怎么做？</h3>
+<ul>
+<li><strong>考察点</strong>：路由进阶</li>
+<li><strong>大白话答案</strong>：命名路由用 <code>NavigatorObserver</code> 监听跳转做拦截；go_router 提供 <code>redirect</code> 做鉴权跳转（未登录跳登录页）。</li>
+<li><strong>加分项</strong>：能写出"未登录拦截到登录页"的伪代码。</li>
+</ul>
+<h3>39. 如何监听 App 前后台切换？</h3>
+<ul>
+<li><strong>考察点</strong>：生命周期</li>
+<li><strong>大白话答案</strong>：<code>WidgetsBindingObserver</code> + <code>didChangeAppLifecycleState</code>，状态有 resumed（前台）/paused（后台）/inactive 等。</li>
+<li><strong>加分项</strong>：后台时暂停动画/保存草稿，回前台恢复。</li>
+</ul>
+<h3>40. <code>GlobalKey</code> 有什么用？</h3>
+<ul>
+<li><strong>考察点</strong>：进阶 Widget</li>
+<li><strong>大白话答案</strong>：GlobalKey 可以跨组件访问 State：<code>GlobalKey&lt;FormState&gt;</code> 拿到表单校验/提交；也可以获取组件的位置尺寸（BuildContext）。</li>
+<li><strong>加分项</strong>：能用 GlobalKey 获取组件 RenderBox 的 size/position（做引导蒙层）。</li>
+</ul>
+<hr>
+<h2>三、高级题（15 道）</h2>
+<h3>41. 解释 Flutter 的渲染管线（pipeline）。</h3>
+<ul>
+<li><strong>考察点</strong>：底层原理（高频）</li>
+<li><strong>大白话答案</strong>：每帧走：build（构建 Widget 树）→ layout（计算位置大小）→ paint（绘制）→ composite（合成图层）→ 上屏。任一阶段超过 16.7ms 就掉帧。优化 = 减少各阶段工作量（const、RepaintBoundary、避免主线程耗时）。</li>
+<li><strong>加分项</strong>：提到"帧调度"由 vsync（Ticker）驱动，和 iOS 的 CADisplayLink 类似。</li>
+</ul>
+<h3>42. Element 复用的条件是什么？什么是 <code>canUpdate</code>？</h3>
+<ul>
+<li><strong>考察点</strong>：三棵树</li>
+<li><strong>大白话答案</strong>：新旧 Widget 的 <code>runtimeType</code> 和 <code>key</code> 都相同，Element 就复用（不重建），只更新配置；否则销毁重建。这就是为什么列表项要加稳定的 key。</li>
+<li><strong>加分项</strong>：能说 canUpdate 源码逻辑（runtimeType == 且 key ==）。</li>
+</ul>
+<h3>43. <code>InheritedWidget</code> 的原理是什么？</h3>
+<ul>
+<li><strong>考察点</strong>：状态共享底层</li>
+<li><strong>大白话答案</strong>：InheritedWidget 是"向上共享数据的机制"：子组件通过 <code>context.dependOnInheritedWidgetOfExactType&lt;T&gt;()</code> 获取最近祖先的数据，且依赖它后，祖先数据变化会<strong>精确通知依赖者重建</strong>（不重建整棵树）。Provider 就是它的封装。</li>
+<li><strong>加分项</strong>：updateShouldNotify 控制是否通知。</li>
+</ul>
+<h3>44. Dart 空安全是什么？<code>?</code>、<code>!</code>、<code>late</code> 各是什么？</h3>
+<ul>
+<li><strong>考察点</strong>：Dart 进阶</li>
+<li><strong>大白话答案</strong>：空安全 = 编译期保证变量不会意外为空。<code>String?</code> 表示可空；<code>!</code> 断言"我确定不为空"；<code>late</code> 延迟初始化（首次使用时赋值，用于 late final 等）。<code>??</code> 提供默认值。</li>
+<li><strong>加分项</strong>：能举出 <code>!</code> 用错的崩溃场景（空断言失败）。</li>
+</ul>
+<h3>45. 如何做内存泄漏排查？</h3>
+<ul>
+<li><strong>考察点</strong>：性能</li>
+<li><strong>大白话答案</strong>：用 DevTools Memory 面板：反复进出页面看内存曲线是否回落；用 Allocation Profile 找堆积对象。常见泄漏：控制器/定时器/监听没 dispose、全局单例持有页面。</li>
+<li><strong>加分项</strong>：能说出"只涨不跌 = 有泄漏"的判断方法。</li>
+</ul>
+<h3>46. <code>const</code> 优化原理是什么？</h3>
+<ul>
+<li><strong>考察点</strong>：性能</li>
+<li><strong>大白话答案</strong>：const Widget 是编译期常量，Flutter 会缓存同一 const 实例。重建时直接复用同一个对象，跳过创建和比较，减少 build 开销。<code>flutter analyze</code> 会提示可加 const 的位置。</li>
+<li><strong>加分项</strong>：能说出 const 对 Element 复用也有帮助（canUpdate 时配置相同跳过更新）。</li>
+</ul>
+<h3>47. 包体积如何优化？</h3>
+<ul>
+<li><strong>考察点</strong>：性能/发布</li>
+<li><strong>大白话答案</strong>：①Tree Shaking（默认删无用代码）；②按需引包（别为小功能装大库）；③压缩图片资源（WebP）；④清理无用 assets；⑤Android 用 AAB 按架构分发；⑥iOS 检查 App Thinning。</li>
+<li><strong>加分项</strong>：能说出 <code>flutter build</code> release 模式默认开启 AOT 和 Tree Shaking。</li>
+</ul>
+<h3>48. 启动速度如何优化？</h3>
+<ul>
+<li><strong>考察点</strong>：性能</li>
+<li><strong>大白话答案</strong>：①main() 别做重初始化（先 runApp 再异步初始化）；②首屏别堆重组件；③懒加载非首屏模块；④release 构建（AOT）；⑤减少首帧前插件初始化。</li>
+<li><strong>加分项</strong>：用 DevTools Timeline 看首帧时间（First Frame）。</li>
+</ul>
+<h3>49. 什么是 <code>Platform Channel</code>？三种通道分别是什么？</h3>
+<ul>
+<li><strong>考察点</strong>：混合开发（高频）</li>
+<li><strong>大白话答案</strong>：Platform Channel 是 Flutter 和原生通信的"对讲机"。三种：MethodChannel（一问一答，最常用）、EventChannel（原生持续发事件流）、BasicMessageChannel（双向消息）。两端通道名必须一致，数据只能传可序列化类型。</li>
+<li><strong>加分项</strong>：能写出 MethodChannel 两端（Dart invokeMethod + Swift setMethodCallHandler）的完整示例。</li>
+</ul>
+<h3>50. Platform View 是什么？有什么坑？</h3>
+<ul>
+<li><strong>考察点</strong>：混合开发</li>
+<li><strong>大白话答案</strong>：Platform View 是在 Flutter 页面里嵌原生视图（地图/视频播放器）。坑：①性能（两层渲染合成开销大）；②手势冲突；③键盘/生命周期不同步；④滚动卡顿。解决：少用、HybridComposition、手动管理生命周期。</li>
+<li><strong>加分项</strong>：能说出 iOS 端需要实现 FlutterPlatformViewFactory 注册 viewType。</li>
+</ul>
+<h3>51. 如何设计一个可测试的架构？</h3>
+<ul>
+<li><strong>考察点</strong>：架构+测试</li>
+<li><strong>大白话答案</strong>：①依赖注入（构造函数传依赖，测试换 mock）；②分层（数据/逻辑/UI 分离）；③业务逻辑放纯 Dart 类（不依赖 Flutter，好测）；④状态管理选可测试方案（Riverpod/Bloc）。</li>
+<li><strong>加分项</strong>：能举例：UserService 依赖 ApiClient 接口，测试注入 FakeApiClient。</li>
+</ul>
+<h3>52. 讲讲 Flutter 引擎架构（Dart/Engine/Embedder）。</h3>
+<ul>
+<li><strong>考察点</strong>：底层</li>
+<li><strong>大白话答案</strong>：三层：Dart 层（Framework，你写的 Widget 代码）；Engine 层（C++，负责渲染 Skia/Impeller、Dart 运行时、文字排版、平台通道）；Embedder 层（平台壳，iOS 上是 FlutterViewController，负责窗口、生命周期、和系统对接）。</li>
+<li><strong>加分项</strong>：能解释"Flutter 自绘"是因为渲染完全由 Engine 完成，不依赖系统控件。</li>
+</ul>
+<h3>53. AOT 和 JIT 是什么？Flutter 为什么两种都用？</h3>
+<ul>
+<li><strong>考察点</strong>：编译原理</li>
+<li><strong>大白话答案</strong>：JIT（Just-In-Time）运行时编译，开发模式用（热重载快）；AOT（Ahead-Of-Time）提前编译成机器码，release 用（启动快、性能好）。Dart 支持两种编译，Flutter 开发用 JIT 换热重载，发布用 AOT 换性能。</li>
+<li><strong>加分项</strong>：能说 release 模式启动比 debug 快很多的原因就是 AOT。</li>
+</ul>
+<h3>54. 如何处理"大图加载 OOM"？</h3>
+<ul>
+<li><strong>考察点</strong>：性能/内存</li>
+<li><strong>大白话答案</strong>：①用 cacheWidth/cacheHeight 按显示尺寸解码（别解码原图）；②图片压缩；③列表图片缓存 + 复用；④用 ResizeImage 限制解码尺寸。</li>
+<li><strong>加分项</strong>：解释 Flutter 默认按原图解码，一张 4000x3000 的图解码后内存巨大。</li>
+</ul>
+<h3>55. 什么是 <code>BuildOwner</code> / <code>SchedulerBinding</code>？（追问向）</h3>
+<ul>
+<li><strong>考察点</strong>：框架源码</li>
+<li><strong>大白话答案</strong>：BuildOwner 管理 Element 的 build 调度（脏列表、重建）；SchedulerBinding 是帧调度器（Ticker、帧回调），负责安排 build/layout/paint 在每帧执行。属于框架底层，一般开发者不需要直接操作。</li>
+<li><strong>加分项</strong>：能提到 <code>addPostFrameCallback</code> 是 SchedulerBinding 提供的"帧后回调"，常用于导航等操作。</li>
+</ul>
+<hr>
+<h2>四、架构与实战题（15 道）</h2>
+<h3>56. 一个真实 Flutter 项目，目录怎么组织？</h3>
+<ul>
+<li><strong>考察点</strong>：工程化</li>
+<li><strong>大白话答案</strong>：推荐按功能分层：<code>core/</code>（网络、主题、工具、常量）、<code>features/</code>（按业务模块，每个模块内 data/domain/presentation 三层）、<code>shared/widgets/</code>（通用组件）、<code>router/</code>。原则：按职责分、上层依赖下层。</li>
+<li><strong>加分项</strong>：能解释"按功能（feature）而不是按类型（all pages 放一起）"更利于团队协作。</li>
+</ul>
+<h3>57. 状态管理怎么选型？为什么？</h3>
+<ul>
+<li><strong>考察点</strong>：架构决策（高频）</li>
+<li><strong>大白话答案</strong>：小项目 setState + Provider；中项目 Provider/Riverpod；大项目 Riverpod/Bloc。判断依据：状态共享范围、业务复杂度、团队熟悉度、可测试性。<strong>别过度设计</strong>，先跑通再加复杂度。</li>
+<li><strong>加分项</strong>：能说出"全局登录态用 Provider，复杂购物车用 Bloc"的组合用法。</li>
+</ul>
+<h3>58. 如何做多环境配置（dev/prod）？</h3>
+<ul>
+<li><strong>考察点</strong>：工程化</li>
+<li><strong>大白话答案</strong>：用 <code>--dart-define=ENV=dev</code> 注入环境变量，代码里 <code>String.fromEnvironment</code> 读取；区分接口地址、日志开关、App 名。也可用 env 文件（assets 里放 dev.json/prod.json）。</li>
+<li><strong>加分项</strong>：能提到 CI 里按分支传不同的 dart-define。</li>
+</ul>
+<h3>59. 讲讲 CI/CD 的搭建流程。</h3>
+<ul>
+<li><strong>考察点</strong>：工程化</li>
+<li><strong>大白话答案</strong>：GitHub Actions（或其他 CI）：checkout → 装 Flutter → pub get → analyze → test → build（iOS/Android）→ 分发（TestFlight/蒲公英）。配置 YAML 流水线，push/PR 自动触发。</li>
+<li><strong>加分项</strong>：能说出 Fastlane 在 iOS 打包分发中的作用（Flutter 也能用）。</li>
+</ul>
+<h3>60. 单元测试怎么写？Widget 测试怎么写？</h3>
+<ul>
+<li><strong>考察点</strong>：测试（高频）</li>
+<li><strong>大白话答案</strong>：单元测试：<code>test('描述', () { expect(实际, 期望); })</code>，测纯逻辑（计算、解析）。Widget 测试：<code>testWidgets</code> + <code>pumpWidget</code> + <code>find</code> + <code>tap</code> + <code>pump</code>，测界面交互。用 mock 替代网络/数据库。</li>
+<li><strong>加分项</strong>：能写出一个完整 Widget 测试（点击 +1 按钮断言文本变化）。</li>
+</ul>
+<h3>61. 覆盖率多少合适？</h3>
+<ul>
+<li><strong>考察点</strong>：测试</li>
+<li><strong>大白话答案</strong>：核心业务逻辑尽量 &gt;80%，纯 UI 不强求；<strong>关键路径全覆盖比数字更重要</strong>。覆盖率是参考不是 KPI，别为凑数字写没意义的测试。</li>
+<li><strong>加分项</strong>：能说明 <code>flutter test --coverage</code> 生成 lcov 报告。</li>
+</ul>
+<h3>62. iOS 上架被拒的常见原因有哪些？</h3>
+<ul>
+<li><strong>考察点</strong>：上架（iOS 工程师强相关）</li>
+<li><strong>大白话答案</strong>：①缺隐私政策；②截图与实际不符；③虚拟商品没用苹果内购；④诱导评分；⑤需要登录才能看核心功能（没给审核账号）；⑥使用私有 API。</li>
+<li><strong>加分项</strong>：能说审核一般 1-3 天，被拒后修改再提，别重复提交相同版本。</li>
+</ul>
+<h3>63. 支付功能怎么做才合规？</h3>
+<ul>
+<li><strong>考察点</strong>：实战合规</li>
+<li><strong>大白话答案</strong>：虚拟商品（会员/金币）走苹果内购（in_app_purchase）或 Google Play Billing；实物商品可用微信/支付宝；<strong>支付结果必须后端二次验证</strong>（防伪造）。客户端别只信回调。</li>
+<li><strong>加分项</strong>：能说 iOS 虚拟商品用第三方支付会被审核拒绝。</li>
+</ul>
+<h3>64. 推送怎么接入？</h3>
+<ul>
+<li><strong>考察点</strong>：实战</li>
+<li><strong>大白话答案</strong>：iOS 用 firebase_messaging（封装 APNs）或原生 APNs；Android 国内用厂商通道/极光个推。流程：服务端 → 推送服务 → 系统 → App 弹通知。注意 iOS 需配置 APNs 证书/密钥。</li>
+<li><strong>加分项</strong>：能区分"远程推送"和"本地通知"（flutter_local_notifications）。</li>
+</ul>
+<h3>65. 权限处理流程是什么？</h3>
+<ul>
+<li><strong>考察点</strong>：实战</li>
+<li><strong>大白话答案</strong>：①iOS 在 Info.plist 声明用途（NSCameraUsageDescription 等）；②用 permission_handler 运行时申请；③判断授权结果；④被拒后引导去设置（openAppSettings）。原则：用的时候再申请、别一次弹一堆。</li>
+<li><strong>加分项</strong>：能说出"iOS 不声明用途会直接闪退"的坑。</li>
+</ul>
+<h3>66. 热重载（Hot Reload）和热重启（Hot Restart）的区别？</h3>
+<ul>
+<li><strong>考察点</strong>：开发工具</li>
+<li><strong>大白话答案</strong>：热重载只重新执行 build（保留 State），改 UI 用；热重启从头执行 main（重置 State），改代码结构/初始化用。热重载更快，但改了 main/全局变量需热重启。</li>
+<li><strong>加分项</strong>：能说热重载不生效时的排查（改的是不是 build 相关代码）。</li>
+</ul>
+<h3>67. 如何做"下拉刷新/上拉加载"？</h3>
+<ul>
+<li><strong>考察点</strong>：实战</li>
+<li><strong>大白话答案</strong>：RefreshIndicator 包 ListView 做下拉刷新（onRefresh 返回 Future）；上拉加载在 ScrollController 监听滚动到底（position.pixels &gt;= maxScrollExtent）触发加载下一页。</li>
+<li><strong>加分项</strong>：能写出分页参数（page/pageSize）管理。</li>
+</ul>
+<h3>68. 深链（Deep Link）怎么做？</h3>
+<ul>
+<li><strong>考察点</strong>：实战进阶</li>
+<li><strong>大白话答案</strong>：iOS 用 Universal Links，Android 用 App Links；Flutter 用 go_router / uni_links 处理：配置 scheme/域名，App 启动时解析链接路由到对应页面（如分享卡片点开直达详情页）。</li>
+<li><strong>加分项</strong>：能说出 App 已启动和冷启动两种场景都要处理。</li>
+</ul>
+<h3>69. 如何保证"列表滑动流畅"？给出完整方案。</h3>
+<ul>
+<li><strong>考察点</strong>：性能实战</li>
+<li><strong>大白话答案</strong>：①builder 按需创建；②itemExtent 固定高；③const 优化；④图片 cacheWidth + 缓存；⑤itemBuilder 不做耗时操作（计算、IO）；⑥RepaintBoundary 隔离重绘；⑦复杂 item 用 keepAlive 控制缓存；⑧DevTools 定位卡顿帧。</li>
+<li><strong>加分项</strong>：能实际用 Performance 面板找掉帧（红色帧）。</li>
+</ul>
+<h3>70. 一个完整项目从 0 到 1 你会怎么做？</h3>
+<ul>
+<li><strong>考察点</strong>：综合能力</li>
+<li><strong>大白话答案</strong>：①需求分析（功能清单、MVP）；②技术选型（状态管理、网络、存储、路由）；③搭骨架（目录结构、环境配置、CI）；④按功能模块开发（数据层 → 逻辑 → UI）；⑤测试（单元 + Widget）；⑥性能优化；⑦打包上架；⑧监控（崩溃、埋点）。</li>
+<li><strong>加分项</strong>：强调"MVP 先跑通再迭代"和"边写边测"的工程节奏。</li>
+</ul>
+<hr>
+<h2>附：面试准备小贴士</h2>
+<ol>
+<li><strong>先答结论再展开</strong>：面试官问"三棵树"，先一句话说清（Widget 描述/Element 桥梁/RenderObject 渲染），再展开细节。</li>
+<li><strong>会写代码</strong>：动画、状态管理、网络请求、Platform Channel 的代码要能现场写出来。</li>
+<li><strong>结合项目</strong>：每个知识点准备一个"我在项目里怎么用的"案例，比背概念加分。</li>
+<li><strong>iOS 视角是优势</strong>：说到动画提 UIView.animate、说到并发提 GCD、说到打包提 Xcode Archive——让面试官知道你是有经验的工程师。</li>
+<li><strong>不会就说不会</strong>：如实说"这块没深入研究"，然后说自己的理解，比硬编强。</li>
+</ol>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

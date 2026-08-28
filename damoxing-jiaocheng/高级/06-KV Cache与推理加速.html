@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>高级 06：KV Cache 与推理加速全家桶 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 高级模块</div>
+    <h1>高级 06：KV Cache 与推理加速全家桶</h1>
+    <span class="header-tag">高级模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>推理慢？显存爆？这章汇总所有加速手段。</p></blockquote><hr>
+<h2>1. KV Cache</h2>
+<p>生成每个新 token 时，前面 token 的 K/V 已经算过，存起来复用。加速明显，但占显存：约 <code>2 × 层数 × 头数 × 维度 × 序列长度</code>。</p>
+<hr>
+<h2>2. Flash Attention</h2>
+<p>分块计算 Attention，减少 GPU 显存读写（IO 瓶颈）。训练推理都加速。</p>
+<hr>
+<h2>3. 其他加速手段</h2>
+<table><thead><tr><th>技术</th><th>作用</th></tr></thead><tbody><tr><td>Continuous Batching</td><td>动态组批，提高吞吐</td></tr><tr><td>投机解码</td><td>小模型猜+大模型验</td></tr><tr><td>PagedAttention</td><td>vLLM 的 KV 分页管理</td></tr><tr><td>Tensor Parallel</td><td>多卡切模型</td></tr><tr><td>量化</td><td>减显存提速度</td></tr></tbody></table>
+<hr>
+<h2>4. Prefill vs Decode</h2>
+<p><strong>Prefill：</strong>吃完全部输入，并行，算力密集。<br><strong>Decode：</strong>一个字一个字吐，内存带宽密集。<br>优化重点不同。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

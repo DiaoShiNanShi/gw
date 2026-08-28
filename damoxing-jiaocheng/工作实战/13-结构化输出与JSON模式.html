@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 13：结构化输出与 JSON 模式 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 13：结构化输出与 JSON 模式</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>企业级实战章节。</p></blockquote><hr>
+<h2>1. 为什么难</h2>
+<p>模型爱自由发挥，JSON 少括号、多字段是常态。</p>
+<hr>
+<h2>2. 解决方案</h2>
+<table><thead><tr><th>方案</th><th>可靠性</th></tr></thead><tbody><tr><td>Prompt 里写 Schema + 示例</td><td>中</td></tr><tr><td>OpenAI JSON Mode</td><td>高</td></tr><tr><td>Function Calling</td><td>高</td></tr><tr><td>Outlines/Instructor 库</td><td>高（约束解码）</td></tr><tr><td>后处理 + 重试</td><td>兜底</td></tr></tbody></table>
+<hr>
+<h2>3. Function Calling 示例</h2>
+<pre><code class="language-python">tools = [{"type":"function","function":{"name":"get_weather","parameters":{"type":"object","properties":{"city":{"type":"string"}},"required":["city"]}}}]
+resp = client.chat.completions.create(model="gpt-4o", messages=msgs, tools=tools)</code></pre>
+<hr>
+<h2>4. 校验重试模式</h2>
+<pre><code class="language-python">for attempt in range(3):
+    raw = llm(prompt)
+    try:
+        data = json.loads(raw)
+        validate(data, schema)
+        break
+    except: prompt += '\n上次格式错误，请严格输出 JSON'</code></pre>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

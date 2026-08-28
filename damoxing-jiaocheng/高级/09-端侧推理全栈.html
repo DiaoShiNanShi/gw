@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>高级 09：端侧推理全栈（Mac / iPhone / Android 对比） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 高级模块</div>
+    <h1>高级 09：端侧推理全栈（Mac / iPhone / Android 对比）</h1>
+    <span class="header-tag">高级模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>不联网也能跑 AI——端侧是隐私和成本的终极方案。</p></blockquote><hr>
+<h2>1. 端侧框架对比</h2>
+<table><thead><tr><th>框架</th><th>平台</th><th>特点</th></tr></thead><tbody><tr><td>llama.cpp</td><td>全平台</td><td>GGUF，社区最大</td></tr><tr><td>MLX</td><td>Apple Silicon</td><td>苹果官方 Python/Swift</td></tr><tr><td>Core ML</td><td>iOS/macOS</td><td>ANE 加速，需转换</td></tr><tr><td>ONNX Runtime</td><td>跨平台</td><td>通用格式</td></tr><tr><td>MNN/NCNN</td><td>移动端</td><td>阿里/腾讯，国内常用</td></tr><tr><td>MediaPipe</td><td>Google</td><td>端侧 ML 全家桶</td></tr></tbody></table>
+<hr>
+<h2>2. 端侧模型大小限制</h2>
+<pre>iPhone 15 Pro 8GB RAM → 建议 1~3B Q4
+Mac M2 16GB → 7B Q4 舒适
+Mac M2 16GB → 13B Q4 勉强</pre>
+<hr>
+<h2>3. 端云协同架构</h2>
+<pre>请求进来 → 路由器判断复杂度
+  ├─ 简单/隐私 → 端侧小模型
+  ├─ 复杂 → 云端大模型
+  └─ 失败 → 降级到规则/缓存</pre>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

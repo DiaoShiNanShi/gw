@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>高级 04：长上下文工程与语义缓存 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 高级模块</div>
+    <h1>高级 04：长上下文工程与语义缓存</h1>
+    <span class="header-tag">高级模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：对话太长怎么办、相同问题怎么省钱——两个工程高频题。</p>
+</blockquote>
+<hr>
+<h2>1. 长上下文工程</h2>
+<table>
+<thead><tr><th>手段</th><th>大白话</th></tr></thead>
+<tbody>
+<tr><td>滑动窗口</td><td>只保留最近 N 轮</td></tr>
+<tr><td>摘要压缩</td><td>老对话让 AI 总结成一段话</td></tr>
+<tr><td>RAG 外置记忆</td><td>重要事实存向量库，用时再查</td></tr>
+<tr><td>128K 长窗口模型</td><td>贵，且「迷失在中间」问题仍存在</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>2. 语义缓存（Semantic Cache）</h2>
+<p>用户问「年假几天」和「公司年假有多少天」意思一样，不必每次都调 LLM。</p>
+<pre><code class="language-python"># 简化语义缓存逻辑
+cache = []  # [(question_embedding, answer), ...]
+
+def get_cached(question: str, embed_fn, threshold=0.92):
+    q_emb = embed_fn(question)
+    for emb, ans in cache:
+        if cosine(q_emb, emb) > threshold:
+            return ans  # 命中，省钱！
+    return None
+</code></pre>
+<p>生产可用 GPTCache、Redis + 向量索引。</p>
+<hr>
+<h2>小结</h2>
+<p>长对话靠截断+摘要+RAG；重复问题靠语义缓存，能省 30%~50% API 费用。</p>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

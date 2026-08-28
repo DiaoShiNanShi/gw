@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 04：Transformer 架构入门（现代 AI 的骨架） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础模块</div>
+    <h1>基础 04：Transformer 架构入门（现代 AI 的骨架）</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>学习目标：搞懂 GPT/BERT 的「祖先」Transformer 是什么结构，为什么能取代 RNN。</p></blockquote><hr>
+<h2>1. 一句话</h2>
+<p><strong>Transformer = 全靠「注意力」处理序列，不用 RNN 一个一个慢慢算。</strong> 2017 年 Google 提出，现在所有大模型的底座。</p>
+<hr>
+<h2>2. 核心组件</h2>
+<table><thead><tr><th>组件</th><th>大白话</th><th>作用</th></tr></thead><tbody><tr><td>Self-Attention</td><td>每个词看所有词</td><td>抓长距离依赖</td></tr><tr><td>Multi-Head Attention</td><td>多个角度同时看</td><td>语法/语义/指代分开看</td></tr><tr><td>FFN 前馈网络</td><td>两层全连接</td><td>非线性变换，提炼特征</td></tr><tr><td>Layer Norm</td><td>层归一化</td><td>训练更稳定</td></tr><tr><td>残差连接</td><td>x + sublayer(x)</td><td>梯度更好传，堆更深</td></tr></tbody></table>
+<hr>
+<h2>3. Encoder vs Decoder</h2>
+<table><thead><tr><th></th><th>Encoder（BERT）</th><th>Decoder（GPT）</th></tr></thead><tbody><tr><td>注意力</td><td>双向：前后都能看</td><td>单向：只能看左边</td></tr><tr><td>适合</td><td>理解类：分类、NER</td><td>生成类：聊天、写作</td></tr><tr><td>代表</td><td>BERT、RoBERTa</td><td>GPT、Llama、Qwen</td></tr></tbody></table>
+<hr>
+<h2>4. 为什么比 RNN 强？</h2>
+<ul><li><strong>并行：</strong>RNN 必须按顺序算，Transformer 整句一起算，GPU 利用率爆表</li><li><strong>长距离：</strong>RNN 传 100 层信息会衰减，Attention 一步直达</li><li><strong>可扩展：</strong>堆更多层、更多头 → 能力涨（Scaling Law）</li></ul>
+<hr>
+<h2>5. 和大模型的关系</h2>
+<p>ChatGPT = <strong>只堆 Decoder</strong> 的 Transformer + 海量预训练 + 对齐微调。你学的每个名词（Token、Embedding、Attention、KV Cache）都在这个架构里。</p>
+<hr>
+<h2>小结</h2><ol><li>Transformer 核心是 Self-Attention</li><li>GPT 系列 = Decoder-only</li><li>理解架构 → 读懂所有技术文章</li></ol>
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

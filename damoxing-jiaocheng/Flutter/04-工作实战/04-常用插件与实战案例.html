@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>04-常用插件与实战案例 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 工作实战</div>
+    <h1>04-常用插件与实战案例</h1>
+    <span class="header-tag">工作实战</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>04-常用插件与实战案例</h1>
+<blockquote>
+<p>大白话版 · 常用插件与实战案例（小白向）<br>
+目标：学会常用插件选型（照片/相机、本地存储、支付、推送、分享）、权限处理，并通过一个完整小项目（待办清单）从 0 到 1 的拆解打通全流程。</p>
+</blockquote>
+<hr>
+<h2>一、先讲"是什么"：插件到底是什么？</h2>
+<p><strong>一句话版本：插件 = 别人写好的"现成零件"，装上就能用，帮你省掉造轮子的时间。</strong></p>
+<p>打个比方：</p>
+<blockquote>
+<p>你要开一家餐厅（做 App），不需要自己种菜、养猪、打铁锅——<br>
+去"批发市场"（pub.dev）买现成的：<br>
+- 拍照功能 → 买个"相机模块"<br>
+- 保存数据 → 买个"冷库模块"<br>
+- 收钱 → 接个"支付收银台"</p>
+<p>插件就是这些现成零件，<code>flutter pub add 插件名</code> 一行命令装进来。</p>
+</blockquote>
+<p><strong>去哪里找插件：</strong> <a href="https://pub.dev">pub.dev</a>（Flutter 官方插件市场，相当于 iOS 的 CocoaPods 仓库）。</p>
+<p><strong>选插件的"防坑三看"（必学）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>看什么</th>
+<th>为什么</th>
+<th>怎么看</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>看评分/点赞</td>
+<td>用的人多 = 靠谱</td>
+<td>pub.dev 的 like 数</td>
+</tr>
+<tr>
+<td>看更新日期</td>
+<td>长期不更新 = 可能已死</td>
+<td>看 last updated</td>
+</tr>
+<tr>
+<td>看维护者</td>
+<td>官方/大厂维护 = 稳</td>
+<td>看 publisher（如 flutter.dev 官方）</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>二、再讲"为什么"：为什么要用插件？</h2>
+<table>
+<thead>
+<tr>
+<th>理由</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>省时间</td>
+<td>拍照/支付/推送自己写要几个月，插件现成</td>
+</tr>
+<tr>
+<td>稳定</td>
+<td>热门插件被千万人用过，坑都填完了</td>
+</tr>
+<tr>
+<td>跨平台</td>
+<td>一个插件同时支持 iOS/Android，不用写两遍</td>
+</tr>
+<tr>
+<td>专注业务</td>
+<td>把时间花在自己的核心功能上</td>
+</tr>
+</tbody>
+</table>
+<p><strong>但要注意（反面）：</strong><br>
+- 别乱装：一个功能装一个插件，插件越多包越大、冲突越多。<br>
+- 别装没人维护的：出了 bug 没人修，只能自己啃源码。<br>
+- 大插件慎重：能用系统能力（如 WebView）就用系统的。</p>
+<hr>
+<h2>三、怎么用：五大类常用插件逐个击破</h2>
+<h3>3.1 照片与相机</h3>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>推荐插件</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>选照片/拍照</td>
+<td><code>image_picker</code></td>
+<td>打开系统相册/相机（官方维护，首选）</td>
+</tr>
+<tr>
+<td>图片裁剪</td>
+<td><code>image_cropper</code></td>
+<td>选完图裁一裁</td>
+</tr>
+<tr>
+<td>图片缓存加载</td>
+<td><code>cached_network_image</code></td>
+<td>网络图缓存，不重复下载</td>
+</tr>
+<tr>
+<td>图片压缩</td>
+<td><code>flutter_image_compress</code></td>
+<td>压缩图片省空间</td>
+</tr>
+</tbody>
+</table>
+<pre class="codehilite"><code class="language-dart">// image_picker 用法（选一张照片）
+import 'package:image_picker/image_picker.dart';
+
+final picker = ImagePicker();
+
+// 从相册选图
+final XFile? photo = await picker.pickImage(source: ImageSource.gallery);
+
+// 拍照
+final XFile? camera = await picker.pickImage(source: ImageSource.camera);
+
+// 拿到路径就能用（如上传或显示）
+// if (photo != null) {
+//   print('选中图片：${photo.path}');
+// }
+</code></pre>
+
+<h3>3.2 本地存储</h3>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>推荐插件</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>存小数据（设置/登录态）</td>
+<td><code>shared_preferences</code></td>
+<td>存键值对（像 UserDefaults）</td>
+</tr>
+<tr>
+<td>存结构化数据</td>
+<td><code>sqflite</code> / <code>drift</code></td>
+<td>本地数据库（像 SQLite）</td>
+</tr>
+<tr>
+<td>存文件（图片/下载）</td>
+<td><code>path_provider</code></td>
+<td>获取 App 目录路径</td>
+</tr>
+</tbody>
+</table>
+<pre class="codehilite"><code class="language-dart">// shared_preferences 用法（存/读小数据）
+import 'package:shared_preferences/shared_preferences.dart';
+
+// 存
+Future&lt;void&gt; saveLogin(bool isLogin) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('is_login', isLogin);
+}
+
+// 读
+Future&lt;bool&gt; readLogin() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('is_login') ?? false;
+}
+</code></pre>
+
+<blockquote>
+<p>对 iOS 工程师：<code>shared_preferences</code> ≈ <code>UserDefaults</code>，<code>sqflite</code> ≈ SQLite/CoreData（更接近 SQLite）。</p>
+</blockquote>
+<h3>3.3 支付</h3>
+<p><strong>大白话先说清：</strong> 支付是"高危区"，每个平台规则不同，务必按官方文档来。</p>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>推荐方式</th>
+<th>关键注意</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>iOS 内购（App 内购买）</td>
+<td><code>in_app_purchase</code>（官方）</td>
+<td><strong>必须走苹果支付</strong>，否则审核被拒</td>
+</tr>
+<tr>
+<td>Android 内购</td>
+<td><code>in_app_purchase</code>（官方）</td>
+<td>走 Google Play Billing</td>
+</tr>
+<tr>
+<td>微信/支付宝（国内）</td>
+<td>官方 SDK 插件（如 <code>fluwx</code>）</td>
+<td>需要商户资质、签名匹配</td>
+</tr>
+</tbody>
+</table>
+<p><strong>支付核心规则（必记）：</strong><br>
+1. <strong>虚拟商品（会员、金币）</strong> → 必须用苹果/谷歌内购（App Store 审核红线）。<br>
+2. <strong>实物商品（买衣服、外卖）</strong> → 可以用微信/支付宝。<br>
+3. 支付结果<strong>必须后端二次验证</strong>（别只信客户端回调，客户端可被伪造）。</p>
+<h3>3.4 推送</h3>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>推荐方案</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>iOS 推送</td>
+<td><code>firebase_messaging</code>（最主流）</td>
+<td>接 APNs 的现成方案</td>
+</tr>
+<tr>
+<td>Android 推送</td>
+<td><code>firebase_messaging</code> / 国内厂商通道</td>
+<td>国内用厂商 SDK 或极光/个推</td>
+</tr>
+<tr>
+<td>本地通知（定时提醒）</td>
+<td><code>flutter_local_notifications</code></td>
+<td>不联网，本地弹通知</td>
+</tr>
+</tbody>
+</table>
+<p><strong>推送大白话流程：</strong></p>
+<pre class="codehilite"><code>服务器 → 推送服务(FCM/APNs) → 手机系统 → 你的 App → 弹通知
+</code></pre>
+
+<p><strong>注意坑：</strong><br>
+- iOS 推送需要开发者账号配置 APNs 证书/密钥。<br>
+- 国内 Android 没有统一推送（谷歌被墙），要用厂商通道（小米/华为/OPPO/vivo）或聚合服务。</p>
+<h3>3.5 分享</h3>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>推荐插件</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分享文字/链接/图片</td>
+<td><code>share_plus</code></td>
+<td>调系统分享面板</td>
+</tr>
+<tr>
+<td>微信/QQ 分享</td>
+<td><code>fluwx</code> 等</td>
+<td>接微信 SDK</td>
+</tr>
+</tbody>
+</table>
+<pre class="codehilite"><code class="language-dart">// share_plus 用法（调起系统分享面板）
+import 'package:share_plus/share_plus.dart';
+
+Future&lt;void&gt; shareText() async {
+  await SharePlus.instance.share(
+    ShareParams(text: '分享一段文字'),
+  );
+}
+</code></pre>
+
+<blockquote>
+<p>对 iOS 工程师：<code>share_plus</code> ≈ <code>UIActivityViewController</code>，一行调起系统分享。</p>
+</blockquote>
+<h3>3.6 权限处理（必学！）</h3>
+<p><strong>大白话：</strong> 用相机/相册/定位前，必须先向系统申请权限，否则会崩溃或被拒。</p>
+<p><strong>iOS 需要在 Info.plist 声明用途（少一个就闪退！）：</strong></p>
+<pre class="codehilite"><code class="language-xml">&lt;!-- ios/Runner/Info.plist 里添加 --&gt;
+&lt;key&gt;NSCameraUsageDescription&lt;/key&gt;
+&lt;string&gt;需要使用相机拍照&lt;/string&gt;
+&lt;key&gt;NSPhotoLibraryUsageDescription&lt;/key&gt;
+&lt;string&gt;需要访问相册选择图片&lt;/string&gt;
+&lt;key&gt;NSLocationWhenInUseUsageDescription&lt;/key&gt;
+&lt;string&gt;需要使用定位显示附近内容&lt;/string&gt;
+</code></pre>
+
+<p><strong>Flutter 端用 <code>permission_handler</code> 统一申请：</strong></p>
+<pre class="codehilite"><code class="language-dart">// 用 permission_handler 申请相机权限
+import 'package:permission_handler/permission_handler.dart';
+
+Future&lt;void&gt; requestCamera() async {
+  final status = await Permission.camera.request();  // 申请
+  if (status.isGranted) {
+    print('权限已授予');
+  } else {
+    print('权限被拒绝');
+    // 引导用户去设置页打开：openAppSettings();
+  }
+}
+</code></pre>
+
+<p><strong>权限处理三原则：</strong><br>
+1. <strong>先声明再申请</strong>：iOS 必须先在 Info.plist 写用途说明。<br>
+2. <strong>合理时机申请</strong>：用的时候再申请，别一启动就弹一堆权限框（审核也不喜欢）。<br>
+3. <strong>被拒要引导</strong>：拒绝后引导用户去系统设置打开（<code>openAppSettings()</code>）。</p>
+<hr>
+<h2>四、实战：待办清单 App 从 0 到 1 拆解</h2>
+<p><strong>目标：</strong> 做一个本地待办清单 App：能添加、完成、删除待办，数据本地保存。</p>
+<h3>第 0 步：规划（先想清楚再写码）</h3>
+<pre class="codehilite"><code>功能：添加待办 → 列表展示 → 勾选完成 → 删除 → 本地保存
+技术选型：
+  - 状态管理：Provider（简单够用）
+  - 本地存储：shared_preferences（小数据足够）
+  - 架构：功能模块三层（presentation/domain/data）
+</code></pre>
+
+<h3>第 1 步：创建项目 + 装依赖</h3>
+<pre class="codehilite"><code class="language-bash">flutter create todo_app
+cd todo_app
+flutter pub add provider shared_preferences
+</code></pre>
+
+<h3>第 2 步：定义数据模型（Model）</h3>
+<pre class="codehilite"><code class="language-dart">// lib/features/todo/domain/todo_item.dart
+class TodoItem {
+  final String id;
+  final String title;
+  final bool isDone;
+
+  const TodoItem({
+    required this.id,
+    required this.title,
+    this.isDone = false,
+  });
+
+  // 转成 Map（用于存到 shared_preferences）
+  Map&lt;String, dynamic&gt; toJson() =&gt; {
+        'id': id,
+        'title': title,
+        'isDone': isDone,
+      };
+
+  // 从 Map 解析（用于读回来）
+  factory TodoItem.fromJson(Map&lt;String, dynamic&gt; json) =&gt; TodoItem(
+        id: json['id'] as String,
+        title: json['title'] as String,
+        isDone: json['isDone'] as bool,
+      );
+
+  // 复制一份改 isDone（不可变风格）
+  TodoItem copyWith({bool? isDone}) =&gt;
+      TodoItem(id: id, title: title, isDone: isDone ?? this.isDone);
+}
+</code></pre>
+
+<h3>第 3 步：状态管理（Provider + ChangeNotifier）</h3>
+<pre class="codehilite"><code class="language-dart">// lib/features/todo/presentation/todo_model.dart
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../domain/todo_item.dart';
+
+class TodoModel extends ChangeNotifier {
+  final List&lt;TodoItem&gt; _items = [];
+
+  List&lt;TodoItem&gt; get items =&gt; List.unmodifiable(_items);  // 只读暴露
+
+  // 添加待办
+  void add(String title) {
+    _items.add(TodoItem(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: title,
+    ));
+    _save();
+    notifyListeners();
+  }
+
+  // 切换完成状态
+  void toggle(String id) {
+    final index = _items.indexWhere((e) =&gt; e.id == id);
+    if (index != -1) {
+      _items[index] = _items[index].copyWith(isDone: !_items[index].isDone);
+      _save();
+      notifyListeners();
+    }
+  }
+
+  // 删除
+  void remove(String id) {
+    _items.removeWhere((e) =&gt; e.id == id);
+    _save();
+    notifyListeners();
+  }
+
+  // 保存到本地（shared_preferences）
+  Future&lt;void&gt; _save() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = _items.map((e) =&gt; e.toJson()).toList();
+    await prefs.setString('todos', jsonList.toString());  // 存成字符串
+  }
+
+  // 启动时读取本地数据
+  Future&lt;void&gt; load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString('todos');
+    if (raw == null) return;
+    // 简单解析：这里用 jsonEncode/decode 更严谨，示例从简
+  }
+}
+</code></pre>
+
+<h3>第 4 步：界面（UI）</h3>
+<pre class="codehilite"><code class="language-dart">// lib/features/todo/presentation/todo_page.dart
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'todo_model.dart';
+
+class TodoPage extends StatelessWidget {
+  const TodoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final model = context.watch&lt;TodoModel&gt;();  // 监听状态变化
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('我的待办')),
+      body: model.items.isEmpty
+          ? const Center(child: Text('暂无待办，点右下角添加'))
+          : ListView.builder(
+              itemCount: model.items.length,
+              itemBuilder: (context, index) {
+                final item = model.items[index];
+                return ListTile(
+                  leading: Checkbox(
+                    value: item.isDone,
+                    onChanged: (_) =&gt; model.toggle(item.id),
+                  ),
+                  title: Text(
+                    item.title,
+                    style: item.isDone
+                        ? const TextStyle(
+                            decoration: TextDecoration.lineThrough,  // 完成划线
+                            color: Colors.grey,
+                          )
+                        : null,
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () =&gt; model.remove(item.id),
+                  ),
+                );
+              },
+            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () =&gt; _showAddDialog(context),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  // 弹出输入框添加待办
+  Future&lt;void&gt; _showAddDialog(BuildContext context) async {
+    final controller = TextEditingController();
+    final title = await showDialog&lt;String&gt;(
+      context: context,
+      builder: (context) =&gt; AlertDialog(
+        title: const Text('添加待办'),
+        content: TextField(controller: controller),
+        actions: [
+          TextButton(
+            onPressed: () =&gt; Navigator.pop(context),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () =&gt; Navigator.pop(context, controller.text),
+            child: const Text('添加'),
+          ),
+        ],
+      ),
+    );
+    if (title != null &amp;&amp; title.trim().isNotEmpty) {
+      context.read&lt;TodoModel&gt;().add(title.trim());  // 调用添加
+    }
+  }
+}
+</code></pre>
+
+<h3>第 5 步：组装入口（main.dart）</h3>
+<pre class="codehilite"><code class="language-dart">// lib/main.dart
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'features/todo/presentation/todo_model.dart';
+import 'features/todo/presentation/todo_page.dart';
+
+void main() {
+  runApp(
+    ChangeNotifierProvider(          // 提供全局 TodoModel
+      create: (_) =&gt; TodoModel()..load(),
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '待办清单',
+      theme: ThemeData(colorSchemeSeed: Colors.blue),
+      home: const TodoPage(),
+    );
+  }
+}
+</code></pre>
+
+<h3>第 6 步：跑起来 + 后续扩展</h3>
+<pre class="codehilite"><code class="language-bash">flutter run
+</code></pre>
+
+<p><strong>扩展方向（进阶练习）：</strong><br>
+- 分类/优先级/截止日期<br>
+- 加测试（单元 + Widget）<br>
+- 换 sqflite 存更复杂数据<br>
+- 加推送提醒（flutter_local_notifications）</p>
+<p><strong>实战拆解心得：</strong><br>
+1. <strong>先想清楚再写码</strong>：功能清单 + 技术选型。<br>
+2. <strong>从小开始</strong>：MVP（最小可用版本）先跑通，再加功能。<br>
+3. <strong>分层清晰</strong>：Model 只存数据，逻辑在 Model 里，页面只管展示。<br>
+4. <strong>边写边测</strong>：功能写完立刻加测试。</p>
+<hr>
+<h2>五、iOS 开发者视角（老司机对照表）</h2>
+<table>
+<thead>
+<tr>
+<th>iOS 原生</th>
+<th>Flutter 插件</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UIImagePickerController</td>
+<td>image_picker</td>
+<td>相册/相机</td>
+</tr>
+<tr>
+<td>UserDefaults</td>
+<td>shared_preferences</td>
+<td>小数据存储</td>
+</tr>
+<tr>
+<td>SQLite / CoreData</td>
+<td>sqflite / drift</td>
+<td>本地数据库</td>
+</tr>
+<tr>
+<td>StoreKit（IAP）</td>
+<td>in_app_purchase</td>
+<td>内购</td>
+</tr>
+<tr>
+<td>APNs</td>
+<td>firebase_messaging</td>
+<td>推送</td>
+</tr>
+<tr>
+<td>UIActivityViewController</td>
+<td>share_plus</td>
+<td>系统分享</td>
+</tr>
+<tr>
+<td>Info.plist 权限声明</td>
+<td>Info.plist 权限声明（一样）</td>
+<td>权限声明</td>
+</tr>
+<tr>
+<td>系统权限弹窗</td>
+<td>permission_handler</td>
+<td>权限申请</td>
+</tr>
+<tr>
+<td>CocoaPods 插件</td>
+<td>pub.dev 插件</td>
+<td>插件市场</td>
+</tr>
+</tbody>
+</table>
+<p><strong>给 iOS 工程师的真心话：</strong><br>
+- 插件选型思路和 CocoaPods 一模一样：去仓库看评分、看更新、看维护者。<br>
+- <code>shared_preferences</code> 就是 UserDefaults，<code>share_plus</code> 就是 UIActivityViewController，几乎零学习成本。<br>
+- <strong>权限处理最像 iOS</strong>：Info.plist 声明 + 运行时申请 + 被拒引导，一套你熟悉的流程。<br>
+- 唯一要留心的：Flutter 插件有时需要额外配置原生端（比如在 AppDelegate 里初始化），装新插件后记得看它的"iOS 配置"说明，别只装不配。</p>
+<hr>
+<h2>六、小节小结</h2>
+<ol>
+<li>插件 = 现成零件，去 pub.dev 找；选型三看：评分、更新日期、维护者。</li>
+<li>五大类插件：照片/相机（image_picker）、本地存储（shared_preferences/sqflite）、支付（in_app_purchase）、推送（firebase_messaging）、分享（share_plus）。</li>
+<li>权限处理：iOS 先 Info.plist 声明 → 用 permission_handler 申请 → 被拒引导设置页。</li>
+<li>支付红线：虚拟商品必须走苹果/谷歌内购；支付结果必须后端二次验证。</li>
+<li>实战套路：规划 → 建项目装依赖 → Model → 状态管理 → UI → 组装入口 → 跑起来。</li>
+<li>工程节奏：MVP 先跑通，再加功能；边写边测。</li>
+</ol>
+<hr>
+<h2>七、本节动手练习（含答案提示）</h2>
+<p><strong>练习 1：插件选型</strong></p>
+<blockquote>
+<p>以下需求分别选哪个插件？A. 选照片　B. 存登录状态　C. 分享文字</p>
+<p>✅ 答案提示：A <code>image_picker</code>；B <code>shared_preferences</code>（小数据键值对）；C <code>share_plus</code>。</p>
+</blockquote>
+<p><strong>练习 2：权限配置</strong></p>
+<blockquote>
+<p>在 iOS 上使用相机拍照，除了申请运行时权限，还必须做什么才不会闪退？</p>
+<p>✅ 答案提示：在 <code>ios/Runner/Info.plist</code> 里添加 <code>NSCameraUsageDescription</code>（用途说明），否则 iOS 直接闪退。</p>
+</blockquote>
+<p><strong>练习 3：支付红线</strong></p>
+<blockquote>
+<p>一个 App 卖"会员订阅"，用户想用微信支付，行不行？为什么？</p>
+<p>✅ 答案提示：不行。虚拟商品（会员/金币）在 iOS 必须走苹果内购（in_app_purchase），用第三方支付会被 App Store 审核拒绝。</p>
+</blockquote>
+<p><strong>练习 4：实战拆解</strong></p>
+<blockquote>
+<p>待办清单 App 的数据保存，为什么选 shared_preferences 而不是 sqflite？</p>
+<p>✅ 答案提示：数据量小、结构简单（纯字符串列表），shared_preferences 够用且简单；数据量大、查询复杂（多表、搜索）才需要 sqflite。</p>
+</blockquote>
+<p><strong>练习 5：状态管理回顾</strong></p>
+<blockquote>
+<p>待办清单里 <code>context.watch&lt;TodoModel&gt;()</code> 和 <code>context.read&lt;TodoModel&gt;()</code> 有什么区别？</p>
+<p>✅ 答案提示：<code>watch</code> 在 build 里用（监听变化自动重建）；<code>read</code> 在事件回调里用（只读一次，不监听，避免多余重建）。</p>
+</blockquote>
+<hr>
+<h2>下一步</h2>
+<p>恭喜！你已完成 <strong>Flutter 工作实战</strong> 的全部 4 篇课程：</p>
+<ol>
+<li>✅ 项目架构与工程化</li>
+<li>✅ 测试</li>
+<li>✅ 打包与上架</li>
+<li>✅ 常用插件与实战案例</li>
+</ol>
+<p>至此，从基础到高深的 Flutter 学习主线已全部打通，且完成了工程化、测试、上架、实战的完整闭环。最后一步是巩固冲刺——<strong>面试题集合与各种练习题（含答案）</strong>，建议进入 <strong>Flutter/05-面试与练习/</strong> 模块，检验学习成果、备战面试。</p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

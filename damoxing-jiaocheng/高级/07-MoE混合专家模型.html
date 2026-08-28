@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>高级 07：MoE 混合专家模型（Mixtral / DeepSeek-MoE） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 高级模块</div>
+    <h1>高级 07：MoE 混合专家模型（Mixtral / DeepSeek-MoE）</h1>
+    <span class="header-tag">高级模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>总参数几百 B，每次只激活几十 B——MoE 是「人海战术」的聪明版。</p></blockquote><hr>
+<h2>1. 原理</h2>
+<p>把 FFN 层换成 N 个「专家」子网络。路由器（Router）根据输入决定叫哪 2~4 个专家干活。</p>
+<hr>
+<h2>2. 优势与代价</h2>
+<table><thead><tr><th></th><th>MoE</th><th>稠密模型</th></tr></thead><tbody><tr><td>总参数量</td><td>可以很大</td><td>受显存限制</td></tr><tr><td>激活参数</td><td>少，推理快</td><td>全部激活</td></tr><tr><td>训练</td><td>复杂，需负载均衡</td><td>简单</td></tr><tr><td>代表</td><td>Mixtral 8x7B, DeepSeek-V3</td></tr></tbody></table>
+<hr>
+<h2>3. 负载均衡</h2>
+<p>如果路由器总叫同一个专家，其他专家废了。训练时要加辅助损失让专家均匀使用。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

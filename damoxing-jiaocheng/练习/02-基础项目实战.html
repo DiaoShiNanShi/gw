@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>练习 02：基础项目实战（5 个递进项目，做完就入门了） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 练习模块</div>
+    <h1>练习 02：基础项目实战（5 个递进项目，做完就入门了）</h1>
+    <span class="header-tag">练习模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：5 个项目从"跑通"到"开发"，难度逐级递增，每个都能在你的 M2 16GB 上跑起来。<br />
+做完这 5 个项目，你已经超过 90% 只会聊天的大模型爱好者。</p>
+</blockquote>
+<hr />
+<h2>项目 0：验证环境（5 分钟，必做）</h2>
+<p>跑通 Ollama 并和模型对话：</p>
+<pre><code class="language-bash">ollama run qwen2.5:1.5b
+</code></pre>
+<pre><code class="language-text">&gt;&gt;&gt; 用三句话解释什么是大模型
+&gt;&gt;&gt; /bye
+</code></pre>
+<p><strong>验收标准</strong>：能看到流式输出的中文回答。✅ 通过后开始项目 1。</p>
+<hr />
+<div class="tip-box">💡 下方深色代码块中，<strong>可在浏览器直接运行的 Python 示例</strong> 会显示绿色「▶ 可运行」标签；需要 Ollama/终端的命令显示「📋 终端命令」，请复制到本机执行。</div>
+<h2>项目 1：用 Python 调用本地模型（30 分钟）</h2>
+<div class="demo-card">
+<div class="demo-card-header">▶ 可运行示例：Python 基础（浏览器内运行，无需安装）</div>
+<div class="demo-card-body">
+<pre><code class="language-python"># 模拟大模型"逐字输出"（纯 Python 演示，不调用真实 API）
+prompt = "电池要不要"
+candidates = ["换", "更换", "充电", "等等"]
+
+print("输入:", prompt)
+print("候选下一个字:", candidates)
+print("模拟输出:", prompt + candidates[0])
+print("---")
+for i, c in enumerate(candidates):
+    print(f"  候选 {i+1}: {c}")
+</code></pre>
+</div></div>
+
+<p><strong>目标</strong>：学会用代码和模型对话（这是所有 AI 开发的基础）。</p>
+<pre><code class="language-python"># chat.py
+from openai import OpenAI
+
+# Ollama 兼容 OpenAI 接口，所以直接用 openai 库就能调本地模型
+client = OpenAI(base_url=&quot;http://localhost:11434/v1&quot;, api_key=&quot;ollama&quot;)
+
+resp = client.chat.completions.create(
+    model=&quot;qwen2.5:1.5b&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;用一句话解释什么是内存&quot;}],
+    temperature=0.7,
+)
+print(resp.choices[0].message.content)
+</code></pre>
+<p>运行：</p>
+<pre><code class="language-bash">python chat.py
+</code></pre>
+<p><strong>学到的知识点</strong>：API 调用、消息格式（system/user/assistant）、temperature 参数。</p>
+<p><strong>扩展练习</strong>：<br />
+- 改成连续多轮对话（循环输入）<br />
+- 试试不同的 temperature（0.1 vs 1.5），观察回答差异<br />
+- 用 <code>stream=True</code> 实现流式输出</p>
+<h2>项目 2：命令行翻译助手（1 小时）</h2>
+<p><strong>目标</strong>：做一个"中译英"工具，理解 System Prompt 的作用。</p>
+<pre><code class="language-python"># translator.py
+from openai import OpenAI
+
+client = OpenAI(base_url=&quot;http://localhost:11434/v1&quot;, api_key=&quot;ollama&quot;)
+
+SYSTEM = &quot;你是一个专业翻译。把用户输入翻译成英语，只输出译文，不要解释。&quot;
+
+def translate(text):
+    resp = client.chat.completions.create(
+        model=&quot;qwen2.5:1.5b&quot;,
+        messages=[
+            {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: SYSTEM},
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: text},
+        ],
+    )
+    return resp.choices[0].message.content
+
+if __name__ == &quot;__main__&quot;:
+    while True:
+        text = input(&quot;请输入中文（q 退出）: &quot;)
+        if text.lower() == &quot;q&quot;:
+            break
+        print(&quot;翻译:&quot;, translate(text))
+</code></pre>
+<p><strong>学到的知识点</strong>：System Prompt 控制行为、角色设定。</p>
+<p><strong>扩展练习</strong>：<br />
+- 加"翻译成日语/法语"选项<br />
+- 加"润色文案"模式（换 SYSTEM 就行）</p>
+<h2>项目 3：本地知识库问答（RAG 入门，半天）</h2>
+<p><strong>目标</strong>：把你的笔记/文档做成 AI 能查的知识库。这是最实用、面试最爱问的项目。</p>
+<p>原理回顾：文档切片 → 向量化 → 存向量库 → 检索 → 喂给模型。</p>
+<pre><code class="language-python"># rag_demo.py
+import chromadb
+from openai import OpenAI
+
+client = OpenAI(base_url=&quot;http://localhost:11434/v1&quot;, api_key=&quot;ollama&quot;)
+vector_client = chromadb.Client()
+col = vector_client.create_collection(&quot;my_notes&quot;)
+
+# 第 1 步：把文档切片存进向量库（这里用你自己的 txt 笔记）
+with open(&quot;我的笔记.txt&quot;, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+    text = f.read()
+chunks = [text[i:i+500] for i in range(0, len(text), 500)]  # 500 字一段
+
+# 第 2 步：用 Embedding 模型向量化（先拉取：ollama pull nomic-embed-text）
+from chromadb.utils.embedding_functions import OllamaEmbeddingFunction
+ef = OllamaEmbeddingFunction(url=&quot;http://localhost:11434/api/embeddings&quot;, model_name=&quot;nomic-embed-text&quot;)
+
+for i, chunk in enumerate(chunks):
+    col.add(ids=[str(i)], documents=[chunk], embeddings=ef([chunk]))
+
+# 第 3 步：提问时先检索再回答
+question = &quot;我的笔记里提到了什么主题？&quot;
+results = col.query(query_embeddings=ef([question]), n_results=3)
+context = &quot;\n&quot;.join(results[&quot;documents&quot;][0])
+
+resp = client.chat.completions.create(
+    model=&quot;qwen2.5:1.5b&quot;,
+    messages=[{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;根据资料回答问题，资料里没有就说不知道。&quot;},
+              {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: f&quot;资料：\n{context}\n\n问题：{question}&quot;}],
+)
+print(resp.choices[0].message.content)
+</code></pre>
+<p><strong>先拉 embedding 模型</strong>：</p>
+<pre><code class="language-bash">ollama pull nomic-embed-text
+</code></pre>
+<p><strong>学到的知识点</strong>：Embedding、向量数据库、RAG 全流程、上下文拼接。</p>
+<p><strong>扩展练习</strong>：<br />
+- 换你的真实笔记/工作文档<br />
+- 问"笔记里没写"的问题，验证"说不知道"的效果</p>
+<h2>项目 4：AI 网页助手（半天）</h2>
+<p><strong>目标</strong>：做一个本地网页聊天界面，体验"产品化"。</p>
+<pre><code class="language-bash"># 装 Web 框架
+pip install fastapi uvicorn
+</code></pre>
+<pre><code class="language-python"># web_chat.py
+from fastapi import FastAPI
+from pydantic import BaseModel
+from openai import OpenAI
+
+app = FastAPI()
+client = OpenAI(base_url=&quot;http://localhost:11434/v1&quot;, api_key=&quot;ollama&quot;)
+
+class Msg(BaseModel):
+    content: str
+
+@app.post(&quot;/chat&quot;)
+def chat(msg: Msg):
+    resp = client.chat.completions.create(
+        model=&quot;qwen2.5:1.5b&quot;,
+        messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: msg.content}],
+    )
+    return {&quot;reply&quot;: resp.choices[0].message.content}
+
+# 启动：uvicorn web_chat:app --port 8000
+# 浏览器访问 http://localhost:8000/docs 就能测试接口
+</code></pre>
+<p><strong>学到的知识点</strong>：API 服务、前后端分离思想、模型部署。</p>
+<p><strong>扩展练习</strong>：<br />
+- 加一个简单 HTML 前端页面<br />
+- 把项目 3 的 RAG 接进来（知识库问答网页版）</p>
+<h2>项目 5：LoRA 微调小模型（进阶，1~2 天）</h2>
+<p><strong>目标</strong>：用你自己的数据"教"模型新东西。这是从"用户"到"开发者"的跨越。</p>
+<p>在你的配置上，推荐微调 0.5B~1.5B 的小模型（LoRA 补丁很小，训练快）。</p>
+<pre><code class="language-bash"># 用 mlx-lm 微调（Apple Silicon 最快方案）
+pip install mlx-lm
+</code></pre>
+<p>准备训练数据 <code>train.jsonl</code>（每行一条）：</p>
+<pre><code class="language-json">{&quot;text&quot;: &quot;用户：今天天气怎么样？\n助手：今天晴转多云，气温 25 度，适合出门。&quot;}
+{&quot;text&quot;: &quot;用户：推荐一家火锅店\n助手：推荐你试试川味老灶，毛肚和鸭肠是一绝。&quot;}
+</code></pre>
+<p>训练（在终端执行，约 10~20 分钟）：</p>
+<pre><code class="language-bash">python -m mlx_lm.lora \
+  --model Qwen/Qwen2.5-0.5B-Instruct-4bit \
+  --train \
+  --data ./train.jsonl \
+  --iters 200 \
+  --batch-size 4 \
+  --learning-rate 1e-5 \
+  --adapter-path ./my-adapter
+</code></pre>
+<p>测试微调效果：</p>
+<pre><code class="language-bash">python -m mlx_lm.generate \
+  --model Qwen/Qwen2.5-0.5B-Instruct-4bit \
+  --adapter-path ./my-adapter \
+  --prompt &quot;推荐一家火锅店&quot;
+</code></pre>
+<p><strong>学到的知识点</strong>：数据准备、LoRA 原理落地、训练超参数（学习率/迭代次数）。</p>
+<p><strong>扩展练习</strong>：<br />
+- 收集 100 条你自己的问答数据（比如你工作领域的话术）<br />
+- 对比微调前后回答差异<br />
+- 试试 QLoRA（量化 + LoRA 组合）</p>
+<hr />
+<h2>项目难度总览</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>难度</th>
+<th>耗时</th>
+<th>核心技能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Python 调模型</td>
+<td>⭐</td>
+<td>30 分钟</td>
+<td>API 调用</td>
+</tr>
+<tr>
+<td>2. 翻译助手</td>
+<td>⭐⭐</td>
+<td>1 小时</td>
+<td>Prompt 工程</td>
+</tr>
+<tr>
+<td>3. RAG 知识库</td>
+<td>⭐⭐⭐</td>
+<td>半天</td>
+<td>向量检索</td>
+</tr>
+<tr>
+<td>4. AI 网页助手</td>
+<td>⭐⭐⭐</td>
+<td>半天</td>
+<td>API 服务</td>
+</tr>
+<tr>
+<td>5. LoRA 微调</td>
+<td>⭐⭐⭐⭐</td>
+<td>1~2 天</td>
+<td>微调训练</td>
+</tr>
+</tbody>
+</table>
+<p><strong>学习建议</strong>：项目 1~4 按顺序做完（预计 1 周），项目 5 作为进阶挑战。每个项目做完后，写一篇笔记记录你的理解和踩坑，这是最好的学习方式。</p>
+<hr />
+<p><strong>下一步：</strong> 做完项目后，用 <a href="03-自测题.html">03-自测题.html</a> 检验学习成果。<br />
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

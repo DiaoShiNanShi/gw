@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生 12：推送通知与后台任务 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 原生模块</div>
+    <h1>iOS 原生 12：推送通知与后台任务</h1>
+    <span class="header-tag">iOS 原生模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>APNs、Background Modes、后台下载模型。</p></blockquote><hr>
+<h2>1. APNs 流程</h2>
+<p>Apple 服务器 → 设备 Token → 你的后端发推送。需证书/Key 配置。</p>
+<hr>
+<h2>2. 后台模式</h2>
+<table><thead><tr><th>Mode</th><th>用途</th></tr></thead><tbody><tr><td>audio</td><td>后台播放</td></tr><tr><td>fetch</td><td>后台拉取</td></tr><tr><td>processing</td><td>后台处理任务</td></tr><tr><td>remote-notification</td><td>静默推送</td></tr></tbody></table>
+<hr>
+<h2>3. 后台下载模型</h2>
+<p>用 <code>URLSessionConfiguration.background</code> 下载大模型文件，下完通知用户。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

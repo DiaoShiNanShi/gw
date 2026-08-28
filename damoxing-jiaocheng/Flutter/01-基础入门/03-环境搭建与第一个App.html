@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>03-环境搭建与第一个App - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 基础入门</div>
+    <h1>03-环境搭建与第一个App</h1>
+    <span class="header-tag">基础入门</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>03-环境搭建与第一个 App</h1>
+<blockquote>
+<p>大白话版 · Mac 上从零跑起 Flutter（小白向）<br>
+目标：装好 Flutter SDK、配好环境、创建项目、在模拟器上看到 Hello World。</p>
+</blockquote>
+<hr>
+<h2>一、先讲"是什么"：环境搭建到底在搭什么？</h2>
+<p><strong>一句话版本：环境搭建 = 给 Flutter 装上"工具包"并告诉电脑"工具在哪"，让电脑能编译和运行 Flutter 代码。</strong></p>
+<p>打个比方：</p>
+<blockquote>
+<p>你想开一家奶茶店。光有配方（代码）不够，你还得有：<br>
+- <strong>厨房设备</strong>（Flutter SDK）——做奶茶的整套工具<br>
+- <strong>水电燃气</strong>（Xcode / Android Studio）——让设备运转起来的基础设施<br>
+- <strong>店铺地址</strong>（PATH 配置）——让系统知道"厨房设备"放在哪，随时能找到</p>
+<p>本篇就是把"厨房"装修好，然后做第一杯奶茶（Hello World）。</p>
+</blockquote>
+<h3>我们最终要装什么（清单）</h3>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>作用</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Flutter SDK</strong></td>
+<td>Flutter 本体</td>
+<td>做奶茶的"整套厨具"</td>
+</tr>
+<tr>
+<td><strong>Xcode</strong>（含 Command Line Tools）</td>
+<td>编译 iOS App + 启动 iOS 模拟器</td>
+<td>iPhone 的"水电"</td>
+</tr>
+<tr>
+<td><strong>Android Studio</strong>（可选）</td>
+<td>编译 Android App + 安卓模拟器</td>
+<td>安卓手机的"水电"</td>
+</tr>
+<tr>
+<td><strong>Chrome</strong>（可选）</td>
+<td>跑 Flutter Web</td>
+<td>网页版试喝窗口</td>
+</tr>
+<tr>
+<td><strong>VS Code 或 Android Studio</strong></td>
+<td>写代码的编辑器</td>
+<td>你的"操作台"</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>如果你只想在 iPhone 模拟器上跑，<strong>Xcode 是必须的</strong>，Android Studio 可以先不装（后面做安卓再补）。</p>
+</blockquote>
+<hr>
+<h2>二、再讲"为什么"：为什么要这么装？</h2>
+<ul>
+<li><strong>Flutter SDK 是核心</strong>：没有它，你写的 Dart 代码没人帮你翻译成 App。</li>
+<li><strong>Xcode 是 iOS 的"编译车间"</strong>：Flutter 在 iOS 上最终要借用 Xcode 的工具链把代码打包成 App（就像 Swift 代码需要 Xcode 编译一样）。</li>
+<li><strong>PATH 配置是为了"随处可用"</strong>：配好 PATH 后，你在终端任意目录敲 <code>flutter</code> 命令，系统都能找到它。不配的话，每次都要输一长串路径，烦死人。</li>
+</ul>
+<hr>
+<h2>三、怎么用：一步步装起来（Mac 版）</h2>
+<h3>第 1 步：检查电脑基础条件</h3>
+<pre class="codehilite"><code class="language-bash"># 打开终端（Terminal），依次输入：
+sw_vers              # 查看 macOS 版本（建议 12.0+）
+xcode-select -p      # 查看 Xcode 命令行工具是否已安装
+</code></pre>
+
+<ul>
+<li>如果 <code>xcode-select -p</code> 报错，先安装 Xcode（App Store 搜索 Xcode 安装，较大）或运行：</li>
+</ul>
+<pre class="codehilite"><code class="language-bash">xcode-select --install
+</code></pre>
+
+<h3>第 2 步：下载 Flutter SDK</h3>
+<ol>
+<li>打开官网：https://docs.flutter.dev/get-started/install/macos</li>
+<li>下载最新的稳定版 SDK 压缩包（文件名类似 <code>flutter_macos_xxx-stable.zip</code>）。</li>
+<li>也可以直接用终端下载（以 macOS ARM 版为例）：</li>
+</ol>
+<pre class="codehilite"><code class="language-bash"># 把 SDK 下载到&quot;下载&quot;文件夹
+cd ~/Downloads
+curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_arm64_3.x.x-stable.zip
+
+# 解压（如果下载的是 zip）
+unzip flutter_macos_arm64_3.x.x-stable.zip
+</code></pre>
+
+<blockquote>
+<p>小贴士：如果官网/谷歌下载慢，可以用国内镜像（把下载地址换成 flutter 中国镜像站），或直接解压后配置镜像环境变量（见第 4 步）。</p>
+</blockquote>
+<h3>第 3 步：把 Flutter 放到合适的位置并配置 PATH</h3>
+<p>推荐把 Flutter 放到 <code>~/development</code> 或 <code>~/flutter</code>（你自己的目录，不要放系统目录）。</p>
+<pre class="codehilite"><code class="language-bash"># 1. 创建目录并移动（假设解压在 ~/Downloads/flutter）
+mkdir -p ~/development
+mv ~/Downloads/flutter ~/development/flutter
+
+# 2. 配置 PATH：把 flutter/bin 加进系统 PATH（写入配置文件 ~/.zshrc）
+echo 'export PATH=&quot;$PATH:$HOME/development/flutter/bin&quot;' &gt;&gt; ~/.zshrc
+
+# 3. 让配置立即生效
+source ~/.zshrc
+
+# 4. 验证是否成功（看到版本号就说明装好了）
+flutter --version
+</code></pre>
+
+<blockquote>
+<p><strong>PATH 是什么？</strong> 大白话：PATH 是系统的一张"寻人启事清单"，告诉终端"去哪里找命令"。加了 flutter/bin 之后，你在任何地方敲 <code>flutter</code>，终端都知道去 <code>~/development/flutter/bin</code> 里找它。</p>
+</blockquote>
+<h3>第 4 步：配置国内镜像（可选，但强烈建议）</h3>
+<p>如果你在国内网络环境，Flutter 下载依赖很慢，配置镜像（以清华/腾讯镜像为例）：</p>
+<pre class="codehilite"><code class="language-bash"># 追加到 ~/.zshrc
+echo 'export PUB_HOSTED_URL=https://pub.flutter-io.cn' &gt;&gt; ~/.zshrc
+echo 'export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn' &gt;&gt; ~/.zshrc
+source ~/.zshrc
+</code></pre>
+
+<h3>第 5 步：运行 flutter doctor 体检</h3>
+<pre class="codehilite"><code class="language-bash">flutter doctor
+</code></pre>
+
+<p><code>flutter doctor</code> 就像"体检报告"，检查每个环节是否正常：</p>
+<table>
+<thead>
+<tr>
+<th>检查项</th>
+<th>正常标志</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flutter</td>
+<td>绿色 <code>[✓] Flutter</code></td>
+</tr>
+<tr>
+<td>Xcode</td>
+<td>绿色 <code>[✓] Xcode - develop for iOS and macOS</code></td>
+</tr>
+<tr>
+<td>Chrome</td>
+<td>绿色 <code>[✓] Chrome - develop for the web</code></td>
+</tr>
+<tr>
+<td>Android toolchain</td>
+<td>没装安卓时是 <code>[✗]</code>，可先忽略</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>看到 <code>[✗]</code> 别慌，看它提示缺什么。通常 <code>flutter doctor --android-licenses</code> 或安装对应组件就能解决。</p>
+</blockquote>
+<h3>第 6 步：创建第一个项目</h3>
+<pre class="codehilite"><code class="language-bash"># 进入你想放项目的目录，比如桌面
+cd ~/Desktop
+
+# 创建 Flutter 项目（my_first_app 是项目名，必须小写+下划线）
+flutter create my_first_app
+
+# 进入项目目录
+cd my_first_app
+</code></pre>
+
+<p>创建成功后项目里会有：<br>
+- <code>lib/main.dart</code> —— <strong>你的主代码文件</strong>（以后主要写这里）<br>
+- <code>pubspec.yaml</code> —— 项目的"依赖清单"（相当于 Podfile）<br>
+- <code>ios/</code>、<code>android/</code> 等 —— 各平台的"壳工程"（一般不用手动改）</p>
+<h3>第 7 步：启动模拟器并运行</h3>
+<p><strong>方式 A：iOS 模拟器（推荐先跑这个）</strong></p>
+<pre class="codehilite"><code class="language-bash"># 打开 iOS 模拟器（需要已装 Xcode）
+open -a Simulator
+
+# 在项目目录里运行（首次编译较慢，耐心等）
+flutter run
+</code></pre>
+
+<p>看到模拟器上出现一个默认计数器 App，就说明成功了！</p>
+<p><strong>方式 B：Chrome 网页版（最快，无需模拟器）</strong></p>
+<pre class="codehilite"><code class="language-bash">flutter run -d chrome
+</code></pre>
+
+<p><strong>方式 C：列出所有可用设备</strong></p>
+<pre class="codehilite"><code class="language-bash">flutter devices   # 查看有哪些设备/模拟器可选
+flutter run -d &lt;设备ID&gt;
+</code></pre>
+
+<h3>第 8 步：把 Hello World 改成"自己的"</h3>
+<p>用 VS Code 或任何编辑器打开 <code>lib/main.dart</code>，把中间的核心部分替换成最简单的代码（下面的完整版可直接用）：</p>
+<pre class="codehilite"><code class="language-dart">// lib/main.dart —— 第一个 Hello World
+import 'package:flutter/material.dart';
+
+// main 函数：App 的启动入口（相当于 iOS 的 main）
+void main() {
+  // runApp：把我们的根 Widget 交给 Flutter 渲染
+  runApp(const MyApp());
+}
+
+// 定义一个 App（StatelessWidget：没有状态的静态页面）
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // MaterialApp：Material 风格的 App 外壳（提供主题、导航等）
+    return MaterialApp(
+      title: '我的第一个 App',
+      // Scaffold：页面的&quot;骨架&quot;（相当于 UIViewController 的 view）
+      home: Scaffold(
+        // AppBar：顶部标题栏（相当于 UINavigationBar）
+        appBar: AppBar(
+          title: const Text('Hello Flutter'),
+        ),
+        // body：页面主体内容
+        body: const Center(
+          // Center：把子组件放到屏幕中间
+          child: Text(
+            'Hello World！我的第一个 Flutter App',
+            style: TextStyle(fontSize: 24),  // 文字大小
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<p>保存文件后，回到运行 <code>flutter run</code> 的终端，按键盘 <code>r</code> 键（热重载），模拟器上的界面会立刻刷新成你的新内容。这就是 Flutter 最爽的"热重载"！</p>
+<hr>
+<h2>四、模拟器使用速查（小白版）</h2>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>命令 / 方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>打开 iOS 模拟器</td>
+<td><code>open -a Simulator</code></td>
+</tr>
+<tr>
+<td>查看所有设备</td>
+<td><code>flutter devices</code></td>
+</tr>
+<tr>
+<td>在 iOS 模拟器运行</td>
+<td><code>flutter run</code>（默认）或 <code>flutter run -d ios</code></td>
+</tr>
+<tr>
+<td>在 Chrome 运行</td>
+<td><code>flutter run -d chrome</code></td>
+</tr>
+<tr>
+<td>热重载（改代码立即生效）</td>
+<td>运行中按 <code>r</code></td>
+</tr>
+<tr>
+<td>完全重启 App</td>
+<td>运行中按 <code>R</code>（大写）</td>
+</tr>
+<tr>
+<td>退出运行</td>
+<td>按 <code>q</code></td>
+</tr>
+<tr>
+<td>清理编译缓存（遇到奇怪报错）</td>
+<td><code>flutter clean</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>五、iOS 开发者视角（老司机对照表）</h2>
+<table>
+<thead>
+<tr>
+<th>iOS 原生概念</th>
+<th>Flutter 对应</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Xcode 安装</td>
+<td>Flutter SDK 安装</td>
+<td>都是"装工具链"</td>
+</tr>
+<tr>
+<td>创建 Xcode 工程</td>
+<td><code>flutter create</code></td>
+<td>生成工程骨架</td>
+</tr>
+<tr>
+<td>Scheme / Target</td>
+<td>项目内的 ios/android 壳工程</td>
+<td>打包配置</td>
+</tr>
+<tr>
+<td>AppDelegate / main</td>
+<td><code>main()</code> + <code>runApp()</code></td>
+<td>启动入口</td>
+</tr>
+<tr>
+<td>模拟器（iOS Simulator）</td>
+<td>同样的 iOS 模拟器</td>
+<td>一模一样，直接用</td>
+</tr>
+<tr>
+<td>真机调试</td>
+<td><code>flutter run</code> 连接真机</td>
+<td>需要开发者证书</td>
+</tr>
+<tr>
+<td>Podfile</td>
+<td><code>pubspec.yaml</code></td>
+<td>依赖管理文件</td>
+</tr>
+<tr>
+<td>Xcode 编译</td>
+<td><code>flutter build</code> / <code>flutter run</code></td>
+<td>构建命令</td>
+</tr>
+<tr>
+<td>热重载</td>
+<td><code>r</code> 键秒级刷新</td>
+<td>原生没有的福利</td>
+</tr>
+</tbody>
+</table>
+<p><strong>给 iOS 工程师的提醒：</strong><br>
+- 你电脑上已有的 Xcode 和 iOS 模拟器<strong>直接就能用</strong>，Flutter 会"借用"它们，不用额外装双份。<br>
+- <code>pubspec.yaml</code> 就是"Podfile + Package.swift"的角色，加依赖后要执行 <code>flutter pub get</code>（相当于 <code>pod install</code>）。<br>
+- 首次 <code>flutter run</code> 慢是正常的（要编译整个引擎 + 壳工程），第二次就快了。</p>
+<hr>
+<h2>六、小节小结</h2>
+<ol>
+<li>环境三件套：Flutter SDK + Xcode + 编辑器，缺一不可。</li>
+<li>配置 PATH 后，<code>flutter</code> 命令随处可用；<code>flutter doctor</code> 是体检工具。</li>
+<li><code>flutter create 项目名</code> 生成工程，<code>flutter run</code> 运行，<code>r</code> 键热重载。</li>
+<li>第一个 App 的核心代码只有三件事：<code>main()</code> → <code>runApp()</code> → 一个 Widget 树。</li>
+<li>iOS 模拟器直接复用你已有的 Xcode 环境，无需额外折腾。</li>
+</ol>
+<hr>
+<h2>七、本节动手练习（含答案提示）</h2>
+<p><strong>练习 1：验证安装</strong></p>
+<blockquote>
+<p>在终端输入什么命令能查看 Flutter 是否安装成功？什么命令能做"体检"？</p>
+<p>✅ 答案提示：<code>flutter --version</code> 看版本；<code>flutter doctor</code> 做体检。</p>
+</blockquote>
+<p><strong>练习 2：创建并运行</strong></p>
+<blockquote>
+<p>请创建一个名为 <code>hello_flutter</code> 的项目，并列出运行它所需的命令。</p>
+<p>✅ 答案提示：<code>flutter create hello_flutter</code> → <code>cd hello_flutter</code> → <code>open -a Simulator</code> → <code>flutter run</code>。</p>
+</blockquote>
+<p><strong>练习 3：修改文本</strong></p>
+<blockquote>
+<p>把 Hello World 页面中间的文字改成你自己的名字，并用热重载查看效果。热重载按哪个键？</p>
+<p>✅ 答案提示：修改 <code>lib/main.dart</code> 里 <code>Text('...')</code> 的内容，保存后在终端按 <code>r</code> 键。</p>
+</blockquote>
+<p><strong>练习 4：排查报错</strong></p>
+<blockquote>
+<p><code>flutter run</code> 报 "No devices found"，可能是什么原因？怎么解决？</p>
+<p>✅ 答案提示：没有可用设备。解决：先 <code>open -a Simulator</code> 打开模拟器，或 <code>flutter run -d chrome</code> 用网页跑，或 <code>flutter devices</code> 查看设备列表。</p>
+</blockquote>
+<p><strong>练习 5：概念连线</strong></p>
+<blockquote>
+<p>连线：<code>main()</code> ↔ ？　<code>runApp()</code> ↔ ？　<code>pubspec.yaml</code> ↔ ？　<code>flutter doctor</code> ↔ ？</p>
+<p>✅ 答案提示：<code>main()</code> ↔ App 启动入口；<code>runApp()</code> ↔ 把根 Widget 交给 Flutter 渲染；<code>pubspec.yaml</code> ↔ 依赖清单（Podfile）；<code>flutter doctor</code> ↔ 环境体检。</p>
+</blockquote>
+<hr>
+<h2>下一步</h2>
+<p>环境已经跑通，第一个 App 已经上屏！接下来学 Flutter 最核心的思想——万物皆 Widget。</p>
+<p>👉 下一篇：<a href="04-Widget基础.html">04-Widget基础.html</a></p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

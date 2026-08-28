@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生 05：Objective-C 与 Swift 混编 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 原生模块</div>
+    <h1>iOS 原生 05：Objective-C 与 Swift 混编</h1>
+    <span class="header-tag">iOS 原生模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>老项目大量 OC 代码，新功能用 Swift 写——混编是必修课。</p></blockquote><hr>
+<h2>1. 为什么还有 OC</h2>
+<p>2014 年前的老 App、大量第三方 SDK 仍是 OC。你会维护 legacy 代码。</p>
+<hr>
+<h2>2. 互调规则</h2>
+<table><thead><tr><th>方向</th><th>做法</th></tr></thead><tbody><tr><td>Swift 调 OC</td><td>Bridging-Header 导入 .h</td></tr><tr><td>OC 调 Swift</td><td>Xcode 自动生成 ProjectName-Swift.h</td></tr><tr><td>.category</td><td>OC 扩展仍常用</td></tr></tbody></table>
+<hr>
+<h2>3. 示例</h2>
+<pre><code class="language-objc">// MyClass.h
+@interface MyClass : NSObject
+- (void)sayHello;
+@end
+
+// Swift 里直接 MyClass().sayHello()</code></pre>
+<hr>
+<h2>4. AI 模块建议</h2>
+<p>新 AI 功能用 Swift Module 写，OC 项目通过 <code>@objc</code> 暴露接口给老代码调用。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

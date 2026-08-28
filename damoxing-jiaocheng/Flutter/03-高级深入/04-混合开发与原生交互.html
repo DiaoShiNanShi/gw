@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>04-混合开发与原生交互 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 高级深入</div>
+    <h1>04-混合开发与原生交互</h1>
+    <span class="header-tag">高级深入</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>04-混合开发与原生交互</h1>
+<blockquote>
+<p>大白话版 · Flutter 与原生互相调用（小白向）<br>
+目标：学会 Platform Channel 三大通道（MethodChannel/EventChannel/BasicMessageChannel）、与 iOS 原生混编（Swift 调用、原生页面跳转）、platform view 与常见坑。</p>
+</blockquote>
+<hr>
+<h2>一、先讲"是什么"：为什么需要和原生交互？</h2>
+<p><strong>一句话版本：Flutter 有些事自己干不了（或干不好），需要"打电话"给原生系统帮忙。</strong></p>
+<p>打个比方：</p>
+<blockquote>
+<p>你的 Flutter App 开在一家"商场"里（iOS 系统）：<br>
+- 大部分店铺（界面）是你自己开的（Flutter 自绘）<br>
+- 但有些"公共设施"必须找商场物业（原生系统）：<br>
+  - 刷脸支付（Face ID）<br>
+  - 震动马达（Taptic Engine）<br>
+  - 系统相册选择器<br>
+  - 推送通知（APNs）<br>
+  - 某些第三方 SDK（支付/地图/统计）</p>
+<p><strong>Platform Channel（平台通道）</strong> 就是你和物业之间的"对讲机"，Flutter 通过它和原生互相对话。</p>
+</blockquote>
+<h3>三种对讲机（通道）对比</h3>
+<table>
+<thead>
+<tr>
+<th>通道</th>
+<th>大白话</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MethodChannel</strong></td>
+<td>"打电话，一问一答"</td>
+<td>调用一次拿结果（获取电量、调 Face ID）——<strong>最常用</strong></td>
+</tr>
+<tr>
+<td><strong>EventChannel</strong></td>
+<td>"对讲机开着，持续接收消息"</td>
+<td>持续监听（传感器、电量变化、原生事件流）</td>
+</tr>
+<tr>
+<td><strong>BasicMessageChannel</strong></td>
+<td>"互发短信，双向随时发"</td>
+<td>双向通信、传递任意消息</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>二、再讲"为什么"：为什么 Flutter 不直接调系统 API？</h2>
+<p><strong>大白话：</strong></p>
+<blockquote>
+<p>Flutter 的 Dart 代码跑在"自己的世界"里（Engine），和 iOS 的 Objective-C/Swift 世界<strong>语言不通、内存不共享</strong>。<br>
+就像两个国家的人，必须通过"翻译官"沟通。Platform Channel 就是那位翻译官：<br>
+- 你（Dart）说"帮我拿一下电量" → 翻译官（Channel） → 原生（Swift）执行 → 把结果翻译回来</p>
+</blockquote>
+<p><strong>为什么不直接内嵌系统控件？</strong> 因为 Flutter 是"自绘"的，直接嵌原生控件会破坏一致性、增加成本。所以默认全部自绘，需要原生能力时才通过 Channel 调用。</p>
+<blockquote>
+<p>对 iOS 工程师：Platform Channel ≈ <strong>JSBridge</strong>（JS 和原生通信）或原生里的跨进程通信，本质都是"序列化消息 + 双向桥接"。</p>
+</blockquote>
+<hr>
+<h2>三、怎么用：三大通道逐个击破</h2>
+<h3>3.1 MethodChannel（最常用：调用一次拿结果）</h3>
+<p><strong>场景：</strong> Flutter 调用 iOS 原生获取"电池电量"。</p>
+<p><strong>第一步：Flutter 端（Dart 侧）发起调用</strong></p>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/services.dart';
+
+// 创建一个通道（名字必须和原生端完全一致，相当于&quot;对讲机频道号&quot;）
+const MethodChannel _channel = MethodChannel('com.example.app/battery');
+
+// 调用原生方法，拿电量
+Future&lt;int&gt; getBatteryLevel() async {
+  try {
+    // invokeMethod：打电话给原生，方法名是 'getBatteryLevel'
+    final int level = await _channel.invokeMethod('getBatteryLevel');
+    return level;
+  } on PlatformException catch (e) {
+    // 原生那边出错了，这里捕获
+    print('获取电量失败：${e.message}');
+    return -1;
+  }
+}
+</code></pre>
+
+<p><strong>第二步：iOS 端（Swift 侧）接收并实现</strong></p>
+<p>在 Xcode 里打开 <code>ios/Runner/AppDelegate.swift</code>（或单独建一个类），添加：</p>
+<pre class="codehilite"><code class="language-swift">import Flutter
+import UIKit
+
+@main
+@objc class AppDelegate: FlutterAppDelegate {
+  override func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+  ) -&gt; Bool {
+    GeneratedPluginRegistrant.register(with: self)
+
+    // 拿到 Flutter 引擎和控制器
+    let controller = window?.rootViewController as! FlutterViewController
+    // 创建同名的通道（名字必须和 Dart 端一致！）
+    let batteryChannel = FlutterMethodChannel(
+      name: &quot;com.example.app/battery&quot;,
+      binaryMessenger: controller.binaryMessenger
+    )
+
+    // 处理 Dart 端发来的调用
+    batteryChannel.setMethodCallHandler { (call: FlutterMethodCall, result: FlutterResult) in
+      if call.method == &quot;getBatteryLevel&quot; {
+        // 真正调用系统 API 拿电量
+        let device = UIDevice.current
+        device.isBatteryMonitoringEnabled = true
+        let level = Int(device.batteryLevel * 100)
+        result(level)   // 把结果传回 Dart
+      } else {
+        result(FlutterMethodNotImplemented)  // 没实现的方法
+      }
+    }
+
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+}
+</code></pre>
+
+<p><strong>大白话走一遍：</strong></p>
+<pre class="codehilite"><code>Dart: invokeMethod('getBatteryLevel') 
+  → 对讲机（MethodChannel 'com.example.app/battery'）
+  → Swift: 收到方法名，调 UIDevice 拿电量
+  → Swift: result(85) 传回去
+  → Dart: 拿到 85
+</code></pre>
+
+<p><strong>数据格式约定（重要）：</strong> 两端传的数据必须是"可序列化"的：数字、字符串、布尔、List、Map。<strong>不能直接传自定义对象</strong>（要转成 Map）。</p>
+<h3>3.2 EventChannel（持续接收事件流）</h3>
+<p><strong>场景：</strong> 监听 iOS 原生每 0.5 秒发来的"加速度传感器数据"。</p>
+<p><strong>Flutter 端（Dart 侧）：</strong></p>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/services.dart';
+
+// 事件通道（名字和原生一致）
+const EventChannel _eventChannel = EventChannel('com.example.app/sensor');
+
+// 开始监听：返回一个&quot;事件流&quot;
+Stream&lt;double&gt; sensorStream() {
+  return _eventChannel.receiveBroadcastStream().map((event) {
+    return (event as num).toDouble();  // 把原生传来的值转成 double
+  });
+}
+
+// 在页面里使用
+// @override
+// void initState() {
+//   super.initState();
+//   sensorStream().listen((value) {
+//     print('传感器数据：$value');  // 每 0.5 秒收到一个
+//   });
+// }
+</code></pre>
+
+<p><strong>iOS 端（Swift 侧）：</strong></p>
+<pre class="codehilite"><code class="language-swift">// 创建事件通道
+let sensorChannel = FlutterEventChannel(
+  name: &quot;com.example.app/sensor&quot;,
+  binaryMessenger: controller.binaryMessenger
+)
+
+// 提供事件流处理器（原生每 0.5 秒发一个数据）
+sensorChannel.setStreamHandler(SensorStreamHandler())
+
+// 事件流处理器类
+class SensorStreamHandler: NSObject, FlutterStreamHandler {
+  private var eventSink: FlutterEventSink?  // 往这个&quot;管道&quot;里发数据
+
+  func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -&gt; FlutterError? {
+    self.eventSink = events
+    // 开启一个定时器，每 0.5 秒发一次数据
+    Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+      events(Int.random(in: 0...100))  // 模拟传感器数据
+    }
+    return nil
+  }
+
+  func onCancel(withArguments arguments: Any?) -&gt; FlutterError? {
+    self.eventSink = nil  // 取消监听时清理
+    return nil
+  }
+}
+</code></pre>
+
+<p><strong>大白话：</strong> EventChannel 是"广播站"——原生持续广播，Dart 持续收听，直到取消。</p>
+<h3>3.3 BasicMessageChannel（双向自由通信）</h3>
+<p><strong>场景：</strong> Flutter 和原生互相发消息（比如登录状态同步）。</p>
+<p><strong>Flutter 端：</strong></p>
+<pre class="codehilite"><code class="language-dart">// 创建通道
+const BasicMessageChannel _messageChannel = BasicMessageChannel(
+  'com.example.app/messages',
+  StringCodec(),   // 消息编码方式（这里用字符串）
+);
+
+// 发消息给原生（异步拿回复）
+Future&lt;void&gt; sendMessage() async {
+  final reply = await _messageChannel.send('来自 Flutter 的消息');
+  print('原生回复：$reply');
+}
+
+// 接收原生主动发来的消息
+// _messageChannel.setMessageHandler((message) async {
+//   print('收到原生消息：$message');
+//   return 'Flutter 收到！';
+// });
+</code></pre>
+
+<p><strong>iOS 端：</strong> 用 <code>FlutterBasicMessageChannel</code>，<code>sendMessage</code> 双向发送，不再展开（了解 API 存在即可）。</p>
+<blockquote>
+<p>使用率：实战中 <strong>MethodChannel 占 90%</strong>，EventChannel 和 BasicMessageChannel 按需用。先吃透 MethodChannel。</p>
+</blockquote>
+<hr>
+<h2>四、与 iOS 原生混编（在原生 App 里嵌入 Flutter）</h2>
+<p><strong>场景：</strong> 你的 iOS App 已经是原生写的，想把某个新页面/模块用 Flutter 做，两个世界互相跳转。</p>
+<h3>4.1 方式一：Flutter 里跳原生页面</h3>
+<p><strong>大白话：</strong> Flutter 发消息给原生，原生 push 一个 Swift 写的控制器。</p>
+<pre class="codehilite"><code class="language-dart">// Flutter 端：请求原生打开&quot;原生设置页&quot;
+const MethodChannel _channel = MethodChannel('com.example.app/navigation');
+await _channel.invokeMethod('openNativeSettings');
+</code></pre>
+
+<pre class="codehilite"><code class="language-swift">// iOS 端：收到请求后，用原生导航控制器跳转
+channel.setMethodCallHandler { call, result in
+  if call.method == &quot;openNativeSettings&quot; {
+    let nativeVC = NativeSettingsViewController()  // 原生写的页面
+    let nav = controller.navigationController
+    nav?.pushViewController(nativeVC, animated: true)
+    result(true)
+  }
+}
+</code></pre>
+
+<h3>4.2 方式二：原生 App 里跳 Flutter 页面</h3>
+<p><strong>大白话：</strong> 原生 Swift 代码里创建 FlutterViewController，push 进去。</p>
+<pre class="codehilite"><code class="language-swift">// 在原生 ViewController 里：
+let flutterEngine = (UIApplication.shared.delegate as! AppDelegate).flutterEngine
+let flutterVC = FlutterViewController(engine: flutterEngine, nibName: nil, bundle: nil)
+navigationController?.pushViewController(flutterVC, animated: true)
+</code></pre>
+
+<blockquote>
+<p>大白话：Flutter 页面其实就是一个 <code>FlutterViewController</code>（原生控制器），原生想跳就 push 它，跟跳普通控制器一样。</p>
+</blockquote>
+<h3>4.3 Platform View（在 Flutter 里嵌原生视图）</h3>
+<p><strong>场景：</strong> 需要在 Flutter 页面里显示原生控件（比如地图 SDK、视频播放器）。</p>
+<pre class="codehilite"><code class="language-dart">// Flutter 端：用 UiKitView / PlatformViewLink 嵌入原生视图
+// 需要原生端实现 FlutterPlatformViewFactory 提供真正的 UIView
+UiKitView(
+  viewType: 'com.example.app/map_view',  // 原生注册的视图类型
+  creationParams: {'center': 'beijing'},
+  creationParamsCodec: const StandardMessageCodec(),
+)
+</code></pre>
+
+<p><strong>iOS 端</strong>需要：<br>
+1. 实现 <code>FlutterPlatformViewFactory</code>（创建 UIView）<br>
+2. 实现 <code>FlutterPlatformView</code>（返回真正的原生 view）<br>
+3. 在 <code>application(_:didFinishLaunching...)</code> 里注册：<code>registrar.register(factory, withId: "com.example.app/map_view")</code></p>
+<p><strong>Platform View 的常见坑（面试/实战高频）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>坑</th>
+<th>大白话</th>
+<th>解决办法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>性能差</td>
+<td>原生视图和 Flutter 自绘画面"两层皮"合成，容易卡</td>
+<td>少用；必要时加 <code>HybridComposition</code> 优化</td>
+</tr>
+<tr>
+<td>手势冲突</td>
+<td>原生视图的手势和 Flutter 手势打架</td>
+<td>用 <code>Listener</code> / <code>GestureBinding</code> 协调</td>
+</tr>
+<tr>
+<td>键盘弹起问题</td>
+<td>原生输入框和 Flutter 键盘不同步</td>
+<td>用 <code>viewInsets</code> 手动调整</td>
+</tr>
+<tr>
+<td>生命周期不同步</td>
+<td>原生视图不随 Flutter 页面一起销毁</td>
+<td>在 dispose 里手动清理</td>
+</tr>
+</tbody>
+</table>
+<p><strong>平台通道常见坑（必看）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>坑</th>
+<th>说明</th>
+<th>解决办法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通道名不一致</td>
+<td>Dart 和 Swift 名字差一个字母就调不通</td>
+<td>名字统一常量管理，两端一致</td>
+</tr>
+<tr>
+<td>数据类型不支持</td>
+<td>传了自定义对象</td>
+<td>转成 Map/List/基本类型再传</td>
+</tr>
+<tr>
+<td>主线程调用</td>
+<td>在原生侧用后台线程回调</td>
+<td>回到主线程再回调 result</td>
+</tr>
+<tr>
+<td>没处理异常</td>
+<td>原生抛错 Dart 端崩</td>
+<td>Dart 端 try-catch + 原生返回 FlutterError</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>五、iOS 开发者视角（老司机对照表）</h2>
+<table>
+<thead>
+<tr>
+<th>iOS 原生</th>
+<th>Flutter</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JSBridge（WKScriptMessageHandler）</td>
+<td>Platform Channel</td>
+<td>跨语言桥接</td>
+</tr>
+<tr>
+<td>URL 传参 + 回调闭包</td>
+<td>MethodChannel invokeMethod</td>
+<td>一问一答调用</td>
+</tr>
+<tr>
+<td>NotificationCenter 持续监听</td>
+<td>EventChannel</td>
+<td>持续事件流</td>
+</tr>
+<tr>
+<td>WKWebView 与 JS 双向通信</td>
+<td>BasicMessageChannel</td>
+<td>双向消息</td>
+</tr>
+<tr>
+<td>原生 App 嵌入 WebView</td>
+<td>Platform View</td>
+<td>Flutter 嵌原生视图</td>
+</tr>
+<tr>
+<td>pushViewController(FlutterVC)</td>
+<td>原生跳 Flutter 页面</td>
+<td>混编跳转</td>
+</tr>
+<tr>
+<td>Codable 序列化</td>
+<td>StandardMessageCodec</td>
+<td>消息编解码</td>
+</tr>
+<tr>
+<td>MainActor / 主线程</td>
+<td>主 Isolate</td>
+<td>UI 线程约束</td>
+</tr>
+</tbody>
+</table>
+<p><strong>给 iOS 工程师的真心话：</strong><br>
+- 如果你做过 WKWebView 和 JS 交互（JSBridge），Platform Channel 就是"Flutter 版 JSBridge"，概念一模一样：通道名 = 桥名，方法名 = 调用的 JS 函数名，result = 回调。<br>
+- MethodChannel 的 <code>result</code> 只允许调用一次，和 Swift 闭包回调"只回调一次"的约定相同。<br>
+- 混编时把 Flutter 想成"一个特殊的 UIViewController"，跳转思维完全复用。</p>
+<hr>
+<h2>六、小节小结</h2>
+<ol>
+<li>Platform Channel 是 Flutter 和原生的"对讲机"，三种通道各司其职：MethodChannel（一问一答）、EventChannel（持续接收）、BasicMessageChannel（双向消息）。</li>
+<li>通道名两端必须一致；传数据只能用可序列化类型（数字/字符串/布尔/List/Map）。</li>
+<li>MethodChannel 最常用：Dart <code>invokeMethod</code> → Swift <code>setMethodCallHandler</code> → <code>result</code> 回传。</li>
+<li>混编：Flutter 可跳原生页面（invokeMethod 让原生 push），原生可跳 Flutter（push FlutterViewController）。</li>
+<li>Platform View 可在 Flutter 里嵌原生视图，但要注意性能、手势、生命周期等坑。</li>
+<li>常见坑：通道名不一致、传自定义对象、原生后台线程回调、异常未处理。</li>
+</ol>
+<hr>
+<h2>七、本节动手练习（含答案提示）</h2>
+<p><strong>练习 1：选通道</strong></p>
+<blockquote>
+<p>下面场景分别用哪个通道？<br>
+A. 获取手机型号（一次调用）　B. 持续监听电池电量变化　C. 原生主动发一条消息给 Flutter</p>
+<p>✅ 答案提示：A 用 MethodChannel（一问一答）；B 用 EventChannel（持续事件流）；C 用 BasicMessageChannel（双向消息）。</p>
+</blockquote>
+<p><strong>练习 2：找 Bug</strong></p>
+<blockquote>
+<p>Dart 端通道名是 <code>'com.example.app/battery'</code>，Swift 端写成了 <code>'com.example.app/Battery'</code>，能调通吗？</p>
+<p>✅ 答案提示：不能。通道名必须完全一致（区分大小写），两端不一致等于对讲机频道不同，互相听不到。</p>
+</blockquote>
+<p><strong>练习 3：数据格式</strong></p>
+<blockquote>
+<p>想通过 MethodChannel 把一个自定义的 <code>User</code> 对象传给原生，应该怎么做？</p>
+<p>✅ 答案提示：不能直接传对象。把 User 转成 Map（如 <code>{'name': '小明', 'age': 18}</code>）再传，原生端解析 Map 或转回自己的对象。</p>
+</blockquote>
+<p><strong>练习 4：混编跳转</strong></p>
+<blockquote>
+<p>在原生 Swift 代码里想跳转到 Flutter 页面，关键步骤是什么？</p>
+<p>✅ 答案提示：创建 <code>FlutterViewController</code>（复用已有 engine 或新建），然后 <code>navigationController?.pushViewController(flutterVC, animated: true)</code> 正常 push 即可。</p>
+</blockquote>
+<p><strong>练习 5：坑排查</strong></p>
+<blockquote>
+<p>Platform View 嵌入原生地图后页面卡顿，最可能的原因是什么？怎么优化？</p>
+<p>✅ 答案提示：原生视图和 Flutter 自绘层合成开销大，容易掉帧。优化：尽量少用 Platform View，必要时开启 HybridComposition，或考虑把地图改成 Flutter 插件方案。</p>
+</blockquote>
+<hr>
+<h2>下一步</h2>
+<p>恭喜！你已完成 <strong>Flutter 高级深入</strong> 的全部 4 篇课程：</p>
+<ol>
+<li>✅ 动画与自定义绘制</li>
+<li>✅ 性能优化</li>
+<li>✅ 底层原理</li>
+<li>✅ 混合开发与原生交互</li>
+</ol>
+<p>至此，从基础到高级的 Flutter 学习主线全部完成。接下来是巩固阶段——面试题集合与各种练习题（含答案），帮助你检验学习成果、备战面试。建议进入 <strong>Flutter/04-面试与练习/</strong> 模块继续学习。</p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生 06：多线程 GCD 与 Operation - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 原生模块</div>
+    <h1>iOS 原生 06：多线程 GCD 与 Operation</h1>
+    <span class="header-tag">iOS 原生模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>AI 推理不能卡主线程。GCD 是 iOS 并发的基石。</p></blockquote><hr>
+<h2>1. 主线程铁律</h2>
+<p><strong>UI 只能在主线程改。</strong> 网络、文件、AI 推理放后台。</p>
+<hr>
+<h2>2. GCD 队列</h2>
+<pre><code class="language-swift">DispatchQueue.global(qos: .userInitiated).async {
+    let result = heavyWork()
+    DispatchQueue.main.async { self.label.text = result }
+}</code></pre>
+<hr>
+<h2>3. QoS 优先级</h2>
+<table><thead><tr><th>QoS</th><th>场景</th></tr></thead><tbody><tr><td>userInteractive</td><td>UI 动画</td></tr><tr><td>userInitiated</td><td>用户触发的 AI 请求</td></tr><tr><td>utility</td><td>下载模型</td></tr><tr><td>background</td><td>清理缓存</td></tr></tbody></table>
+<hr>
+<h2>4. OperationQueue</h2>
+<p>需要依赖关系、取消、进度时用 NSOperation。大量 AI 任务可放 OperationQueue 限并发。</p>
+<hr>
+<h2>5. AI 推理线程</h2>
+<p>模型 inference 放 <code>DispatchQueue.global(qos: .userInitiated)</code>，结果回 <code>MainActor</code> 更新 UI。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

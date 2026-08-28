@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 16：Docker 与 K8s 部署入门 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 16：Docker 与 K8s 部署入门</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>企业级实战章节。</p></blockquote><hr>
+<h2>1. Docker 基础</h2>
+<pre><code class="language-dockerfile">FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+<hr>
+<h2>2. vLLM 容器</h2>
+<pre><code class="language-bash">docker run --gpus all -p 8000:8000 vllm/vllm-openai \
+  --model Qwen/Qwen2.5-7B-Instruct</code></pre>
+<hr>
+<h2>3. K8s 核心概念</h2>
+<table><thead><tr><th>概念</th><th>大白话</th></tr></thead><tbody><tr><td>Pod</td><td>最小部署单元</td></tr><tr><td>Deployment</td><td>管 Pod 副本数</td></tr><tr><td>Service</td><td>对内暴露端口</td></tr><tr><td>Ingress</td><td>对外 HTTP 入口</td></tr><tr><td>HPA</td><td>自动扩缩容</td></tr></tbody></table>
+<hr>
+<h2>4. 何时上 K8s</h2>
+<p>QPS 高、要多副本、要 GPU 调度时。个人项目 Docker Compose 够用。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

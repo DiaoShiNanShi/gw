@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>02-练习题与答案 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 面试题与练习</div>
+    <h1>02-练习题与答案</h1>
+    <span class="header-tag">面试题与练习</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>02-练习题与答案</h1>
+<blockquote>
+<p>大白话版 · Flutter 编程练习题（从基础到高级，约 20 道）<br>
+每题含：题目描述、难度、提示、完整参考答案（可运行）、讲解<br>
+类型覆盖：Dart 语法、Widget、布局、状态管理、网络、动画、自定义绘制</p>
+</blockquote>
+<hr>
+<h2>练习 1：打印九九乘法表</h2>
+<ul>
+<li><strong>类型</strong>：Dart 语法</li>
+<li><strong>难度</strong>：⭐ 入门</li>
+<li><strong>题目描述</strong>：用 Dart 打印 9x9 乘法表，格式如 <code>1x1=1</code>、<code>1x2=2</code>……每行结束换行。</li>
+<li><strong>提示</strong>：双层 for 循环，内层循环范围到外层数即可（三角阵）。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">void main() {
+  for (int i = 1; i &lt;= 9; i++) {
+    String line = '';
+    for (int j = 1; j &lt;= i; j++) {
+      line += '$j x $i = ${i * j}\t';  // \t 制表符对齐
+    }
+    print(line);
+  }
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：核心是循环嵌套和内层边界 <code>j &lt;= i</code>（只打印三角形部分）。用字符串拼接输出，<code>${}</code> 是 Dart 的字符串插值。类似 iOS 里 for 循环控制台打印，思路完全一致。</li>
+</ul>
+<hr>
+<h2>练习 2：判断闰年</h2>
+<ul>
+<li><strong>类型</strong>：Dart 语法</li>
+<li><strong>难度</strong>：⭐ 入门</li>
+<li><strong>题目描述</strong>：写函数 <code>bool isLeapYear(int year)</code>：能被 4 整除但不能被 100 整除，或能被 400 整除，为闰年。</li>
+<li><strong>提示</strong>：注意优先级，先写"能被 4 整除且不能被 100 整除"，再"或能被 400 整除"。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">bool isLeapYear(int year) {
+  return (year % 4 == 0 &amp;&amp; year % 100 != 0) || (year % 400 == 0);
+}
+
+void main() {
+  print(isLeapYear(2024)); // true
+  print(isLeapYear(1900)); // false
+  print(isLeapYear(2000)); // true
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：考察条件组合。<code>&amp;&amp;</code> 优先级高于 <code>||</code>，所以括号加不加都行，但加上更清晰。测试用例要覆盖边界（世纪年 1900/2000）。</li>
+</ul>
+<hr>
+<h2>练习 3：字符串反转</h2>
+<ul>
+<li><strong>类型</strong>：Dart 语法</li>
+<li><strong>难度</strong>：⭐ 入门</li>
+<li><strong>题目描述</strong>：把 <code>"Flutter"</code> 反转成 <code>"rettulF"</code>。</li>
+<li><strong>提示</strong>：Dart 的 String 没有内置 reverse，可以转 List 再反转，或者用 split+reversed。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">String reverse(String s) {
+  return s.split('').reversed.join();
+}
+
+void main() {
+  print(reverse('Flutter')); // rettulF
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：<code>split('')</code> 把字符串拆成字符数组，<code>reversed</code> 倒序（返回 Iterable），<code>join()</code> 拼回字符串。注意中文字符按 UTF-16 拆可能有问题，进阶可学 <code>characters</code> 包。</li>
+</ul>
+<hr>
+<h2>练习 4：求列表最大值和平均值</h2>
+<ul>
+<li><strong>类型</strong>：Dart 语法</li>
+<li><strong>难度</strong>：⭐⭐ 基础</li>
+<li><strong>题目描述</strong>：给 <code>[3, 7, 2, 9, 5]</code>，输出最大值和平均值。</li>
+<li><strong>提示</strong>：遍历累加、比较；也可以用 <code>reduce</code>。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">void main() {
+  List&lt;int&gt; nums = [3, 7, 2, 9, 5];
+
+  int max = nums.reduce((a, b) =&gt; a &gt; b ? a : b);
+  double avg = nums.reduce((a, b) =&gt; a + b) / nums.length;
+
+  print('最大值: $max');       // 9
+  print('平均值: $avg');       // 5.2
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：<code>reduce</code> 把列表"两两合并"成一个值：第一个例子每次留大的，第二个例子求和。Dart 的 <code>/</code> 结果是 double，所以平均值类型是 double。</li>
+</ul>
+<hr>
+<h2>练习 5：使用 Future 模拟网络请求</h2>
+<ul>
+<li><strong>类型</strong>：Dart 异步</li>
+<li><strong>难度</strong>：⭐⭐ 基础</li>
+<li><strong>题目描述</strong>：写一个 <code>Future&lt;String&gt; fetchData()</code>，延迟 1 秒返回 <code>"数据加载完成"</code>，用 async/await 调用并打印。</li>
+<li><strong>提示</strong>：<code>Future.delayed(Duration(seconds: 1), ...)</code> 模拟延迟。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">Future&lt;String&gt; fetchData() async {
+  await Future.delayed(Duration(seconds: 1));  // 模拟网络延迟
+  return '数据加载完成';
+}
+
+void main() async {
+  print('开始请求...');
+  String result = await fetchData();
+  print(result);  // 1秒后打印
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：async 函数自动返回 Future；await 会等 Future 完成再继续往下走。iOS 里类似 <code>Task.sleep</code> + <code>async/await</code>（Swift 并发），概念一模一样：不会卡住 UI 线程。</li>
+</ul>
+<hr>
+<h2>练习 6：Stream 计数器</h2>
+<ul>
+<li><strong>类型</strong>：Dart 异步</li>
+<li><strong>难度</strong>：⭐⭐ 基础</li>
+<li><strong>题目描述</strong>：创建一个 Stream，每 500ms 发射一个递增数字（1、2、3…），监听并打印前 5 个后取消。</li>
+<li><strong>提示</strong>：用 <code>Stream.periodic</code>，用 <code>take(5)</code> 或手动 cancel。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'dart:async';
+
+void main() {
+  int count = 0;
+  Stream&lt;int&gt; stream = Stream.periodic(
+    Duration(milliseconds: 500),
+    (_) =&gt; ++count,   // 每次回调返回自增数
+  );
+
+  StreamSubscription sub = stream.listen((value) {
+    print(value);
+    if (value &gt;= 5) {
+      sub.cancel();   // 记得取消，否则一直跑
+    }
+  });
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：<code>Stream.periodic</code> 按固定间隔发事件，类似 iOS 的 <code>Timer.scheduledTimer</code>。监听后要 cancel，否则定时器不释放——对应 iOS 里 invalidate Timer，不然内存泄漏。</li>
+</ul>
+<hr>
+<h2>练习 7：空安全练习</h2>
+<ul>
+<li><strong>类型</strong>：Dart 语法</li>
+<li><strong>难度</strong>：⭐⭐ 基础</li>
+<li><strong>题目描述</strong>：写函数 <code>String greeting(String? name)</code>：name 为 null 时返回 <code>"你好，游客"</code>，否则返回 <code>"你好，$name"</code>。</li>
+<li><strong>提示</strong>：用 <code>??</code> 空合并运算符。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">String greeting(String? name) {
+  return '你好，${name ?? '游客'}';
+}
+
+void main() {
+  print(greeting('小明')); // 你好，小明
+  print(greeting(null));  // 你好，游客
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：<code>String?</code> 表示可空类型；<code>??</code> 左边为 null 时用右边默认值。这是 Dart 空安全最常用的写法，比 Swift 的 <code>??</code> 完全一致。</li>
+</ul>
+<hr>
+<h2>练习 8：Counter 计数器（StatelessWidget 升级版）</h2>
+<ul>
+<li><strong>类型</strong>：Widget</li>
+<li><strong>难度</strong>：⭐⭐⭐ 进阶</li>
+<li><strong>题目描述</strong>：写一个带"点击 +1"和"点击 -1"按钮的计数器页面，当前值居中显示。</li>
+<li><strong>提示</strong>：StatefulWidget + setState，Column 布局，TextButton。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const CounterApp());
+
+class CounterApp extends StatelessWidget {
+  const CounterApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('计数器')),
+        body: const CounterPage(),
+      ),
+    );
+  }
+}
+
+class CounterPage extends StatefulWidget {
+  const CounterPage({super.key});
+
+  @override
+  State&lt;CounterPage&gt; createState() =&gt; _CounterPageState();
+}
+
+class _CounterPageState extends State&lt;CounterPage&gt; {
+  int _count = 0;  // 状态存在 State 里
+
+  void _change(int delta) {
+    setState(() {
+      _count += delta;  // 修改后通知重建
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextButton(onPressed: () =&gt; _change(-1), child: const Text('-1')),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text('$_count', style: const TextStyle(fontSize: 40)),
+          ),
+          TextButton(onPressed: () =&gt; _change(1), child: const Text('+1')),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：StatefulWidget 拆成"壳"和"State"两部分：壳不可变，State 里存可变数据。<code>setState</code> 触发 build 重建，类似 iOS 里改完 UI 后刷新 label。注意 <code>_count</code> 加下划线是私有变量。</li>
+</ul>
+<hr>
+<h2>练习 9：姓名输入表单</h2>
+<ul>
+<li><strong>类型</strong>：Widget / 表单</li>
+<li><strong>难度</strong>：⭐⭐⭐ 进阶</li>
+<li><strong>题目描述</strong>：做一个表单：输入姓名，点"提交"后弹提示"你好，XXX"；为空时提示"请输入姓名"。</li>
+<li><strong>提示</strong>：TextEditingController + Form + GlobalKey<FormState>，或用最简单的 controller 判断。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+class FormPage extends StatefulWidget {
+  const FormPage({super.key});
+
+  @override
+  State&lt;FormPage&gt; createState() =&gt; _FormPageState();
+}
+
+class _FormPageState extends State&lt;FormPage&gt; {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();  // 用完必须释放，对应 iOS 里释放对象
+    super.dispose();
+  }
+
+  void _submit() {
+    String name = _controller.text.trim();
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请输入姓名')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('你好，$name')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('姓名表单')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                labelText: '姓名',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(onPressed: _submit, child: const Text('提交')),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：<code>TextEditingController</code> 是输入框的"数据源"，需要手动 dispose（和 iOS 释放对象同理，否则内存泄漏）。<code>trim()</code> 去掉首尾空格。提示用 SnackBar 弹出，类似 iOS 的 toast。</li>
+</ul>
+<hr>
+<h2>练习 10：商品列表（ListView.builder）</h2>
+<ul>
+<li><strong>类型</strong>：列表</li>
+<li><strong>难度</strong>：⭐⭐⭐ 进阶</li>
+<li><strong>题目描述</strong>：用 ListView.builder 渲染 100 个商品项（标题为"商品 N"，价格为随机数），点击项弹出 SnackBar 显示商品名。</li>
+<li><strong>提示</strong>：数据存 List，builder 按 index 取。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+class GoodsListPage extends StatelessWidget {
+  GoodsListPage({super.key});
+
+  final List&lt;Map&lt;String, Object&gt;&gt; goods = List.generate(100, (i) {
+    return {'name': '商品 $i', 'price': 10 + i * 0.5};
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('商品列表')),
+      body: ListView.builder(
+        itemCount: goods.length,
+        itemBuilder: (context, index) {
+          final item = goods[index];
+          return ListTile(
+            title: Text(item['name'] as String),
+            subtitle: Text('价格：${item['price']} 元'),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('点击了 ${item['name']}')),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：<code>ListView.builder</code> 按需创建，100 条也不会一次性全建。<code>List.generate</code> 快速生成列表。ListTile 是现成的"一行列表项"（标题+副标题+点击）。100 条用 builder 完全没问题，对应 iOS 的 UITableView 复用机制。</li>
+</ul>
+<hr>
+<h2>练习 11：Flex 布局（比例分配）</h2>
+<ul>
+<li><strong>类型</strong>：布局</li>
+<li><strong>难度</strong>：⭐⭐⭐ 进阶</li>
+<li><strong>题目描述</strong>：做一个布局：左 1/3 是红色方块，右 2/3 是蓝色方块（用 Expanded 的 flex 比例实现），中间留 8 间距。</li>
+<li><strong>提示</strong>：Row + Expanded(flex: 1/2) + SizedBox。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+class FlexLayoutPage extends StatelessWidget {
+  const FlexLayoutPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Flex 布局')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,  // 占 1/3
+              child: Container(
+                height: 200,
+                color: Colors.red,
+                alignment: Alignment.center,
+                child: const Text('1/3'),
+              ),
+            ),
+            const SizedBox(width: 8),  // 间距
+            Expanded(
+              flex: 2,  // 占 2/3
+              child: Container(
+                height: 200,
+                color: Colors.blue,
+                alignment: Alignment.center,
+                child: const Text('2/3'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：Expanded 的 flex 比例决定空间分配：1:2 即 1/3 和 2/3。类似 iOS 的 UIStackView + distribution: .fillProportionally，但 Flutter 更直观。</li>
+</ul>
+<hr>
+<h2>练习 12：Stack 头像 + 小红点</h2>
+<ul>
+<li><strong>类型</strong>：布局</li>
+<li><strong>难度</strong>：⭐⭐⭐ 进阶</li>
+<li><strong>题目描述</strong>：画一个圆形头像（用 CircleAvatar），右上角叠加一个红色数字角标（如 99+），模仿"未读消息"。</li>
+<li><strong>提示</strong>：Stack + Positioned 定位角标。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+class AvatarBadgePage extends StatelessWidget {
+  const AvatarBadgePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('头像角标')),
+      body: Center(
+        child: Stack(
+          children: [
+            const CircleAvatar(
+              radius: 40,
+              backgroundImage: NetworkImage('https://picsum.photos/80'),
+            ),
+            Positioned(
+              right: 0,
+              top: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Text('99+', style: TextStyle(color: Colors.white, fontSize: 10)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：Stack 层叠，后写的在上面；Positioned 精确指定位置（右上角）。这是列表页"未读数角标"的标准写法，对应 iOS 里手动加 subview + AutoLayout 约束，Flutter 更省事。</li>
+</ul>
+<hr>
+<h2>练习 13：状态管理（Provider + ChangeNotifier）</h2>
+<ul>
+<li><strong>类型</strong>：状态管理</li>
+<li><strong>难度</strong>：⭐⭐⭐⭐ 高级</li>
+<li><strong>题目描述</strong>：用 Provider 实现"购物车数量"：首页按钮 +1，详情页显示同一个数量（跨页面共享状态）。</li>
+<li><strong>提示</strong>：ChangeNotifier 存 count，MultiProvider 注入，context.watch 读取。</li>
+<li><strong>参考答案</strong>（需 pubspec 加 <code>provider</code> 依赖）：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+// 1. 数据模型：ChangeNotifier 存状态
+class CartModel extends ChangeNotifier {
+  int _count = 0;
+  int get count =&gt; _count;
+
+  void add() {
+    _count++;
+    notifyListeners();  // 通知所有监听者刷新
+  }
+}
+
+void main() =&gt; runApp(
+  // 2. 顶层注入，整棵树都能拿到
+  ChangeNotifierProvider(
+    create: (_) =&gt; CartModel(),
+    child: const CartApp(),
+  ),
+);
+
+class CartApp extends StatelessWidget {
+  const CartApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const Scaffold(body: Center(child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [HomePage(), DetailPage()],
+      ))),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // watch：数据变化时这里会重建
+    final count = context.watch&lt;CartModel&gt;().count;
+    return Text('购物车数量：$count', style: const TextStyle(fontSize: 20));
+  }
+}
+
+class DetailPage extends StatelessWidget {
+  const DetailPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () =&gt; context.read&lt;CartModel&gt;().add(),  // read：只读不监听
+      child: const Text('+1'),
+    );
+  }
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：三步骤：①ChangeNotifier 存数据并 notifyListeners；②顶层 ChangeNotifierProvider 注入；③子组件 context.watch 监听（自动重建）/ context.read 操作（不重建）。这就像 iOS 的 ObservableObject + @EnvironmentObject，Provider 是全 App 共享的"全局状态单例"。</li>
+</ul>
+<hr>
+<h2>练习 14：网络请求（dio + JSON 解析）</h2>
+<ul>
+<li><strong>类型</strong>：网络</li>
+<li><strong>难度</strong>：⭐⭐⭐⭐ 高级</li>
+<li><strong>题目描述</strong>：用 dio 请求一个公共接口（如 <code>https://api.github.com/users/octocat</code>），解析返回的 name 和 avatar_url 并展示。</li>
+<li><strong>提示</strong>：dio get + jsonDecode；生产环境记得 try-catch。</li>
+<li><strong>参考答案</strong>（需 pubspec 加 <code>dio</code> 依赖）：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+
+class NetworkPage extends StatefulWidget {
+  const NetworkPage({super.key});
+
+  @override
+  State&lt;NetworkPage&gt; createState() =&gt; _NetworkPageState();
+}
+
+class _NetworkPageState extends State&lt;NetworkPage&gt; {
+  String _name = '加载中...';
+  String _avatar = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUser();
+  }
+
+  Future&lt;void&gt; _fetchUser() async {
+    try {
+      final resp = await Dio().get('https://api.github.com/users/octocat');
+      final data = resp.data as Map&lt;String, dynamic&gt;;
+      setState(() {
+        _name = data['name'] ?? data['login'];
+        _avatar = data['avatar_url'] ?? '';
+      });
+    } catch (e) {
+      setState(() =&gt; _name = '请求失败：$e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('网络请求')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (_avatar.isNotEmpty)
+              ClipOval(
+                child: Image.network(_avatar, width: 80, height: 80,
+                  fit: BoxFit.cover),
+              ),
+            const SizedBox(height: 16),
+            Text(_name, style: const TextStyle(fontSize: 20)),
+            const SizedBox(height: 16),
+            ElevatedButton(onPressed: _fetchUser, child: const Text('重新加载')),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：<code>Dio().get</code> 返回 Response，<code>resp.data</code> 是解析好的 JSON（Map）。网络请求在异步函数里跑，不卡 UI，对应 iOS 的 URLSession。记得 try-catch，网络一定可能失败。</li>
+</ul>
+<hr>
+<h2>练习 15：动画（AnimationController + Tween）</h2>
+<ul>
+<li><strong>类型</strong>：动画</li>
+<li><strong>难度</strong>：⭐⭐⭐⭐ 高级</li>
+<li><strong>题目描述</strong>：做一个方块：点击按钮后从左边平移到右边，1 秒完成。</li>
+<li><strong>提示</strong>：AnimationController + Tween(begin:0, end:300) + AnimatedBuilder。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+class AnimPage extends StatefulWidget {
+  const AnimPage({super.key});
+
+  @override
+  State&lt;AnimPage&gt; createState() =&gt; _AnimPageState();
+}
+
+class _AnimPageState extends State&lt;AnimPage&gt;
+    with SingleTickerProviderStateMixin {  // 提供 vsync
+
+  late final AnimationController _controller = AnimationController(
+    vsync: this,                                    // 帧同步
+    duration: const Duration(seconds: 1),
+  );
+  late final Animation&lt;double&gt; _offset =
+      Tween(begin: 0.0, end: 300.0).animate(_controller);
+
+  @override
+  void dispose() {
+    _controller.dispose();  // 释放，否则泄漏
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('平移动画')),
+      body: Column(
+        children: [
+          AnimatedBuilder(
+            animation: _offset,
+            builder: (context, child) {
+              return Transform.translate(
+                offset: Offset(_offset.value, 100),
+                child: child,   // 不变的子树复用，性能更好
+              );
+            },
+            child: Container(
+              width: 60,
+              height: 60,
+              color: Colors.orange,
+            ),
+          ),
+          const SizedBox(height: 200),
+          ElevatedButton(
+            onPressed: () =&gt; _controller.forward(from: 0),  // 从头播放
+            child: const Text('开始动画'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：AnimationController 是"进度条"（0→1），Tween 把进度翻译成位移（0→300 像素），AnimatedBuilder 在每帧重建受影响部分。类似 iOS 的 UIViewPropertyAnimator + CGAffineTransform，但 Flutter 需要手动处理 vsync 和 dispose。</li>
+</ul>
+<hr>
+<h2>练习 16：隐式动画（AnimatedContainer）</h2>
+<ul>
+<li><strong>类型</strong>：动画</li>
+<li><strong>难度</strong>：⭐⭐⭐ 进阶</li>
+<li><strong>题目描述</strong>：点击方块切换颜色和圆角（红/蓝、直角/圆角），动画自动过渡。</li>
+<li><strong>提示</strong>：AnimatedContainer 的 color/borderRadius 变化自动动画。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+class ImplicitAnimPage extends StatefulWidget {
+  const ImplicitAnimPage({super.key});
+
+  @override
+  State&lt;ImplicitAnimPage&gt; createState() =&gt; _ImplicitAnimPageState();
+}
+
+class _ImplicitAnimPageState extends State&lt;ImplicitAnimPage&gt; {
+  bool _isBlue = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('隐式动画')),
+      body: Center(
+        child: GestureDetector(
+          onTap: () =&gt; setState(() =&gt; _isBlue = !_isBlue),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 500),  // 自动过渡时长
+            width: 120,
+            height: 120,
+            color: _isBlue ? Colors.blue : Colors.red,
+            borderRadius: BorderRadius.circular(_isBlue ? 60 : 0),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：AnimatedContainer 的核心：<strong>不用手动控制动画</strong>，只要属性目标值变了，它自动从旧值过渡到新值（color、圆角都支持）。适合"切换状态"类动画，类似 iOS 的 UIView.animate(withDuration:)。</li>
+</ul>
+<hr>
+<h2>练习 17：自定义绘制（CustomPaint 画笑脸）</h2>
+<ul>
+<li><strong>类型</strong>：自定义绘制</li>
+<li><strong>难度</strong>：⭐⭐⭐⭐⭐ 高阶</li>
+<li><strong>题目描述</strong>：用 CustomPaint 画一个笑脸：黄色圆脸、两个黑色眼睛、一个弧形嘴巴。</li>
+<li><strong>提示</strong>：CustomPainter + Canvas，圆 drawCircle，弧 drawArc。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+class SmilePage extends StatelessWidget {
+  const SmilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('自定义绘制')),
+      body: const Center(
+        child: CustomPaint(
+          size: Size(200, 200),
+          painter: SmilePainter(),
+        ),
+      ),
+    );
+  }
+}
+
+class SmilePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+
+    // 脸：黄色圆
+    canvas.drawCircle(center, 80, Paint()..color = Colors.yellow);
+
+    // 眼睛：两个黑色小圆
+    final eyePaint = Paint()..color = Colors.black;
+    canvas.drawCircle(center.translate(-30, -20), 10, eyePaint);
+    canvas.drawCircle(center.translate(30, -20), 10, eyePaint);
+
+    // 嘴巴：半圆弧
+    final mouthPaint = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4;
+    canvas.drawArc(
+      Rect.fromCircle(center: center.translate(0, 10), radius: 40),
+      0.1,      // 起始角度（弧度）
+      3.14,     // 扫过的角度（约 180 度）
+      false,
+      mouthPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：CustomPaint 是"画布"，painter 负责画。Canvas API 和 iOS 的 Core Graphics/UIKit 绘制很像：drawCircle 画圆、drawArc 画弧。<code>shouldRepaint</code> 返回 false 表示静态图不用重绘。角度单位是<strong>弧度</strong>（π≈3.14 是 180°）。</li>
+</ul>
+<hr>
+<h2>练习 18：列表 + 下拉刷新/上拉加载</h2>
+<ul>
+<li><strong>类型</strong>：综合</li>
+<li><strong>难度</strong>：⭐⭐⭐⭐⭐ 高阶</li>
+<li><strong>题目描述</strong>：做一个分页列表：下拉刷新重置到第 1 页，滚动到底自动加载第 2 页，加载中显示 loading。</li>
+<li><strong>提示</strong>：RefreshIndicator + ScrollController 监听到底。</li>
+<li><strong>参考答案</strong>：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+class PagingPage extends StatefulWidget {
+  const PagingPage({super.key});
+
+  @override
+  State&lt;PagingPage&gt; createState() =&gt; _PagingPageState();
+}
+
+class _PagingPageState extends State&lt;PagingPage&gt; {
+  final ScrollController _scroll = ScrollController();
+  final List&lt;String&gt; _items = [];
+  int _page = 0;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMore();                       // 首屏加载
+    _scroll.addListener(_onScroll);    // 监听滚动
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    // 滚到底部附近就加载更多
+    if (_scroll.position.pixels &gt;= _scroll.position.maxScrollExtent - 50) {
+      _loadMore();
+    }
+  }
+
+  Future&lt;void&gt; _loadMore() async {
+    if (_loading) return;              // 防重复请求
+    setState(() =&gt; _loading = true);
+
+    await Future.delayed(const Duration(milliseconds: 800));  // 模拟请求
+
+    setState(() {
+      _page++;
+      _items.addAll(List.generate(20, (i) =&gt; '第 $_page 页 · 条目 $i'));
+      _loading = false;
+    });
+  }
+
+  Future&lt;void&gt; _refresh() async {
+    setState(() {
+      _page = 0;
+      _items.clear();
+    });
+    await _loadMore();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('分页列表')),
+      body: RefreshIndicator(
+        onRefresh: _refresh,  // 下拉刷新
+        child: ListView.builder(
+          controller: _scroll,
+          itemCount: _items.length + 1,  // 多一个 loading 行
+          itemBuilder: (context, index) {
+            if (index == _items.length) {
+              return const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+            return ListTile(title: Text(_items[index]));
+          },
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：分页三件套：①ScrollController 监听滚动位置判断到底；②_loading 标志防重复请求；③itemCount+1 末尾加 loading 行。RefreshIndicator 的下拉刷新类似 iOS 的 UIRefreshControl，包住 ListView 就行。</li>
+</ul>
+<hr>
+<h2>练习 19：Platform Channel（Dart 调 iOS 原生）</h2>
+<ul>
+<li><strong>类型</strong>：混合开发</li>
+<li><strong>难度</strong>：⭐⭐⭐⭐⭐ 高阶</li>
+<li><strong>题目描述</strong>：Dart 通过 MethodChannel 调用 iOS 原生方法，获取设备名称。</li>
+<li><strong>提示</strong>：Dart 端 MethodChannel('com.example.device/info')，iOS 端在 AppDelegate 里注册 handler。</li>
+<li><strong>参考答案</strong>（Dart 端）：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/services.dart';
+
+class DeviceInfoService {
+  static const MethodChannel _channel =
+      MethodChannel('com.example.device/info');
+
+  static Future&lt;String&gt; getDeviceName() async {
+    // invokeMethod 调原生；平台没有实现会抛 MissingPluginException
+    final String? name = await _channel.invokeMethod('getDeviceName');
+    return name ?? '未知设备';
+  }
+}
+
+// 使用
+// String name = await DeviceInfoService.getDeviceName();
+</code></pre>
+
+<p>（iOS 端 AppDelegate.swift）</p>
+<pre class="codehilite"><code class="language-swift">import Flutter
+import UIKit
+
+@main
+@objc class AppDelegate: FlutterAppDelegate {
+  override func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+  ) -&gt; Bool {
+    let controller = window?.rootViewController as! FlutterViewController
+    let channel = FlutterMethodChannel(
+      name: &quot;com.example.device/info&quot;,
+      binaryMessenger: controller.binaryMessenger)
+
+    channel.setMethodCallHandler { call, result in
+      if call.method == &quot;getDeviceName&quot; {
+        result(UIDevice.current.name)   // 返回设备名
+      } else {
+        result(FlutterMethodNotImplemented)
+      }
+    }
+    GeneratedPluginRegistrant.register(with: self)
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：MethodChannel 是 Flutter 和原生之间的"电话线"：Dart 端 invokeMethod 打电话，iOS 端 setMethodCallHandler 接电话，result 回传结果。<strong>两端通道名必须完全一致</strong>。结果类型要可序列化（String/数字/List/Map）。iOS 工程师看这个非常亲切，本质就是跨语言方法调用。</li>
+</ul>
+<hr>
+<h2>练习 20：综合小项目：待办清单（含增删改、持久化）</h2>
+<ul>
+<li><strong>类型</strong>：综合</li>
+<li><strong>难度</strong>：⭐⭐⭐⭐⭐ 高阶</li>
+<li><strong>题目描述</strong>：做完整的待办 App：添加待办、勾选完成、删除待办、本地持久化（shared_preferences 保存）。</li>
+<li><strong>提示</strong>：StatefulWidget + List 状态 + shared_preferences 存 JSON 字符串；注意 dispose。</li>
+<li><strong>参考答案</strong>（需 pubspec 加 <code>shared_preferences</code> 依赖）：</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main() =&gt; runApp(const TodoApp());
+
+class TodoApp extends StatelessWidget {
+  const TodoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: TodoPage(),
+    );
+  }
+}
+
+class Todo {
+  String title;
+  bool done;
+  Todo(this.title, {this.done = false});
+
+  Map&lt;String, dynamic&gt; toJson() =&gt; {'title': title, 'done': done};
+  factory Todo.fromJson(Map&lt;String, dynamic&gt; json) =&gt;
+      Todo(json['title'] as String, done: json['done'] as bool);
+}
+
+class TodoPage extends StatefulWidget {
+  @override
+  State&lt;TodoPage&gt; createState() =&gt; _TodoPageState();
+}
+
+class _TodoPageState extends State&lt;TodoPage&gt; {
+  final List&lt;Todo&gt; _todos = [];
+  final TextEditingController _input = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  @override
+  void dispose() {
+    _input.dispose();
+    super.dispose();
+  }
+
+  // 从本地读取
+  Future&lt;void&gt; _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString('todos');
+    if (raw == null) return;
+    final list = jsonDecode(raw) as List;
+    setState(() {
+      _todos.addAll(list.map((e) =&gt; Todo.fromJson(e as Map&lt;String, dynamic&gt;)));
+    });
+  }
+
+  // 保存到本地
+  Future&lt;void&gt; _save() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      'todos',
+      jsonEncode(_todos.map((t) =&gt; t.toJson()).toList()),
+    );
+  }
+
+  void _add() {
+    final text = _input.text.trim();
+    if (text.isEmpty) return;
+    setState(() {
+      _todos.add(Todo(text));
+    });
+    _input.clear();
+    _save();
+  }
+
+  void _toggle(int index) {
+    setState(() =&gt; _todos[index].done = !_todos[index].done);
+    _save();
+  }
+
+  void _delete(int index) {
+    setState(() =&gt; _todos.removeAt(index));
+    _save();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('待办清单')),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _input,
+                    decoration: const InputDecoration(
+                      hintText: '输入待办事项...',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(onPressed: _add, child: const Text('添加')),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _todos.length,
+              itemBuilder: (context, index) {
+                final todo = _todos[index];
+                return ListTile(
+                  leading: Checkbox(
+                    value: todo.done,
+                    onChanged: (_) =&gt; _toggle(index),
+                  ),
+                  title: Text(
+                    todo.title,
+                    style: TextStyle(
+                      decoration: todo.done
+                          ? TextDecoration.lineThrough  // 完成加删除线
+                          : null,
+                    ),
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () =&gt; _delete(index),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+
+<ul>
+<li><strong>讲解</strong>：这是"迷你版完整 App"：①Todo 类负责数据；②增删改都调 setState + _save（数据持久化）；③shared_preferences 存 JSON 字符串（类似 UserDefaults 存 data）。核心套路：<strong>改状态 → setState → 存本地</strong>，三件事一条链。做透这题，Flutter 基础就过关了。</li>
+</ul>
+<hr>
+<h2>附：刷题建议</h2>
+<ol>
+<li><strong>先动手再对答案</strong>：每道题先自己写 15 分钟，卡住再看提示。</li>
+<li><strong>改造成自己的</strong>：把练习里的颜色、文案、数据换掉，加深记忆。</li>
+<li><strong>重点练习</strong>：8（状态）、13（Provider）、14（网络）、18（分页）、20（综合）是面试手写高频题。</li>
+<li><strong>把每个练习跑起来</strong>：新建一个 Flutter 项目，把 main() 换成对应练习的入口，亲眼看效果比背代码强十倍。</li>
+</ol>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

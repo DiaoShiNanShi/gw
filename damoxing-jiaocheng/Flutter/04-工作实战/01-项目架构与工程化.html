@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>01-项目架构与工程化 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 工作实战</div>
+    <h1>01-项目架构与工程化</h1>
+    <span class="header-tag">工作实战</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>01-项目架构与工程化</h1>
+<blockquote>
+<p>大白话版 · 项目架构与工程化（小白向）<br>
+目标：搞懂目录结构规范、pubspec 依赖管理、多环境配置、代码规范与 lint、CI/CD 简介，以及状态管理在真实项目中的组合用法。</p>
+</blockquote>
+<hr>
+<h2>一、先讲"是什么"：工程化到底在解决什么问题？</h2>
+<p><strong>一句话版本：工程化 = 一套让项目"多人协作不乱、长期维护不崩、自动发布不慌"的规范和工具。</strong></p>
+<p>打个比方：</p>
+<blockquote>
+<p>一个项目就像一家餐厅的后厨：<br>
+- <strong>目录结构规范</strong> = 厨具分类摆放（锅放哪、调料放哪），新厨师来了不会找不到东西<br>
+- <strong>依赖管理（pubspec）</strong> = 采购清单（要用哪些食材/供应商），统一登记、版本可控<br>
+- <strong>多环境配置</strong> = 同一套菜谱，在"试菜间"和"正式大堂"用不同的火候参数<br>
+- <strong>代码规范 + lint</strong> = 厨师着装和操作规范，大家写得像一个人写的<br>
+- <strong>CI/CD</strong> = 自动化的"流水线"：菜做好自动质检、自动打包上桌</p>
+</blockquote>
+<p><strong>大白话结论：</strong> 单机小 Demo 不需要工程化；一旦要上线、要团队协作，工程化就是救命稻草。</p>
+<hr>
+<h2>二、再讲"为什么"：不工程化会怎样？</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>不工程化的后果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>目录乱</td>
+<td>新同事找不到文件，代码重复堆叠</td>
+</tr>
+<tr>
+<td>依赖乱</td>
+<td>直接改 pubspec 版本，一升级全崩，没人知道改了什么</td>
+</tr>
+<tr>
+<td>环境不分</td>
+<td>测试环境接口和正式环境接口混用，上线事故</td>
+</tr>
+<tr>
+<td>不规范</td>
+<td>10 个人 10 种写法，review 地狱</td>
+</tr>
+<tr>
+<td>没 CI</td>
+<td>每次发布手动跑测试、手动打包，漏一步就出 bug</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>对 iOS 工程师：这一整套思路和你在 Xcode 里维护工程、用 CocoaPods/SwiftPM 管依赖、用 Fastlane 自动化发布是一模一样的，只是工具换成了 Flutter 生态的。</p>
+</blockquote>
+<hr>
+<h2>三、怎么用：六大块逐个击破</h2>
+<h3>3.1 目录结构规范（推荐分层）</h3>
+<p><strong>大白话：</strong> 把代码按"职责"分房间，而不是按"类型"堆一起。</p>
+<p>推荐的分层目录（真实项目常用）：</p>
+<pre class="codehilite"><code>lib/
+├── main.dart                  # 入口：启动 App、初始化
+├── app.dart                   # 根 Widget（MaterialApp、主题、路由表）
+├── core/                      # 核心基础设施（不依赖业务）
+│   ├── constants/             # 常量（颜色、字符串、接口地址）
+│   ├── theme/                 # 主题（亮色/暗色）
+│   ├── network/               # 网络层（dio 封装）
+│   ├── storage/               # 本地存储封装
+│   └── utils/                 # 工具函数
+├── features/                  # 按业务功能分模块（重点）
+│   ├── todo/                  # 待办功能
+│   │   ├── data/              # 数据层（模型、API、本地存储）
+│   │   ├── domain/            # 业务逻辑（仓库、用例）
+│   │   └── presentation/      # 界面层（页面、状态管理、组件）
+│   ├── weather/               # 天气功能（同样三层）
+│   └── ...
+├── shared/                    # 跨模块共享组件
+│   └── widgets/               # 通用组件（按钮、空态、加载态）
+└── router/                    # 路由配置
+</code></pre>
+
+<p><strong>三层架构（data / domain / presentation）大白话：</strong></p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>是什么</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>presentation</td>
+<td>界面 + 状态</td>
+<td>前台服务员：接待客人（展示 UI）</td>
+</tr>
+<tr>
+<td>domain</td>
+<td>业务规则</td>
+<td>店长：定规矩（下单逻辑）</td>
+</tr>
+<tr>
+<td>data</td>
+<td>数据来源</td>
+<td>仓库管理员：进货出货（网络/数据库）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>铁律：</strong> 上层可以依赖下层，下层绝不能依赖上层（界面不能直接写死数据库逻辑）。</p>
+<h3>3.2 依赖管理（pubspec.yaml ≈ 你的 Podfile）</h3>
+<p><strong>大白话：</strong> <code>pubspec.yaml</code> 是 Flutter 项目的"采购清单"，记录项目用什么依赖、什么版本。</p>
+<pre class="codehilite"><code class="language-yaml">name: todo_app            # 项目名（包名基础）
+description: 待办清单示例
+publish_to: 'none'        # 不发布到 pub.dev
+version: 1.0.0+1          # 版本号：1.0.0 是版本，+1 是构建号
+
+environment:
+  sdk: '&gt;=3.0.0 &lt;4.0.0'   # Dart SDK 版本范围
+
+dependencies:             # 正式依赖（发布要用）
+  flutter:
+    sdk: flutter
+  dio: ^5.4.0             # ^5.4.0：允许 5.x 的最新版，不允许跨大版本
+  provider: ^6.1.0
+  shared_preferences: ^2.2.0   # 本地存储
+
+dev_dependencies:         # 开发依赖（只测试/工具用，不打进包）
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0   # 代码规范检查
+
+flutter:                  # Flutter 专属配置
+  uses-material-design: true
+  assets:                 # 资源文件（图片、字体）
+    - assets/images/
+</code></pre>
+
+<p><strong>常用命令（背下来）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>flutter pub get</code></td>
+<td>根据 pubspec 下载依赖</td>
+<td>按清单采购</td>
+</tr>
+<tr>
+<td><code>flutter pub add dio</code></td>
+<td>添加依赖并自动写进 pubspec</td>
+<td>直接在清单加一行</td>
+</tr>
+<tr>
+<td><code>flutter pub upgrade</code></td>
+<td>升级依赖</td>
+<td>换新供应商</td>
+</tr>
+<tr>
+<td><code>flutter pub outdated</code></td>
+<td>查看哪些依赖有新版</td>
+<td>检查库存是否过时</td>
+</tr>
+</tbody>
+</table>
+<p><strong>版本号语法（<code>^</code> 的意思）：</strong> <code>^5.4.0</code> = "5.4.0 及以上，但不超过 6.0.0"（大版本不变）。大版本升级通常有破坏性变更，要谨慎。</p>
+<blockquote>
+<p>对 iOS 工程师：pubspec ≈ Podfile + Package.swift，<code>flutter pub get</code> ≈ <code>pod install</code>。区别是 Flutter 自带依赖解析，不用管 xcworkspace。</p>
+</blockquote>
+<h3>3.3 多环境配置（dev / prod）</h3>
+<p><strong>大白话：</strong> 同一套代码，在开发（dev）和正式（prod）环境用不同的配置（接口地址、App 名称、日志开关）。</p>
+<p><strong>实现方式一：dart-define（最简单，推荐）</strong></p>
+<pre class="codehilite"><code class="language-bash"># 启动开发环境
+flutter run --dart-define=ENV=dev --dart-define=API_BASE=https://dev.example.com
+
+# 启动正式环境
+flutter run --dart-define=ENV=prod --dart-define=API_BASE=https://api.example.com
+</code></pre>
+
+<pre class="codehilite"><code class="language-dart">// 代码里读取配置
+class AppConfig {
+  static const String env = String.fromEnvironment('ENV', defaultValue: 'dev');
+  static const String apiBase = String.fromEnvironment(
+    'API_BASE',
+    defaultValue: 'https://dev.example.com',
+  );
+
+  static bool get isProd =&gt; env == 'prod';
+  static bool get isDebug =&gt; kDebugMode;  // 是否调试模式
+}
+
+// 使用
+// final client = Dio(BaseOptions(baseUrl: AppConfig.apiBase));
+</code></pre>
+
+<p><strong>实现方式二：环境文件（进阶，多个复杂配置时）</strong></p>
+<p>在项目根目录建 <code>env/dev.json</code>、<code>env/prod.json</code>，启动时传入：</p>
+<pre class="codehilite"><code class="language-bash">flutter run --dart-define=ENV_FILE=assets/env/dev.json
+</code></pre>
+
+<p><strong>环境配置要点：</strong><br>
+1. <strong>接口地址</strong>分 dev/prod<br>
+2. <strong>日志</strong>：dev 全开，prod 关闭或只留错误<br>
+3. <strong>App 名称/图标</strong>：dev 可加"测试"后缀区分<br>
+4. <strong>测试开关</strong>：dev 可一键进测试账号</p>
+<blockquote>
+<p>对 iOS 工程师：≈ Xcode 的 Debug/Release Configuration + xcconfig 文件，<code>--dart-define</code> 就是 Flutter 版的环境变量注入。</p>
+</blockquote>
+<h3>3.4 代码规范与 lint</h3>
+<p><strong>大白话：</strong> lint 是"自动纠察队"，帮你检查代码是否符合规范，问题一目了然。</p>
+<p><strong>Flutter 项目自带 lint：</strong></p>
+<pre class="codehilite"><code class="language-yaml"># pubspec.yaml 里已配好
+dev_dependencies:
+  flutter_lints: ^4.0.0
+</code></pre>
+
+<p><strong>使用：</strong></p>
+<pre class="codehilite"><code class="language-bash"># 检查代码规范
+flutter analyze
+
+# 自动修复能修的问题
+dart fix --apply
+</code></pre>
+
+<p><strong>常见规范（小白先记住这 5 条）：</strong><br>
+1. 类名用大驼峰（<code>TodoItem</code>），变量/方法用小驼峰（<code>itemCount</code>）<br>
+2. 常量用下划线大写（<code>kMaxItems</code>）<br>
+3. 私有成员加下划线（<code>_controller</code>）<br>
+4. 能 <code>const</code> 就 <code>const</code><br>
+5. import 排序、不要有未使用的变量</p>
+<blockquote>
+<p>对 iOS 工程师：<code>flutter analyze</code> ≈ Xcode 的 Analyze + SwiftLint；<code>dart fix --apply</code> ≈ 自动修复警告。团队可加 <code>analysis_options.yaml</code> 自定义规则，就像 .swiftlint.yml。</p>
+</blockquote>
+<h3>3.5 CI/CD 简介（自动流水线）</h3>
+<p><strong>大白话：</strong> CI/CD 是"自动工厂"：代码一提交，自动跑测试、自动检查、自动打包、自动分发。</p>
+<table>
+<thead>
+<tr>
+<th>术语</th>
+<th>全称</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CI</td>
+<td>Continuous Integration 持续集成</td>
+<td>每次提交代码自动跑检查+测试，有问题立刻报警</td>
+</tr>
+<tr>
+<td>CD</td>
+<td>Continuous Delivery 持续交付</td>
+<td>自动打包、自动发布到测试/商店</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见 CI/CD 工具（Flutter 生态）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GitHub Actions</td>
+<td>GitHub 自带的自动化流水线（最常用、免费额度够用）</td>
+</tr>
+<tr>
+<td>GitLab CI</td>
+<td>GitLab 内置 CI</td>
+</tr>
+<tr>
+<td>Codemagic</td>
+<td>专门优化 Flutter 的云打包服务</td>
+</tr>
+<tr>
+<td>Fastlane</td>
+<td>iOS/Android 通用的自动化发布工具（iOS 老熟人）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>一个极简 GitHub Actions 示例：</strong></p>
+<pre class="codehilite"><code class="language-yaml"># .github/workflows/flutter_ci.yml
+name: Flutter CI
+
+on:
+  push:            # 每次 push 触发
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2   # 装 Flutter
+        with:
+          flutter-version: '3.x'
+      - run: flutter pub get               # 拉依赖
+      - run: flutter analyze               # 代码检查
+      - run: flutter test                  # 跑测试
+</code></pre>
+
+<p><strong>大白话流程：</strong> 你 push 代码 → GitHub 自动开一台机器 → 装 Flutter → 拉依赖 → 检查代码 → 跑测试 → 全绿才算通过。</p>
+<blockquote>
+<p>对 iOS 工程师：CI/CD ≈ Fastlane + Xcode Cloud 的组合，只是配置文件是 YAML 而不是 Ruby/Swift 脚本。</p>
+</blockquote>
+<h3>3.6 状态管理在真实项目中的组合用法</h3>
+<p><strong>大白话：</strong> 真实项目里不是只用一种状态管理，而是"组合拳"：</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>用什么</th>
+<th>为什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>页面内局部状态</td>
+<td><code>setState</code></td>
+<td>简单直接，页面自己管</td>
+</tr>
+<tr>
+<td>跨页面共享的少量状态（登录态/主题）</td>
+<td><code>Provider</code>（ChangeNotifier）</td>
+<td>轻量、易上手</td>
+</tr>
+<tr>
+<td>复杂业务状态（购物车/订单流）</td>
+<td><code>Riverpod</code> 或 <code>Bloc</code></td>
+<td>可测试、可追踪</td>
+</tr>
+<tr>
+<td>异步数据流（实时数据）</td>
+<td><code>StreamBuilder</code> / Riverpod stream</td>
+<td>响应式数据</td>
+</tr>
+<tr>
+<td>路由/导航</td>
+<td>交给 Navigator / go_router</td>
+<td>不进状态管理</td>
+</tr>
+</tbody>
+</table>
+<p><strong>一个组合示例（Provider 管理全局 + 页面局部 setState）：</strong></p>
+<pre class="codehilite"><code class="language-dart">// 1. 全局状态：登录状态（ChangeNotifier）
+class AuthModel extends ChangeNotifier {
+  bool _isLoggedIn = false;
+  bool get isLoggedIn =&gt; _isLoggedIn;
+
+  void login() {
+    _isLoggedIn = true;
+    notifyListeners();   // 通知所有监听者刷新
+  }
+
+  void logout() {
+    _isLoggedIn = false;
+    notifyListeners();
+  }
+}
+
+// 2. main.dart 里用 ChangeNotifierProvider 提供全局状态
+// ChangeNotifierProvider(
+//   create: (_) =&gt; AuthModel(),
+//   child: const MyApp(),
+// )
+
+// 3. 页面里读取/使用全局状态 + 页面局部 setState
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+  @override
+  State&lt;HomePage&gt; createState() =&gt; _HomePageState();
+}
+
+class _HomePageState extends State&lt;HomePage&gt; {
+  int _localCount = 0;  // 页面局部状态，用 setState 管
+
+  @override
+  Widget build(BuildContext context) {
+    // 读全局状态：登录了吗？
+    final auth = context.watch&lt;AuthModel&gt;();
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('组合用法')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(auth.isLoggedIn ? '已登录' : '未登录'),
+            const SizedBox(height: 12),
+            Text('局部计数：$_localCount'),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () =&gt; setState(() =&gt; _localCount++),  // 局部用 setState
+              child: const Text('局部 +1'),
+            ),
+            ElevatedButton(
+              onPressed: auth.isLoggedIn ? auth.logout : auth.login,  // 全局用 Provider
+              child: Text(auth.isLoggedIn ? '退出登录' : '登录'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<p><strong>选型口诀（真实项目）：</strong></p>
+<blockquote>
+<p>小项目：setState + Provider 就够。<br>
+中项目：Provider/Riverpod 按模块划分。<br>
+大项目：Riverpod 或 Bloc + 分层架构。<br>
+<strong>先跑起来，别过度设计</strong>；架构为业务服务，不为了炫技。</p>
+</blockquote>
+<hr>
+<h2>四、iOS 开发者视角（老司机对照表）</h2>
+<table>
+<thead>
+<tr>
+<th>iOS 原生</th>
+<th>Flutter</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Xcode 工程目录（Groups）</td>
+<td>lib/ 目录分层</td>
+<td>项目组织</td>
+</tr>
+<tr>
+<td>Podfile / Package.swift</td>
+<td>pubspec.yaml</td>
+<td>依赖管理</td>
+</tr>
+<tr>
+<td>pod install</td>
+<td>flutter pub get</td>
+<td>拉依赖</td>
+</tr>
+<tr>
+<td>xcconfig / Configuration</td>
+<td>--dart-define / env 文件</td>
+<td>多环境配置</td>
+</tr>
+<tr>
+<td>SwiftLint / Xcode Analyze</td>
+<td>flutter analyze + flutter_lints</td>
+<td>代码规范</td>
+</tr>
+<tr>
+<td>Fastlane / Xcode Cloud</td>
+<td>GitHub Actions / Codemagic</td>
+<td>CI/CD</td>
+</tr>
+<tr>
+<td>Combine / ObservableObject</td>
+<td>Provider / Riverpod / Bloc</td>
+<td>状态管理</td>
+</tr>
+<tr>
+<td>MVVM / VIPER</td>
+<td>分层架构（data/domain/presentation）</td>
+<td>架构模式</td>
+</tr>
+</tbody>
+</table>
+<p><strong>给 iOS 工程师的真心话：</strong><br>
+- pubspec 就是"Podfile + Package.swift 二合一"，<code>flutter pub get</code> 就是 <code>pod install</code>，上手零成本。<br>
+- <code>--dart-define</code> 就是 xcconfig 环境变量，Swift 里 <code>Environment</code> 那套。<br>
+- CI/CD 你玩过 Fastlane 的话，GitHub Actions 的 YAML 只是换个写法。<br>
+- 状态管理：<code>ChangeNotifier</code> ≈ <code>ObservableObject</code>，<code>context.watch</code> ≈ <code>@ObservedObject</code> 的订阅，概念直接平移。</p>
+<hr>
+<h2>五、小节小结</h2>
+<ol>
+<li>工程化解决"多人协作不乱、长期维护不崩、自动发布不慌"。</li>
+<li>目录结构：按职责分层（core / features / shared），功能内再分 data / domain / presentation。</li>
+<li>pubspec.yaml 管理依赖：<code>^</code> 控制版本范围，<code>flutter pub get</code> 拉依赖。</li>
+<li>多环境：<code>--dart-define</code> 注入 dev/prod 配置（接口地址、日志、App 名）。</li>
+<li>lint：<code>flutter analyze</code> 检查 + <code>dart fix --apply</code> 自动修。</li>
+<li>CI/CD：GitHub Actions 自动化跑检查+测试+打包。</li>
+<li>状态管理组合拳：局部 setState + 全局 Provider + 复杂场景 Riverpod/Bloc。</li>
+</ol>
+<hr>
+<h2>六、本节动手练习（含答案提示）</h2>
+<p><strong>练习 1：目录判断</strong></p>
+<blockquote>
+<p>一个"用户头像组件"应该放在哪个目录？为什么？</p>
+<p>✅ 答案提示：放 <code>shared/widgets/</code>（跨模块通用组件）。因为它被多个功能模块复用，不属于某个具体业务。</p>
+</blockquote>
+<p><strong>练习 2：版本号理解</strong></p>
+<blockquote>
+<p><code>dio: ^5.4.0</code> 表示允许什么版本？</p>
+<p>✅ 答案提示：允许 5.4.0 及以上、但小于 6.0.0 的版本（大版本 5 不变，小版本可更新）。</p>
+</blockquote>
+<p><strong>练习 3：环境配置</strong></p>
+<blockquote>
+<p>想让 App 在正式环境不打印调试日志，应该怎么做？</p>
+<p>✅ 答案提示：用 <code>AppConfig.isProd</code>（来自 <code>--dart-define=ENV=prod</code>）判断，正式环境把 logger 级别调成 error 或关闭；也可配合 <code>kDebugMode</code> 判断。</p>
+</blockquote>
+<p><strong>练习 4：CI 流程</strong></p>
+<blockquote>
+<p>一个最简单的 Flutter CI 流程，按顺序应该做哪几步？</p>
+<p>✅ 答案提示：checkout 代码 → 装 Flutter → <code>flutter pub get</code> → <code>flutter analyze</code> → <code>flutter test</code>（全绿才通过）。</p>
+</blockquote>
+<p><strong>练习 5：状态管理选型</strong></p>
+<blockquote>
+<p>一个中大型项目，登录状态要跨页面共享、购物车逻辑复杂。分别适合用什么？</p>
+<p>✅ 答案提示：登录状态用 Provider（简单共享）；购物车等复杂业务逻辑用 Riverpod 或 Bloc（可测试、可追踪）。</p>
+</blockquote>
+<hr>
+<h2>下一步</h2>
+<p>架构和工程化搞定了，接下来给项目加"保险"——写测试。</p>
+<p>👉 下一篇：<a href="02-测试.html">02-测试.html</a></p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

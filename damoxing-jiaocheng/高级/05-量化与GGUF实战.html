@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>高级 05：量化与 GGUF 实战（把模型压小） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 高级模块</div>
+    <h1>高级 05：量化与 GGUF 实战（把模型压小）</h1>
+    <span class="header-tag">高级模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>7B 模型从 14GB 压到 4GB，精度损失可控——量化是端侧 AI 的命脉。</p></blockquote><hr>
+<h2>1. 量化原理</h2>
+<p>FP16 每个参数 16bit → INT4 每参数 4bit，体积和显存约 ÷4。用 scale/zero-point 映射回近似浮点。</p>
+<hr>
+<h2>2. 常见量化格式</h2>
+<table><thead><tr><th>格式</th><th>bit</th><th>场景</th></tr></thead><tbody><tr><td>FP16</td><td>16</td><td>训练、云端推理</td></tr><tr><td>INT8</td><td>8</td><td>推理加速</td></tr><tr><td>INT4/GPTQ/AWQ</td><td>4</td><td>本地部署主力</td></tr><tr><td>GGUF</td><td>4~8</td><td>llama.cpp/Ollama 专用</td></tr></tbody></table>
+<hr>
+<h2>3. GGUF 文件名解读</h2>
+<pre>qwen2.5-7b-instruct-q4_k_m.gguf
+         ↑        ↑  ↑ ↑
+       模型名   量化  K混合精度 M中等质量
+
+Q4_K_M：平衡体积和质量，Mac 本地首选</pre>
+<hr>
+<h2>4. 实操命令</h2>
+<pre><code class="language-bash"># Ollama 自动量化
+ollama pull qwen2.5:7b
+
+# llama.cpp 手动量化
+./llama-quantize model-f16.gguf model-q4_k_m.gguf Q4_K_M</code></pre>
+<hr>
+<h2>5. 精度 vs 速度</h2>
+<table><thead><tr><th>量化</th><th>体积</th><th>质量</th><th>速度</th></tr></thead><tbody><tr><td>Q8</td><td>大</td><td>最好</td><td>慢</td></tr><tr><td>Q4_K_M</td><td>中</td><td>很好</td><td>快</td></tr><tr><td>Q2</td><td>最小</td><td>明显下降</td><td>最快</td></tr></tbody></table>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

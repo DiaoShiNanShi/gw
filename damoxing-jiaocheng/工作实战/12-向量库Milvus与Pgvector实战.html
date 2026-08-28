@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 12：Milvus 与 pgvector 企业实战 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 12：Milvus 与 pgvector 企业实战</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>企业级实战章节。</p></blockquote><hr>
+<h2>1. Chroma → 生产的鸿沟</h2>
+<p>Chroma 适合开发；上线要考虑并发、持久化、备份、权限。</p>
+<hr>
+<h2>2. pgvector 方案</h2>
+<p>向量存在 PostgreSQL 里，和业务数据同库。SQL 过滤 + 向量检索一次搞定。</p><pre><code class="language-sql">-- 创建向量列
+ALTER TABLE documents ADD COLUMN embedding vector(1536);
+CREATE INDEX ON documents USING hnsw (embedding vector_cosine_ops);
+
+-- 混合检索
+SELECT content FROM documents
+WHERE category = '人事'
+ORDER BY embedding <=> query_vector
+LIMIT 5;</code></pre>
+<hr>
+<h2>3. Milvus 方案</h2>
+<p>独立向量服务，支持亿级、多租户、云原生。Docker 一键起。</p>
+<hr>
+<h2>4. 数据同步</h2>
+<p>文档更新 → 重新 Embedding → 更新向量库。要有增量更新和全量重建策略。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

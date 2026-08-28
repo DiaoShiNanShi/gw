@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>02-测试 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 工作实战</div>
+    <h1>02-测试</h1>
+    <span class="header-tag">工作实战</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>02-测试</h1>
+<blockquote>
+<p>大白话版 · Flutter 测试实战（小白向）<br>
+目标：学会单元测试、Widget 测试、集成测试、mock 依赖、常见测试套路与覆盖率。</p>
+</blockquote>
+<hr>
+<h2>一、先讲"是什么"：测试到底在测什么？</h2>
+<p><strong>一句话版本：测试 = 用代码验证"代码没写错"，分三层：测逻辑、测界面、测整体流程。</strong></p>
+<p>打个比方（餐厅质检）：</p>
+<blockquote>
+<ul>
+<li><strong>单元测试</strong> = 单独检查"切菜师傅"：给一把菜、一把刀，验证切出来的丝是不是粗细均匀（只测一个函数/一个类）</li>
+<li><strong>Widget 测试</strong> = 检查"一道菜上桌"：摆盘对不对、菜名对不对（测一个界面组件）</li>
+<li><strong>集成测试</strong> = 完整走一遍"客人从进门到结账"：全流程一起跑（测整个 App 流程）</li>
+</ul>
+</blockquote>
+<h3>Flutter 三种测试对比</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>大白话</th>
+<th>运行速度</th>
+<th>场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>单元测试</strong></td>
+<td>只测一个函数/类</td>
+<td>极快（毫秒级）</td>
+<td>工具函数、Model 解析、业务逻辑</td>
+</tr>
+<tr>
+<td><strong>Widget 测试</strong></td>
+<td>测一个界面组件</td>
+<td>快（秒级）</td>
+<td>按钮点击、文案显示、交互</td>
+</tr>
+<tr>
+<td><strong>集成测试</strong></td>
+<td>整个 App 流程</td>
+<td>慢（分钟级）</td>
+<td>登录→首页→下单 全链路</td>
+</tr>
+</tbody>
+</table>
+<p><strong>测试金字塔（记住这个形状）：</strong></p>
+<pre class="codehilite"><code>        /\       集成测试（少，最贵）
+       /  \
+      /----\     Widget 测试（中）
+     /------\
+    /--------\   单元测试（多，最便宜，主力）
+</code></pre>
+
+<p><strong>大白话：</strong> 大部分测试应该是最便宜的单元测试，界面和集成测试少而精。</p>
+<hr>
+<h2>二、再讲"为什么"：为什么要写测试？</h2>
+<table>
+<thead>
+<tr>
+<th>理由</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>防止回归</td>
+<td>改 A 功能把 B 搞坏了？测试立刻报警</td>
+</tr>
+<tr>
+<td>敢重构</td>
+<td>有测试兜底，随便改代码不怕</td>
+</tr>
+<tr>
+<td>文档作用</td>
+<td>测试展示了"这个函数应该怎么用、返回什么"</td>
+</tr>
+<tr>
+<td>面试加分</td>
+<td>大厂几乎必问测试</td>
+</tr>
+<tr>
+<td>CI 自动质检</td>
+<td>提交代码自动跑测试，坏代码进不了主干</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>对 iOS 工程师：这和 XCTest / ViewInspector 的定位完全一样：单元测试 ≈ XCTest 的 <code>testXxx()</code>，Widget 测试 ≈ 用 ViewInspector 断言 SwiftUI 视图。</p>
+</blockquote>
+<hr>
+<h2>三、怎么用：四类测试逐个击破</h2>
+<h3>3.1 单元测试（测逻辑，最快最常用）</h3>
+<p><strong>场景：</strong> 测一个计算函数和 Model 解析。</p>
+<pre class="codehilite"><code class="language-dart">// 被测代码（lib/utils/calculator.dart）
+class Calculator {
+  int add(int a, int b) =&gt; a + b;
+
+  // 计算总价：满 100 减 20
+  int totalPrice(int price, int count) {
+    final total = price * count;
+    return total &gt;= 100 ? total - 20 : total;
+  }
+}
+
+// 测试代码（test/calculator_test.dart）
+import 'package:flutter_test/flutter_test.dart';
+import 'package:todo_app/utils/calculator.dart';
+
+void main() {
+  group('Calculator 计算器', () {       // group：分组，方便看结果
+    test('加法：2 + 3 = 5', () {
+      final calc = Calculator();
+      expect(calc.add(2, 3), 5);       // expect：断言（期望等于 5）
+    });
+
+    test('总价满 100 减 20', () {
+      final calc = Calculator();
+      expect(calc.totalPrice(30, 4), 100);   // 120 - 20 = 100
+      expect(calc.totalPrice(30, 2), 60);    // 不满 100，不优惠
+    });
+
+    test('边界：正好 100 也要优惠', () {
+      final calc = Calculator();
+      expect(calc.totalPrice(25, 4), 80);    // 100 - 20 = 80
+    });
+  });
+}
+</code></pre>
+
+<p><strong>运行单元测试：</strong></p>
+<pre class="codehilite"><code class="language-bash">flutter test test/calculator_test.dart
+# 或者全部测试
+flutter test
+</code></pre>
+
+<p><strong>核心 API 速记：</strong></p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test('描述', () {...})</code></td>
+<td>定义一条测试</td>
+</tr>
+<tr>
+<td><code>group('描述', () {...})</code></td>
+<td>分组</td>
+</tr>
+<tr>
+<td><code>expect(实际值, 期望值)</code></td>
+<td>断言：相等</td>
+</tr>
+<tr>
+<td><code>expect(() =&gt; fn(), throwsException)</code></td>
+<td>断言：抛异常</td>
+</tr>
+</tbody>
+</table>
+<p><strong>测试套路（AAA 模式）：</strong><br>
+1. <strong>Arrange</strong>（准备）：创建对象、准备数据<br>
+2. <strong>Act</strong>（执行）：调用被测函数<br>
+3. <strong>Assert</strong>（断言）：检查结果</p>
+<h3>3.2 Widget 测试（测界面）</h3>
+<p><strong>场景：</strong> 测一个计数器页面：点击按钮，数字 +1。</p>
+<pre class="codehilite"><code class="language-dart">// 被测页面（lib/counter_page.dart）
+class CounterPage extends StatefulWidget {
+  const CounterPage({super.key});
+  @override
+  State&lt;CounterPage&gt; createState() =&gt; _CounterPageState();
+}
+
+class _CounterPageState extends State&lt;CounterPage&gt; {
+  int _count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('计数：$_count', key: const Key('count_text')),  // 加 key 方便测试找
+            ElevatedButton(
+              key: const Key('add_button'),
+              onPressed: () =&gt; setState(() =&gt; _count++),
+              child: const Text('+1'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// 测试代码（test/counter_page_test.dart）
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:todo_app/counter_page.dart';
+
+void main() {
+  testWidgets('点击按钮计数 +1', (WidgetTester tester) async {
+    // 1. 把页面&quot;铺&quot;到测试环境里
+    await tester.pumpWidget(const MaterialApp(home: CounterPage()));
+
+    // 2. 初始状态：计数为 0
+    expect(find.text('计数：0'), findsOneWidget);
+
+    // 3. 点击 +1 按钮
+    await tester.tap(find.byKey(const Key('add_button')));
+
+    // 4. 刷新一帧（setState 后需要 pump）
+    await tester.pump();
+
+    // 5. 断言：现在显示 1
+    expect(find.text('计数：1'), findsOneWidget);
+  });
+}
+</code></pre>
+
+<p><strong>Widget 测试核心 API：</strong></p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>作用</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>testWidgets('描述', (tester) async {...})</code></td>
+<td>定义 Widget 测试</td>
+<td>开一个小舞台</td>
+</tr>
+<tr>
+<td><code>tester.pumpWidget(widget)</code></td>
+<td>把组件放上舞台</td>
+<td>摆道具</td>
+</tr>
+<tr>
+<td><code>tester.tap(finder)</code></td>
+<td>模拟点击</td>
+<td>用手指点</td>
+</tr>
+<tr>
+<td><code>tester.pump()</code></td>
+<td>刷新一帧</td>
+<td>让画面更新</td>
+</tr>
+<tr>
+<td><code>find.text('xxx')</code></td>
+<td>按文本找组件</td>
+<td>找带字的元素</td>
+</tr>
+<tr>
+<td><code>find.byKey(Key('xxx'))</code></td>
+<td>按 key 找组件</td>
+<td>找贴标签的元素</td>
+</tr>
+<tr>
+<td><code>findsOneWidget / findsNothing</code></td>
+<td>断言找到 1 个 / 0 个</td>
+<td>检查有没有</td>
+</tr>
+</tbody>
+</table>
+<p><strong>找组件的三种常用方式：</strong></p>
+<pre class="codehilite"><code class="language-dart">find.text('计数：1')          // 按文字
+find.byKey(const Key('add_button'))  // 按 key（推荐，稳定）
+find.byType(ElevatedButton)   // 按类型
+</code></pre>
+
+<h3>3.3 mock 依赖（模拟网络/外部服务）</h3>
+<p><strong>大白话：</strong> 测试时不想真的发网络请求（又慢又不可控），就用"假接口"（mock）模拟返回。</p>
+<p><strong>场景：</strong> 测一个"获取用户信息"的业务函数，mock 网络层。</p>
+<pre class="codehilite"><code class="language-dart">// 被测代码（lib/services/user_service.dart）
+class UserService {
+  final ApiClient api;   // 网络客户端
+
+  UserService(this.api);
+
+  Future&lt;String&gt; getUserName(int id) async {
+    final data = await api.get('/user/$id');
+    return data['name'] as String;
+  }
+}
+
+// 测试代码（test/user_service_test.dart）
+import 'package:flutter_test/flutter_test.dart';
+import 'package:todo_app/services/user_service.dart';
+
+// 手写一个&quot;假 ApiClient&quot;（不用任何 mock 库也能做）
+class FakeApiClient implements ApiClient {
+  @override
+  Future&lt;Map&lt;String, dynamic&gt;&gt; get(String path) async {
+    // 不发网络请求，直接返回假数据
+    if (path == '/user/1') {
+      return {'name': '小明'};
+    }
+    throw Exception('404');
+  }
+}
+
+void main() {
+  test('获取用户名成功', () async {
+    final service = UserService(FakeApiClient());  // 注入假客户端
+    final name = await service.getUserName(1);
+    expect(name, '小明');
+  });
+
+  test('获取用户名失败抛异常', () async {
+    final service = UserService(FakeApiClient());
+    expect(() =&gt; service.getUserName(999), throwsException);
+  });
+}
+</code></pre>
+
+<p><strong>用 mockito（业界标准库）更省事：</strong></p>
+<pre class="codehilite"><code class="language-dart">// 需要先 flutter pub add mockito dev:build_runner
+// 生成 mock 类后：
+// final mockApi = MockApiClient();
+// when(mockApi.get('/user/1')).thenAnswer((_) async =&gt; {'name': '小明'});
+</code></pre>
+
+<p><strong>mock 的原则：</strong><br>
+1. 只 mock <strong>外部依赖</strong>（网络、数据库、系统服务），别 mock 自己写的业务逻辑（不然测试就没意义了）。<br>
+2. 依赖要能"注入"：构造函数传进去（依赖注入），这样才能在测试里换假的。</p>
+<h3>3.4 集成测试（全流程）</h3>
+<p><strong>场景：</strong> 整个 App 从首页走到详情页，验证真实流程。</p>
+<pre class="codehilite"><code class="language-dart">// 集成测试（integration_test/app_test.dart）
+// 需要在 pubspec 加 integration_test 依赖：
+// dev_dependencies:
+//   integration_test:
+//     sdk: flutter
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+import 'package:todo_app/main.dart' as app;
+
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('完整流程：打开 App → 点按钮 → 看到结果', (tester) async {
+    app.main();                                  // 启动真实 App
+    await tester.pumpAndSettle();                // 等动画/加载完成
+
+    // 在真实 App 上操作
+    await tester.tap(find.text('开始'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('成功'), findsOneWidget);
+  });
+}
+</code></pre>
+
+<p><strong>运行集成测试（需要真机/模拟器）：</strong></p>
+<pre class="codehilite"><code class="language-bash">flutter test integration_test/app_test.dart -d &lt;device_id&gt;
+</code></pre>
+
+<p><strong>注意：</strong> 集成测试慢、依赖真实环境，<strong>别写太多</strong>，只覆盖核心用户路径。</p>
+<h3>3.5 测试覆盖率</h3>
+<p><strong>大白话：</strong> 覆盖率 = "被测代码行数 / 总代码行数"，看测试漏了哪里。</p>
+<pre class="codehilite"><code class="language-bash"># 跑测试并生成覆盖率报告
+flutter test --coverage
+
+# 报告在 coverage/lcov.info，可用工具可视化
+# 或直接看终端汇总（有些工具会输出百分比）
+</code></pre>
+
+<p><strong>覆盖率不是越高越好（重点）：</strong><br>
+- 核心业务逻辑覆盖率要尽量高（&gt;80%）<br>
+- UI 纯展示代码不必强求<br>
+- <strong>比覆盖率更重要的是：关键路径测到位</strong>（登录、支付、数据解析这些出问题就完蛋的）</p>
+<p><strong>测试套路总结（背下来）：</strong><br>
+1. AAA：准备 → 执行 → 断言<br>
+2. 只测"行为"，不测"实现细节"<br>
+3. 一个测试只验证一件事<br>
+4. 描述要清晰：<code>'点击登录按钮后显示加载中'</code><br>
+5. mock 外部依赖，别发真网络请求</p>
+<hr>
+<h2>四、iOS 开发者视角（老司机对照表）</h2>
+<table>
+<thead>
+<tr>
+<th>iOS 原生</th>
+<th>Flutter</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>XCTest <code>testXxx()</code></td>
+<td><code>test('...', () {...})</code></td>
+<td>单元测试</td>
+</tr>
+<tr>
+<td>XCTAssertEqual</td>
+<td>expect(实际, 期望)</td>
+<td>断言</td>
+</tr>
+<tr>
+<td>ViewInspector（SwiftUI）</td>
+<td>testWidgets + find</td>
+<td>Widget 测试</td>
+</tr>
+<tr>
+<td><code>tester.tap</code> ≈ XCUITest tap</td>
+<td>tester.tap</td>
+<td>模拟点击</td>
+</tr>
+<tr>
+<td>XCTestCase setUp/tearDown</td>
+<td>setUp/tearDown</td>
+<td>测试准备清理</td>
+</tr>
+<tr>
+<td>OCMock / Mockingbird</td>
+<td>mockito / Fake 类</td>
+<td>mock 依赖</td>
+</tr>
+<tr>
+<td>XCUITest 全流程</td>
+<td>integration_test</td>
+<td>集成测试</td>
+</tr>
+<tr>
+<td>xccov 覆盖率</td>
+<td>flutter test --coverage</td>
+<td>覆盖率</td>
+</tr>
+<tr>
+<td>Fastlane scan / Xcode Cloud</td>
+<td>CI 里跑 flutter test</td>
+<td>自动测试</td>
+</tr>
+</tbody>
+</table>
+<p><strong>给 iOS 工程师的真心话：</strong><br>
+- 单元测试：<code>test</code> + <code>expect</code> 就是 XCTest 的 <code>testXxx</code> + XCTAssert，写法更轻。<br>
+- Widget 测试：比 ViewInspector 更直观——<code>find.text('xxx')</code> 找元素、<code>tester.tap</code> 点击，非常像 XCUITest 但跑得快得多（不需要模拟器）。<br>
+- mock：iOS 用协议注入 + Mockingbird，Flutter 用接口注入 + mockito，思路一模一样（都靠依赖注入）。<br>
+- 关键差异：Flutter 的 Widget 测试<strong>速度极快</strong>（毫秒级），可以写很多；iOS 的 UI 测试很慢，只能少写。所以 Flutter 项目测试金字塔的"中腰"特别肥。</p>
+<hr>
+<h2>五、小节小结</h2>
+<ol>
+<li>三层测试：单元（测逻辑）、Widget（测界面）、集成（测全流程）。</li>
+<li>测试金字塔：单元测试最多最便宜，集成测试少而精。</li>
+<li>单元测试：<code>test</code> + <code>group</code> + <code>expect</code>，AAA 套路（准备→执行→断言）。</li>
+<li>Widget 测试：<code>testWidgets</code> + <code>pumpWidget</code> + <code>find</code> + <code>tap</code> + <code>pump</code>。</li>
+<li>mock：用假对象代替网络/数据库等外部依赖，靠依赖注入实现。</li>
+<li>集成测试：<code>integration_test</code> 跑真实 App 全流程，覆盖核心路径即可。</li>
+<li>覆盖率：核心逻辑 &gt;80%，关键路径比数字更重要。</li>
+</ol>
+<hr>
+<h2>六、本节动手练习（含答案提示）</h2>
+<p><strong>练习 1：选测试类型</strong></p>
+<blockquote>
+<p>以下场景分别用什么测试？<br>
+A. 验证一个"满减计算"函数　B. 验证登录页点击按钮跳转　C. 验证从登录到下单的完整流程</p>
+<p>✅ 答案提示：A 单元测试（纯函数）；B Widget 测试（界面交互）；C 集成测试（全流程）。</p>
+</blockquote>
+<p><strong>练习 2：找 API</strong></p>
+<blockquote>
+<p>Widget 测试里，点击按钮后界面变了，为什么需要 <code>tester.pump()</code>？</p>
+<p>✅ 答案提示：setState 触发重建需要刷新一帧才能看到新界面，<code>pump()</code> 就是"刷新一帧"；异步动画/网络完成用 <code>pumpAndSettle()</code> 等所有帧稳定。</p>
+</blockquote>
+<p><strong>练习 3：mock 判断</strong></p>
+<blockquote>
+<p>测试一个调用了 <code>FirebaseAuth</code> 的登录函数，应不应该发真实请求？怎么做？</p>
+<p>✅ 答案提示：不应该发真实请求（不可控、慢、可能失败）。把 auth 依赖注入到构造函数，测试时传入 mock 假实现返回固定结果。</p>
+</blockquote>
+<p><strong>练习 4：断言</strong></p>
+<blockquote>
+<p>想验证"页面上没有'加载中'三个字"，用哪个断言？</p>
+<p>✅ 答案提示：<code>expect(find.text('加载中'), findsNothing);</code></p>
+</blockquote>
+<p><strong>练习 5：覆盖率理解</strong></p>
+<blockquote>
+<p>团队规定覆盖率要 100%，这个要求合理吗？为什么？</p>
+<p>✅ 答案提示：不合理。纯展示代码、防御代码等难以覆盖，且高覆盖率不等于测到关键路径；合理做法是核心业务逻辑高覆盖 + 关键路径全覆盖。</p>
+</blockquote>
+<hr>
+<h2>下一步</h2>
+<p>测试写好了，代码质量有保障，接下来把 App 打包上架。</p>
+<p>👉 下一篇：<a href="03-打包与上架.html">03-打包与上架.html</a></p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

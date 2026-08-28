@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>02-性能优化 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 高级深入</div>
+    <h1>02-性能优化</h1>
+    <span class="header-tag">高级深入</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>02-性能优化</h1>
+<blockquote>
+<p>大白话版 · 性能优化实战（小白向）<br>
+目标：学会列表优化、const 优化、重绘分析、启动速度、包体积和内存泄漏排查。</p>
+</blockquote>
+<hr>
+<h2>一、先讲"是什么"：性能优化到底在优化什么？</h2>
+<p><strong>一句话版本：性能优化 = 让 App 更流畅（不卡顿）、启动更快、包更小、不崩不泄漏。</strong></p>
+<p>打个比方：</p>
+<blockquote>
+<p>你的 App 像一家餐厅：<br>
+- <strong>流畅度</strong>：高峰期上菜快不快（不卡顿）<br>
+- <strong>启动速度</strong>：顾客进门到坐下点菜多快（启动时间）<br>
+- <strong>包体积</strong>：厨房占多大地方（安装包大小）<br>
+- <strong>内存泄漏</strong>：有没有"用过的碗碟不洗、越堆越多"（内存越占越多最后崩溃）</p>
+<p>性能优化就是把这四个环节都调理顺。</p>
+</blockquote>
+<h3>卡顿的根本原因（必懂）</h3>
+<p>屏幕每秒刷新 60 次（60fps），每帧只有约 <strong>16.7 毫秒</strong>（1000/60）来完成任务。<br>
+如果一帧的活儿超过 16.7ms，就会"掉帧"——用户感觉就是卡顿。</p>
+<pre class="codehilite"><code>一帧的时间线（16.7ms）：
+[   Dart 代码执行   ][   渲染    ][   绘制上屏   ]
+        必须赶在 16.7ms 内全部完成！
+</code></pre>
+
+<p><strong>大白话：</strong> 一帧就像一次"限时任务"，超时就是卡顿。优化的核心 = <strong>让每帧的活变少</strong>。</p>
+<hr>
+<h2>二、再讲"为什么"：常见的性能杀手有哪些？</h2>
+<table>
+<thead>
+<tr>
+<th>性能杀手</th>
+<th>大白话</th>
+<th>后果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>列表一次性建太多</td>
+<td>一口气把 10000 个 cell 全造出来</td>
+<td>卡顿、内存暴涨</td>
+</tr>
+<tr>
+<td>没写 const</td>
+<td>每次重建都重新"画"一遍不变的零件</td>
+<td>浪费 CPU</td>
+</tr>
+<tr>
+<td>重绘范围太大</td>
+<td>只改一个小图标，整页全部重画</td>
+<td>掉帧</td>
+</tr>
+<tr>
+<td>主线程干重活</td>
+<td>在主线程解析大 JSON、读大文件</td>
+<td>界面卡死</td>
+</tr>
+<tr>
+<td>内存泄漏</td>
+<td>页面关了，对象还不释放</td>
+<td>内存越用越多、闪退</td>
+</tr>
+<tr>
+<td>包体积大</td>
+<td>塞了很多没用的大资源/代码</td>
+<td>下载慢、审核烦</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>三、怎么用：六大优化逐个击破</h2>
+<h3>3.1 优化一：列表性能（ListView.builder + 懒加载 + 缓存）</h3>
+<p><strong>问题：</strong> 用 <code>ListView(children: [...])</code> 会一次性创建所有条目。<br>
+<strong>解决：</strong> 用 <code>ListView.builder</code> 按需创建 + <code>itemExtent</code> 固定高度 + <code>addAutomaticKeepAlives</code> 缓存。</p>
+<pre class="codehilite"><code class="language-dart">// 好的写法：builder 按需生成，滚动到哪才建哪
+ListView.builder(
+  itemCount: 10000,
+  itemExtent: 72,                 // 固定每行高度：让滚动计算更快
+  cacheExtent: 200,               // 预加载范围：提前渲染可视区外一点点
+  itemBuilder: (context, index) {
+    return ListTile(
+      leading: const CircleAvatar(child: Icon(Icons.person)),
+      title: Text('用户 $index'),
+    );
+  },
+)
+</code></pre>
+
+<p><strong>ListTile 内部的 keepAlive（大白话）：</strong><br>
+- <code>addAutomaticKeepAlives: true</code>（默认开启）：滚出屏幕的条目先"缓存"不销毁，滚回来不用重建。<br>
+- 好处：来回滚不卡；代价：占一点内存。列表项很重时改为 false 省内存。</p>
+<p><strong>列表优化口诀：</strong><br>
+1. 大量数据 → 一定用 <code>ListView.builder</code> / <code>GridView.builder</code>。<br>
+2. 行高固定 → 加 <code>itemExtent</code>（省去测量高度）。<br>
+3. 每行内容不变 → 能 <code>const</code> 就 <code>const</code>。<br>
+4. 图片 → 用 <code>cached_network_image</code> 缓存，不重复下载。</p>
+<h3>3.2 优化二：const 优化（免费的午餐）</h3>
+<p><strong>大白话：</strong> <code>const</code> 告诉 Flutter："这个 Widget 永远不会变"。重建时 Flutter 直接复用同一个实例，不用重新创建。</p>
+<pre class="codehilite"><code class="language-dart">// 坏的写法：每次 build 都新建，浪费
+Text('标题', style: TextStyle(fontSize: 20))
+
+// 好的写法：const 让 Flutter 复用
+const Text('标题', style: TextStyle(fontSize: 20))
+</code></pre>
+
+<p><strong>怎么找漏网之鱼：</strong> 在 Android Studio / VS Code 里跑 <code>flutter analyze</code>，会提示"Use const"。看到提示就加。</p>
+<blockquote>
+<p>对 iOS 工程师：const ≈ Swift 里"不可变 + 缓存复用"的组合拳，Flutter 编译器还能帮你自动复用，性能免费提升。</p>
+</blockquote>
+<h3>3.3 优化三：重绘分析（RepaintBoundary）</h3>
+<p><strong>问题：</strong> 默认情况下，一个组件重绘，可能带动整个页面重绘。<br>
+<strong>解决：</strong> 用 <code>RepaintBoundary</code> 把"容易变的部分"隔离起来——它变了只重绘它自己，不影响别人。</p>
+<pre class="codehilite"><code class="language-dart">// 场景：一个列表里有个&quot;会动的加载动画&quot;，不希望它带动整行/整页重绘
+ListView.builder(
+  itemBuilder: (context, index) {
+    return RepaintBoundary(   // 隔离层：里面怎么变都不影响外面
+      child: ListTile(
+        title: Text('第 $index 条'),
+        trailing: index % 10 == 0
+            ? const SizedBox(
+                width: 20, height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),  // 会转的圈
+              )
+            : const Icon(Icons.check),
+      ),
+    );
+  },
+)
+</code></pre>
+
+<p><strong>怎么定位重绘问题（DevTools）：</strong><br>
+1. 运行 App 时开启"Debug 模式下的性能叠加层"：<br>
+   - Android Studio：View → Tool Windows → Flutter Inspector → Enable Repaint Rainbow<br>
+   - 或运行代码 <code>debugPaintLayerBordersEnabled = true</code> 看边界<br>
+2. 开启后，<strong>频繁重绘的区域会闪烁</strong>，闪烁的地方就该加 RepaintBoundary。</p>
+<blockquote>
+<p>对 iOS 工程师：RepaintBoundary ≈ CALayer 的 <code>shouldRasterize</code> / 独立 layer，都是"隔离重绘区域"。</p>
+</blockquote>
+<h3>3.4 优化四：启动速度</h3>
+<p><strong>启动慢的原因（大白话）：</strong> 启动时要执行很多代码——初始化 SDK、读配置、渲染首页。</p>
+<p><strong>优化手段：</strong></p>
+<table>
+<thead>
+<tr>
+<th>手段</th>
+<th>做法</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>首帧前别干重活</td>
+<td>main() 里别做大量初始化</td>
+<td>先上菜，再慢慢加调料</td>
+</tr>
+<tr>
+<td>懒加载</td>
+<td>非首屏模块按需 import / 延迟初始化</td>
+<td>用到再加载</td>
+</tr>
+<tr>
+<td>减少首屏 Widget 复杂度</td>
+<td>首页别堆大量图片/动画</td>
+<td>第一屏简单点</td>
+</tr>
+<tr>
+<td>用 <code>runApp</code> 前预加载主题/字体</td>
+<td>避免首帧后闪一下</td>
+<td>先摆好桌布再上菜</td>
+</tr>
+<tr>
+<td>发布用 <code>flutter build</code> 的 release 模式</td>
+<td>开启 AOT 编译、Tree Shaking</td>
+<td>去掉没用代码，跑更快</td>
+</tr>
+</tbody>
+</table>
+<p><strong>度量启动时间：</strong></p>
+<pre class="codehilite"><code class="language-bash"># 用 flutter run --profile 模式观察（release/profile 才接近真实）
+flutter run --profile
+# 或看 DevTools 的 Timeline 里的&quot;首帧时间&quot;
+</code></pre>
+
+<h3>3.5 优化五：包体积</h3>
+<p><strong>包体积大的原因：</strong> 代码里塞了没用的库、大图片、多平台资源。</p>
+<p><strong>优化手段（大白话版）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>手段</th>
+<th>做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tree Shaking（默认开启）</td>
+<td>发布时自动删掉没用的 Dart 代码</td>
+</tr>
+<tr>
+<td>按需引入包</td>
+<td>别为了一个功能装一个大库（比如能用 cached_network_image 就别装整个 image 全家桶）</td>
+</tr>
+<tr>
+<td>压缩图片资源</td>
+<td>图片用 WebP/压缩格式，别直接塞原图</td>
+</tr>
+<tr>
+<td>清理无用资源</td>
+<td>用 <code>flutter clean</code> + 检查 assets</td>
+</tr>
+<tr>
+<td>拆分平台包</td>
+<td>只打包用到的平台（不用的平台资源删掉）</td>
+</tr>
+<tr>
+<td>用 <code>flutter build appbundle</code>（Android）</td>
+<td>按设备架构分发，用户只下载需要的部分</td>
+</tr>
+</tbody>
+</table>
+<p><strong>查看包大小：</strong></p>
+<pre class="codehilite"><code class="language-bash">flutter build ios --release   # 构建后查看 .app 大小
+ls -lh build/ios/iphoneos/*.app   # 看产物大小
+</code></pre>
+
+<h3>3.6 优化六：内存泄漏排查（DevTools）</h3>
+<p><strong>内存泄漏（大白话）：</strong> 页面关了，但它的对象还被别的东西"拽着"不释放，越积越多，最后内存爆掉闪退。</p>
+<p><strong>Flutter 最常见的泄漏原因：</strong><br>
+1. 订阅/监听没取消（<code>addListener</code> 后没 <code>removeListener</code>）<br>
+2. <code>AnimationController</code> 没 <code>dispose()</code><br>
+3. 全局/单例持有页面对象不放<br>
+4. 定时器（Timer）没取消</p>
+<p><strong>正确写法（防泄漏模板）：</strong></p>
+<pre class="codehilite"><code class="language-dart">class MyPage extends StatefulWidget {
+  const MyPage({super.key});
+  @override
+  State&lt;MyPage&gt; createState() =&gt; _MyPageState();
+}
+
+class _MyPageState extends State&lt;MyPage&gt; {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 1),
+  );
+  Timer? _timer;  // 定时器
+
+  @override
+  void initState() {
+    super.initState();
+    // 启动定时器
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {});
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();  // 1. 释放动画控制器
+    _timer?.cancel();       // 2. 取消定时器
+    super.dispose();
+  }
+}
+</code></pre>
+
+<p><strong>用 DevTools 排查泄漏：</strong><br>
+1. 运行 App，打开 DevTools（<code>flutter run</code> 后按 <code>Shift + P</code> 或 IDE 里点 DevTools）。<br>
+2. 切到 <strong>Memory</strong> 面板，反复进入/退出某个页面，观察内存曲线：<br>
+   - 曲线"进页面涨、退出跌回原位" = 正常。<br>
+   - 曲线"只涨不跌" = 有泄漏！<br>
+3. 用 <strong>Allocation Profile</strong> 看哪些对象堆积，找到泄漏源头。</p>
+<p><strong>DevTools 各面板速查（大白话）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>面板</th>
+<th>用途</th>
+<th>什么时候用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Performance</td>
+<td>看帧耗时、定位卡顿</td>
+<td>掉帧卡顿时</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>看内存曲线、找泄漏</td>
+<td>内存只涨不跌时</td>
+</tr>
+<tr>
+<td>Inspector</td>
+<td>看 Widget 树、查 Repaint 边界</td>
+<td>布局/重绘分析</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>看网络请求耗时</td>
+<td>接口慢时</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>四、iOS 开发者视角（老司机对照表）</h2>
+<table>
+<thead>
+<tr>
+<th>iOS 原生</th>
+<th>Flutter</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UITableView 懒加载</td>
+<td>ListView.builder</td>
+<td>按需创建 cell</td>
+</tr>
+<tr>
+<td>cell 复用（dequeueReusableCell）</td>
+<td>builder + keepAlive</td>
+<td>cell 缓存复用</td>
+</tr>
+<tr>
+<td>CALayer.shouldRasterize</td>
+<td>RepaintBoundary</td>
+<td>隔离重绘区域</td>
+</tr>
+<tr>
+<td>Instruments Time Profiler</td>
+<td>DevTools Performance</td>
+<td>性能分析</td>
+</tr>
+<tr>
+<td>Instruments Leaks / Allocations</td>
+<td>DevTools Memory</td>
+<td>内存泄漏排查</td>
+</tr>
+<tr>
+<td>首帧优化（启动时间）</td>
+<td>首帧优化（runApp 前少干活）</td>
+<td>启动提速</td>
+</tr>
+<tr>
+<td>包瘦身（删无用架构/资源）</td>
+<td>Tree Shaking + 清理资源</td>
+<td>包体积优化</td>
+</tr>
+<tr>
+<td>Timer 取消 / deinit 清理</td>
+<td>dispose() 取消</td>
+<td>防泄漏规范</td>
+</tr>
+</tbody>
+</table>
+<p><strong>给 iOS 工程师的真心话：</strong><br>
+- <code>ListView.builder</code> + <code>itemExtent</code> 就是 <code>UITableView</code> 的"注册 cell + 固定行高 + dequeue 复用"，你熟得很。<br>
+- DevTools 就是 Flutter 版的 Instruments，<code>Memory</code> 面板看曲线找泄漏的思路和 Leaks 一样。<br>
+- 最关键的差异：Flutter 是"声明式重建"，所以 <strong>const 和 RepaintBoundary</strong> 是你需要新学的两个优化点，iOS 里没有完全对应的概念（CALayer 隔离略接近）。</p>
+<hr>
+<h2>五、小节小结</h2>
+<ol>
+<li>卡顿 = 一帧超时（&gt;16.7ms）；优化核心 = 让每帧活变少。</li>
+<li>列表性能：用 <code>ListView.builder</code> 按需创建 + <code>itemExtent</code> 固定行高 + keepAlive 缓存。</li>
+<li><code>const</code> 优化：能加就加，Flutter 自动复用，零成本提速。</li>
+<li><code>RepaintBoundary</code>：隔离重绘区域，小部件变不影响大页面。</li>
+<li>启动速度：首帧前少干活、懒加载、release 模式构建。</li>
+<li>包体积：Tree Shaking、按需引包、压缩图片、拆分平台资源。</li>
+<li>内存泄漏：<code>dispose()</code> 释放控制器/定时器/监听；用 DevTools Memory 面板看曲线定位。</li>
+</ol>
+<hr>
+<h2>六、本节动手练习（含答案提示）</h2>
+<p><strong>练习 1：判断卡顿原因</strong></p>
+<blockquote>
+<p>一个列表有 5000 条数据，用 <code>ListView(children: List.generate(5000, ...))</code> 后非常卡。为什么？怎么改？</p>
+<p>✅ 答案提示：一次性创建 5000 个 Widget，重建成本高。改成 <code>ListView.builder</code>（按需创建）+ <code>itemExtent</code> 固定行高，滚动到哪建哪。</p>
+</blockquote>
+<p><strong>练习 2：const 判断</strong></p>
+<blockquote>
+<p>下面的代码哪些能加 const？<code>Text('你好')</code>、<code>Text(name)</code>、<code>Icon(Icons.star)</code>、<code>Image.network(url)</code></p>
+<p>✅ 答案提示：<code>Text('你好')</code> 和 <code>Icon(Icons.star)</code> 可以加 const（内容编译期确定）；<code>Text(name)</code> 和 <code>Image.network(url)</code> 不能（依赖运行时变量）。</p>
+</blockquote>
+<p><strong>练习 3：RepaintBoundary 场景</strong></p>
+<blockquote>
+<p>页面里有一个一直转圈的加载动画，其余内容基本不变。为什么建议给动画加 RepaintBoundary？</p>
+<p>✅ 答案提示：不加的话，动画每帧重绘可能带动整个页面重绘，浪费性能；加上后动画只在 RepaintBoundary 内部重绘，不影响外部。</p>
+</blockquote>
+<p><strong>练习 4：防泄漏</strong></p>
+<blockquote>
+<p>一个 StatefulWidget 里有 <code>AnimationController</code> 和 <code>Timer</code>，在哪个方法里清理？分别怎么清理？</p>
+<p>✅ 答案提示：在 <code>dispose()</code> 里：<code>_controller.dispose()</code> 释放动画控制器、<code>_timer?.cancel()</code> 取消定时器。</p>
+</blockquote>
+<p><strong>练习 5：选工具</strong></p>
+<blockquote>
+<p>App 出现"内存只涨不跌、最后闪退"，用 DevTools 的哪个面板排查？重点看什么？</p>
+<p>✅ 答案提示：用 <strong>Memory</strong> 面板。反复进出页面看内存曲线是否回落；用 Allocation Profile 看哪些对象持续堆积，定位泄漏源头。</p>
+</blockquote>
+<hr>
+<h2>下一步</h2>
+<p>性能已经会优化了，接下来深入"底层"——搞懂 Flutter 到底是怎么工作的。</p>
+<p>👉 下一篇：<a href="03-底层原理.html">03-底层原理.html</a></p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

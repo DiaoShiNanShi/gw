@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 逆向 07：Swift 逆向与符号还原 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 逆向模块</div>
+    <h1>iOS 逆向 07：Swift 逆向与符号还原</h1>
+    <span class="header-tag">iOS 逆向模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>⚠️ 仅用于合法安全研究和自有 App 审计。</p></blockquote><hr>
+<blockquote><p>Swift 名字修饰、demangle、Hook Swift 函数。</p></blockquote><hr>
+<h2>1. Swift 符号修饰</h2>
+<p>Swift 函数名被 mangled：<code>$s4MyApp11doSomethingyyF</code>。用 <code>swift demangle</code> 还原。</p>
+<hr>
+<h2>2. Swift vs OC 逆向</h2>
+<table><thead><tr><th></th><th>OC</th><th>Swift</th></tr></thead><tbody><tr><td>头文件</td><td>class-dump 直接看</td><td>无公开头文件</td></tr><tr><td>动态性</td><td>Runtime 强大</td><td>部分优化静态派发</td></tr><tr><td>Hook</td><td>容易</td><td>较难，需找符号地址</td></tr></tbody></table>
+<hr>
+<h2>3. Frida Hook Swift</h2>
+<pre><code class="language-javascript">// 找 mangled 名
+var addr = Module.findExportByName(null, "$s4MyApp8sendChatyySSF");
+Interceptor.attach(addr, { onEnter: function(args) { console.log(ObjC.Object(args[1])); } });</code></pre>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

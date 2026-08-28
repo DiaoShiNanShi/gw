@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 逆向 05：ARM 汇编与 IDA 入门 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 逆向模块</div>
+    <h1>iOS 逆向 05：ARM 汇编与 IDA 入门</h1>
+    <span class="header-tag">iOS 逆向模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>⚠️ 仅用于合法安全研究和自有 App 审计。</p></blockquote><hr>
+<blockquote><p>看懂汇编才能理解 Hook 和破解在改什么。</p></blockquote><hr>
+<h2>1. 为什么学汇编</h2>
+<p>Hopper/IDA 反汇编后全是 ARM 指令。不懂汇编只能干瞪眼。</p>
+<hr>
+<h2>2. 常用 ARM64 指令</h2>
+<table><thead><tr><th>指令</th><th>作用</th><th>例子</th></tr></thead><tbody><tr><td>MOV</td><td>赋值</td><td>MOV X0, #1</td></tr><tr><td>LDR/STR</td><td>读/写内存</td><td>LDR X0, [X1]</td></tr><tr><td>BL</td><td>调函数</td><td>BL _objc_msgSend</td></tr><tr><td>RET</td><td>返回</td><td>RET</td></tr><tr><td>CBZ/CBNZ</td><td>条件跳转</td><td>CBZ X0, label</td></tr></tbody></table>
+<hr>
+<h2>3. 寄存器</h2>
+<p>X0~X7 传参/返回值，X29(FP) 帧指针，X30(LR) 返回地址，SP 栈指针。</p>
+<hr>
+<h2>4. IDA/Hopper 使用</h2>
+<ol><li>打开 Mach-O</li><li>找函数列表 / Strings</li><li>F5 看伪代码</li><li>交叉引用（Xrefs）追踪调用链</li></ol>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

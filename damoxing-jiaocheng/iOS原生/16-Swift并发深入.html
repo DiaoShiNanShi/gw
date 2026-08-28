@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生 16：Swift 并发深入（async/await / Actor / Sendable） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 原生模块</div>
+    <h1>iOS 原生 16：Swift 并发深入（async/await / Actor / Sendable）</h1>
+    <span class="header-tag">iOS 原生模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>Swift 5.5+ 现代并发，AI 流式输出必用。</p></blockquote><hr>
+<h2>1. async/await</h2>
+<pre><code class="language-swift">func loadAI() async throws -> String {
+    try await aiClient.chat(messages: msgs)
+}</code></pre>
+<hr>
+<h2>2. Actor</h2>
+<p>Actor 保证内部状态线程安全。共享的 ChatHistory 可声明为 actor。</p>
+<hr>
+<h2>3. Task 与取消</h2>
+<pre><code class="language-swift">let task = Task { await longRunningAI() }
+task.cancel()  // 用户点停止时取消</code></pre>
+<hr>
+<h2>4. AsyncStream 流式</h2>
+<p>LLM 流式输出用 <code>AsyncThrowingStream</code> 往 UI 推 chunk。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>中级 04：位置编码与 Decoder 结构 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 中级模块</div>
+    <h1>中级 04：位置编码与 Decoder 结构</h1>
+    <span class="header-tag">中级模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>模型怎么知道词序？Decoder 怎么做到只往右生成？</p></blockquote><hr>
+<h2>1. 为什么需要位置编码</h2>
+<p>Attention 本身不区分顺序，「狗咬人」和「人咬狗」算出来一样。必须注入位置信息。</p>
+<hr>
+<h2>2. 位置编码方案</h2>
+<table><thead><tr><th>方案</th><th>特点</th><th>现状</th></tr></thead><tbody><tr><td>绝对位置</td><td>sin/cos 函数</td><td>老方案</td></tr><tr><td>RoPE 旋转位置</td><td>相对位置，外推好</td><td>Llama/Qwen 主流</td></tr><tr><td>ALiBi</td><td>线性偏置</td><td>部分长上下文模型</td></tr></tbody></table>
+<hr>
+<h2>3. Decoder-only 结构</h2>
+<pre>输入 Token → Embedding + 位置编码
+    ↓
+[N × Decoder Block]
+  每个 Block = Masked Attention + FFN + Norm
+    ↓
+输出 logits → Softmax → 采样下一个 Token
+    ↓
+拼到输入，循环…</pre>
+<hr>
+<h2>4. Masked Attention（因果掩码）</h2>
+<p>生成第 5 个 token 时，只能看 1~4，不能偷看 6~N。用一个三角矩阵把「未来」遮掉。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

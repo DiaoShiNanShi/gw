@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生面试题大全（162 题） - 大模型学习教程</title>
+<style>
+.card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; margin-bottom:14px; overflow:hidden; }
+.card-head { display:flex; gap:12px; padding:14px 18px; cursor:pointer; align-items:flex-start; }
+.q-num { flex-shrink:0; min-width:34px; height:34px; background:linear-gradient(135deg, #7c3aed, #2563eb); color:#fff; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; }
+.q-title { flex:1; font-size:15px; font-weight:700; margin:0; line-height:1.5; }
+.toggle-btn { flex-shrink:0; border:1px solid #e2e8f0; background:#f8fafc; border-radius:8px; padding:4px 10px; cursor:pointer; font-size:12px; }
+.card-body { padding:0 18px 14px; border-top:1px dashed #e2e8f0; }
+.plain-talk { background:#ecfdf5; border-left:4px solid #16a34a; border-radius:8px; padding:10px 14px; margin:10px 0; color:#14532d; font-size:14px; line-height:1.7; }
+.plain-talk .label { background:#16a34a; color:#fff; font-size:11px; padding:2px 8px; border-radius:999px; }
+.answer-label { font-size:12px; font-weight:700; color:#1e40af; margin:10px 0 4px; }
+.answer { font-size:14.5px; line-height:1.75; color:#334155; }
+.tag { background:#f1f5f9; padding:3px 10px; border-radius:6px; font-size:12px; color:#475569; }
+.nav-filter { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0; }
+.nav-filter button { border:1px solid #e2e8f0; background:#fff; padding:6px 14px; border-radius:999px; cursor:pointer; font-size:12.5px; }
+.nav-filter button.active { background:#2563eb; color:#fff; border-color:#2563eb; }
+.stats { display:flex; flex-wrap:wrap; gap:12px; margin:12px 0; font-size:13px; color:#64748b; }
+.stat-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 14px; }
+.search-box { width:100%; padding:10px 14px; border:1px solid #e2e8f0; border-radius:10px; font-size:14px; margin:12px 0; }
+</style>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> / 面试题</div>
+    <h1>iOS 原生 · 面试题大全（162 题）</h1>
+    <span class="header-tag">Swift · UIKit · 内存 · 多线程 · 架构 · 工程</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote>
+<p>参考 <strong>牛客网 iOS 高频统计</strong>、<strong>掘金 2025 面试分析</strong>、<strong>阿里/腾讯/字节/美团</strong> 真题。<br>
+覆盖内存管理、Swift/OC、UIKit、SwiftUI、多线程、Runtime、存储、网络、架构、性能、工程。<br>
+🔥 = 最高频。逆向题见 <a href="iOS逆向面试题大全.html">iOS 逆向面试题</a>。</p>
+</blockquote>
+<div class="stats">
+  <span class="stat-box">共 <strong>162</strong> 题</span>
+  <span class="stat-box">🔥 高频 <strong>92</strong> 题</span>
+  <span class="stat-box">14 个分类</span>
+</div>
+<input type="text" class="search-box" id="searchBox" placeholder="搜索：ARC、TableView、GCD、KVO、MVVM…">
+<div class="nav-filter" id="filters">
+<button class="active" data-cat="all">全部 162</button>
+  <button data-cat="UIKit">UIKit 25</button>
+  <button data-cat="内存管理">内存管理 17</button>
+  <button data-cat="Swift">Swift 16</button>
+  <button data-cat="多线程">多线程 16</button>
+  <button data-cat="Objective-C">Objective-C 15</button>
+  <button data-cat="工程">工程 12</button>
+  <button data-cat="网络">网络 11</button>
+  <button data-cat="架构">架构 11</button>
+  <button data-cat="数据存储">数据存储 9</button>
+  <button data-cat="性能优化">性能优化 9</button>
+  <button data-cat="SwiftUI">SwiftUI 8</button>
+  <button data-cat="Swift并发">Swift并发 6</button>
+  <button data-cat="Runtime">Runtime 5</button>
+  <button data-cat="AI+iOS">AI+iOS 2</button>
+</div>
+
+<article class="card" data-cat="内存管理" data-num="1">
+  <div class="card-head"><span class="q-num">1</span>
+    <h3 class="q-title">iOS 内存管理机制是什么？ARC 和 MRC 区别？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>ARC = 编译器自动帮你数引用，为 0 就释放；MRC 要手动 retain/release。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">ARC（Automatic Reference Counting）在编译期插入 retain/release/autorelease 代码，运行时根据 strong 引用计数决定何时 deinit。MRC 是 iOS 5 之前手动管理，现在新项目几乎全 ARC。Struct/Enum 是值类型不走 ARC，只有 Class 实例才计数。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="2">
+  <div class="card-head"><span class="q-num">2</span>
+    <h3 class="q-title">strong / weak / unowned / assign 分别是什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>strong 默认强引用；weak 弱引用变 nil；unowned 弱引用不 Optional 但对象没了会崩；assign 只用于基本类型。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">strong：默认，+1 计数。weak：不增加计数，对象释放后自动置 nil，必须 Optional，delegate 常用。unowned：不增加计数，对象释放后访问会 crash，用于生命周期确定的场景（如闭包和 self 同生共死）。assign：OC 属性修饰符，用于 int/float 等，对象类型用 assign 对象释放后指针悬空（野指针），所以对象属性不用 assign。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="3">
+  <div class="card-head"><span class="q-num">3</span>
+    <h3 class="q-title">assign 和 weak 的区别？（Shopee/滴滴高频）<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>assign 释放后指针还在（野指针）；weak 释放后自动变 nil，安全。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">weak 是弱引用，被引用对象 dealloc 时 weak 指针自动置 nil。assign 只是简单赋值，对象释放后内存地址还在，成为 dangling pointer，再访问可能 crash 或读到垃圾数据。Swift 里对象引用默认 strong，OC 里 delegate 必须 weak 不能 assign。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="4">
+  <div class="card-head"><span class="q-num">4</span>
+    <h3 class="q-title">什么是循环引用（Retain Cycle）？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>两个对象互相 strong 指着对方，ARC 永远减不到 0，内存泄漏。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">典型场景：① VC 强引用 closure，closure 捕获 self；② 父对象 strong 子对象，子对象 delegate 没设 weak 又 strong 父对象；③ Timer 的 target 是 self。解决：一方改 weak/unowned，或闭包 [weak self]。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="5">
+  <div class="card-head"><span class="q-num">5</span>
+    <h3 class="q-title">闭包为什么容易造成循环引用？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>闭包默认 strong 捕获外部变量，包括 self。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Closure 捕获列表默认 strong。若 closure 被 self 的属性持有，又捕获了 self，就形成环。解决：[weak self] 或 [unowned self]，配合 guard let self = self else { return }。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="6">
+  <div class="card-head"><span class="q-num">6</span>
+    <h3 class="q-title">weak self 和 unowned self 怎么选？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>不确定对象是否还活着用 weak；确定闭包比 self 活得短用 unowned。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">weak：对象可能先释放，闭包后执行，self 变 nil，安全。unowned：假设 self 一定比闭包活得长，否则 crash。面试标准答法：不确定就用 weak。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="7">
+  <div class="card-head"><span class="q-num">7</span>
+    <h3 class="q-title">@escaping 和非 escaping 闭包与内存的关系？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>escaping 闭包可能逃出函数被长期持有，容易循环引用；非 escaping 函数返回就销毁。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">非 escaping：闭包在函数内同步执行完即销毁，不会和 self 形成长期环。escaping：闭包被存储或异步调用，编译器要求显式写 self，提醒注意捕获。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="8">
+  <div class="card-head"><span class="q-num">8</span>
+    <h3 class="q-title">autoreleasepool 原理和作用？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>临时对象先放池里，池 drain 时统一 release，省内存峰值。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">RunLoop 每次循环会创建和销毁 autoreleasepool。大循环（解析海量图片、循环创建临时对象）里用 @autoreleasepool { } 及时释放。主线程 RunLoop 自动管理；子线程需手动创建 pool 否则临时对象可能延迟释放。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="9">
+  <div class="card-head"><span class="q-num">9</span>
+    <h3 class="q-title">autorelease 对象什么时候释放？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>当前 RunLoop 迭代结束，或所在 autoreleasepool drain 时。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">对象 send autorelease 后进入当前 pool，pool 销毁时 refcount-1。不在 pool 里的 autorelease 对象会泄漏到外层 pool。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="10">
+  <div class="card-head"><span class="q-num">10</span>
+    <h3 class="q-title">如何排查内存泄漏？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>deinit 打日志、Xcode Memory Graph、Instruments Leaks。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">① 每个 VC  deinit 里 print，页面关闭没打印就有泄漏。② Debug → Memory Graph，看有没有不该存在的对象。③ Instruments → Leaks / Allocations。④ 重点查 closure、delegate、Timer、Notification 观察者。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="11">
+  <div class="card-head"><span class="q-num">11</span>
+    <h3 class="q-title">Memory Graph Debugger 怎么用？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>看对象之间的 strong 引用箭头，找环。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Xcode Debug 时点 Memory Graph 按钮，筛选 Leaked 或搜索类名，看引用链谁 strong 指着谁。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="12">
+  <div class="card-head"><span class="q-num">12</span>
+    <h3 class="q-title">Copy-on-Write 是什么？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>值类型共享内存，真正修改时才拷贝一份。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Swift Array/Dictionary/String 底层 COW，多个变量共享存储，写时才 copy，读多写少时省内存。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="13">
+  <div class="card-head"><span class="q-num">13</span>
+    <h3 class="q-title">值类型和引用类型对内存的影响？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Struct 拷贝栈上/堆上按值复制；Class 堆上 + ARC 计数。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Struct/Enum：赋值拷贝，无引用计数。Class：赋值共享同一实例，ARC 管理。闭包是引用类型。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="14">
+  <div class="card-head"><span class="q-num">14</span>
+    <h3 class="q-title">Block 在 ARC 和 MRC 下有什么区别？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>MRC 下 Block 需要 copy 到堆才长期持有；ARC 下 Block 自动管理。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">MRC：栈 Block copy 到堆。ARC：编译器自动处理 Block 拷贝和 __block 变量。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="15">
+  <div class="card-head"><span class="q-num">15</span>
+    <h3 class="q-title">__block 修饰符干什么？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>让 Block 内部能修改外部局部变量。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">默认局部变量在 Block 里是只读拷贝；__block 变成引用，Block 内外共享。ARC 下 __block 变量本身可能被 Block 强引用，也要注意循环引用。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="16">
+  <div class="card-head"><span class="q-num">16</span>
+    <h3 class="q-title">Swift 和 Objective-C 有什么区别？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Swift 更安全（Optional）、更现代（泛型、协议）、值类型默认；OC 动态性更强。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Swift：类型安全、Optional、泛型、函数式、值类型优先、编译优化好。OC：Runtime 动态性、消息发送、Category、与 C 混编成熟。现有项目常混编。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="17">
+  <div class="card-head"><span class="q-num">17</span>
+    <h3 class="q-title">Struct 和 Class 的区别？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Struct 值拷贝，Class 引用计数。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Struct：值语义、栈分配（通常）、无继承、无 deinit。Class：引用语义、ARC、可继承、有 deinit。Swift 推荐能用 Struct 就用 Struct。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="18">
+  <div class="card-head"><span class="q-num">18</span>
+    <h3 class="q-title">Optional 是什么？if let / guard let / ?? 区别？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Optional = 可能有值可能没有。if let 解包；guard let 提前 return；?? 给默认值。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Optional&lt;T&gt; 是 enum：.none 或 .some(T)。if let x = opt { } 解包成功才进分支。guard let x = opt else { return } 失败就退出。opt ?? default 为 nil 时用默认值。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="19">
+  <div class="card-head"><span class="q-num">19</span>
+    <h3 class="q-title">guard 和 if 的区别？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>guard 必须 else 退出当前作用域，适合前置条件校验。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">guard 用于提前退出（return/continue/break），让主逻辑少嵌套。if 是普通分支。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="20">
+  <div class="card-head"><span class="q-num">20</span>
+    <h3 class="q-title">Swift 函数参数 label 是什么？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>外部名和内部名，调用时更易读。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">func greet(name internal: String) 调用 greet(name: "Tom")。_ 省略外部 label。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="21">
+  <div class="card-head"><span class="q-num">21</span>
+    <h3 class="q-title">协议 Protocol 和 Extension？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Protocol 定义接口；Extension 给已有类型加方法/默认实现。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Protocol 可多继承，支持 extension 提供默认实现（类似 mixin）。POP 协议导向编程是 Swift 核心思想。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="22">
+  <div class="card-head"><span class="q-num">22</span>
+    <h3 class="q-title">泛型 Generic 解决什么问题？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>一份代码适配多种类型，如 Array&lt;Element&gt;。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">泛型函数/类型在编译期特化，类型安全且避免 Any 装箱。where 子句进一步约束。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="23">
+  <div class="card-head"><span class="q-num">23</span>
+    <h3 class="q-title">Error 处理 throws / try / do-catch？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>可能出错的函数 throws；调用 try；do-catch 捕获。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">try? 转 Optional；try! 强制（错就 crash）。Result&lt;Success, Failure&gt; 也可封装错误。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="24">
+  <div class="card-head"><span class="q-num">24</span>
+    <h3 class="q-title">Codable 是什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Encodable + Decodable，JSON 编解码。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">JSONEncoder().encode(obj) / JSONDecoder().decode(Type.self, from: data)。CodingKeys 映射字段名。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="25">
+  <div class="card-head"><span class="q-num">25</span>
+    <h3 class="q-title">访问控制 private/fileprivate/internal/public/open？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>控制谁能看到这段代码。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">private：当前声明 scope。fileprivate：当前文件。internal：模块内（默认）。public：模块外可见但不能被继承/override。open：模块外可继承。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="26">
+  <div class="card-head"><span class="q-num">26</span>
+    <h3 class="q-title">@objc 和 dynamic 干什么？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>暴露给 OC Runtime；dynamic 允许 Runtime 替换实现（KVO/Swizzle）。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">继承 NSObject 的 Swift 类要 @objc 才能被 OC 调用。dynamic + @objc 才能 Method Swizzling。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="27">
+  <div class="card-head"><span class="q-num">27</span>
+    <h3 class="q-title">Swift 里的 lazy 属性？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>第一次访问时才初始化，常用于耗资源的 UI 组件。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">lazy var tableView = UITableView()。注意 self 在 lazy 闭包里的捕获。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="28">
+  <div class="card-head"><span class="q-num">28</span>
+    <h3 class="q-title">mutating 关键字？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Struct/Enum 的方法要改 self 必须 mutating。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">值类型方法默认不能改属性，mutating func 可以。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="29">
+  <div class="card-head"><span class="q-num">29</span>
+    <h3 class="q-title">Result 类型？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>enum Result&lt;Success, Failure: Error&gt;，.success 或 .failure。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">替代 throw 或 (data, error) 元组，链式处理更清晰。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="30">
+  <div class="card-head"><span class="q-num">30</span>
+    <h3 class="q-title">typealias 和 associatedtype？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>typealias 类型别名；associatedtype 协议里的占位类型。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">associatedtype 让协议关联具体类型，如 IteratorProtocol.Element。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift并发" data-num="31">
+  <div class="card-head"><span class="q-num">31</span>
+    <h3 class="q-title">async/await 是什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift并发</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>异步代码写法和同步一样，不用回调地狱。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">func fetch() async throws -&gt; Data { try await URLSession.shared.data(from: url) }。调用处 await fetch()。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift并发" data-num="32">
+  <div class="card-head"><span class="q-num">32</span>
+    <h3 class="q-title">Actor 是什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift并发</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>保证内部状态串行访问的类型，防数据竞争。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">actor Counter { var value = 0; func inc() { value += 1 } }。外部必须用 await 访问 actor 属性。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift并发" data-num="33">
+  <div class="card-head"><span class="q-num">33</span>
+    <h3 class="q-title">Sendable 协议？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift并发</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>标记类型可以安全跨并发域传递。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Swift 6 严格并发检查，非 Sendable 跨 Task 会编译警告。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift并发" data-num="34">
+  <div class="card-head"><span class="q-num">34</span>
+    <h3 class="q-title">Task 和 TaskGroup？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift并发</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Task 启动异步任务；TaskGroup 并发执行多个子任务再汇总。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Task { await work() }；Task.detached 不继承 actor context。withTaskGroup 并发 map。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift并发" data-num="35">
+  <div class="card-head"><span class="q-num">35</span>
+    <h3 class="q-title">@MainActor 干什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift并发</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>保证代码在主线程（UI 线程）执行。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">UI 更新、@Published 驱动 SwiftUI 的类标记 @MainActor。async 回调后改 UI 要 await MainActor.run { }。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift并发" data-num="36">
+  <div class="card-head"><span class="q-num">36</span>
+    <h3 class="q-title">async/await 和 GCD 怎么选？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift并发</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>新代码优先 async/await；老代码/底层仍用 GCD。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">async/await 可读性好、错误传播自然。DispatchQueue 仍广泛用于简单异步和与 C API 交互。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="37">
+  <div class="card-head"><span class="q-num">37</span>
+    <h3 class="q-title">OC 消息发送机制（objc_msgSend）？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>方法调用转成消息发送：查缓存→方法列表→父类→转发。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">[obj doThing] → objc_msgSend(obj, @selector(doThing))。动态派发是 OC 和 Swift 静态派发的重要区别。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="38">
+  <div class="card-head"><span class="q-num">38</span>
+    <h3 class="q-title">Category 和 Extension 区别？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Category 运行时添加方法（可分离编译）；Extension 编译期扩展（常放私有方法/协议 conformance）。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Category 可给已有类加方法甚至「假」属性（关联对象）。Extension 不能加存储属性（Swift extension 也是）。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="39">
+  <div class="card-head"><span class="q-num">39</span>
+    <h3 class="q-title">load 和 initialize 区别？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>load 类加载时调，每个类一次，父类先于子类；initialize 第一次发消息时调。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">load 里做 Method Swizzling。initialize 懒加载，适合类级别一次性配置。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="40">
+  <div class="card-head"><span class="q-num">40</span>
+    <h3 class="q-title">KVO 原理？（小红书/知乎高频）<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Runtime 动态创建子类 NSKVONotifying_xxx，重写 setter 发通知。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">isa-swizzling：被观察对象的 isa 指向 KVO 子类，setValueForKey: 时通知观察者。手动触发需 willChangeValueForKey/didChangeValueForKey。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="41">
+  <div class="card-head"><span class="q-num">41</span>
+    <h3 class="q-title">如何给一个不支持 KVO 的类添加 KVO？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>继承并重写 will/didChangeValueForKey，或 Runtime 动态子类。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">系统类如 NSMutableArray 部分不支持直接 KVO，需封装或 KVC 辅助。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="42">
+  <div class="card-head"><span class="q-num">42</span>
+    <h3 class="q-title">KVC 原理？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Key-Value Coding，通过字符串 key 访问属性，底层仍走 accessor 或 ivar。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">setValue:forKey: / valueForKey:。可能触发 KVO。valueForKeyPath 支持点语法跨对象。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="43">
+  <div class="card-head"><span class="q-num">43</span>
+    <h3 class="q-title">copy 和 mutableCopy？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>copy 返回不可变副本；mutableCopy 返回可变副本。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">遵循 NSCopying 协议。NSString copy 可能是浅拷贝（immutable 时）或深拷贝。容器类注意一层 copy 还是 deep copy。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="44">
+  <div class="card-head"><span class="q-num">44</span>
+    <h3 class="q-title">Block 在栈/堆/全局区？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>栈 Block copy 后变堆 Block 才能长期持有；全局 Block 不捕获状态。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Block 结构体含 isa、flags、func、capture 变量。ARC 下 _Block_copy。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="45">
+  <div class="card-head"><span class="q-num">45</span>
+    <h3 class="q-title">Block 捕获变量规则？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>局部 auto 变量拷贝进 Block；static/global 不拷贝；__block 引用。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">修改外部变量需 __block。循环引用：Block 强引用 self，self 强引用 Block。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="46">
+  <div class="card-head"><span class="q-num">46</span>
+    <h3 class="q-title">Method Swizzling 原理和风险？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Runtime 交换两个方法的 IMP 指针。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">+[MethodSwizzle swizzleClass:original:swizzled:] 用于埋点、调试。风险：系统升级可能变、影响全局、审核敏感。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="47">
+  <div class="card-head"><span class="q-num">47</span>
+    <h3 class="q-title">消息转发三步？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>resolveInstanceMethod → forwardingTargetForSelector → forwardInvocation。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">前两步快速转发；第三步 NSInvocation 完整转发。unrecognized selector 在这之后 crash。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="48">
+  <div class="card-head"><span class="q-num">48</span>
+    <h3 class="q-title">isa 指针和元类？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>实例 isa→类对象；类对象 isa→元类（存类方法）；元类 isa→根元类。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">对象方法在类对象 method list；类方法在元类 method list。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="49">
+  <div class="card-head"><span class="q-num">49</span>
+    <h3 class="q-title">OC 和 Swift 混编怎么做？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Bridging Header 导入 OC 头文件；Swift 通过 @objc 暴露给 OC。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Pod 库混编、老项目渐进迁移 Swift Module。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="50">
+  <div class="card-head"><span class="q-num">50</span>
+    <h3 class="q-title">UIView 和 CALayer 关系？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>View 负责交互和布局；Layer 负责渲染和动画。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">UIView 是 CALayer 的 delegate。改 frame 同时影响 layer。圆角、阴影直接改 layer 性能更好。hitTest 在 View 层。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="51">
+  <div class="card-head"><span class="q-num">51</span>
+    <h3 class="q-title">UIViewController 生命周期顺序？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>init → loadView → viewDidLoad → willAppear → didAppear → willDisappear → didDisappear → deinit。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">viewDidLoad 只一次做 UI 初始化；willAppear 每次刷新数据；didDisappear 停定时器。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="52">
+  <div class="card-head"><span class="q-num">52</span>
+    <h3 class="q-title">loadView 什么时候重写？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>不用 xib/storyboard、纯代码创建根 view 时重写 loadView。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">不要在这里调 super.loadView 又自己设 view 会循环。通常 storyboard 项目不重写 loadView。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="53">
+  <div class="card-head"><span class="q-num">53</span>
+    <h3 class="q-title">UITableView 重用机制？（阿里/百度高频）<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>dequeueReusableCell 复用滚出屏幕的 cell，避免无限创建。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">prepareForReuse 里重置 cell 状态（图片、选中态），否则复用时显示错乱。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="54">
+  <div class="card-head"><span class="q-num">54</span>
+    <h3 class="q-title">UITableView 复用遇到过什么问题？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>图片错乱、选中态残留、异步加载图片错位。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">prepareForReuse 取消 SDWebImage 请求；用 indexPath 校验异步回调；重置 UI 状态。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="55">
+  <div class="card-head"><span class="q-num">55</span>
+    <h3 class="q-title">UITableView 和 UICollectionView 区别？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Table 单列/分组列表；Collection 网格/瀑布流，布局更灵活。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Collection 用 UICollectionViewLayout（Flow/Custom）。Diffable Data Source 两者都支持。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="56">
+  <div class="card-head"><span class="q-num">56</span>
+    <h3 class="q-title">Diffable Data Source 好处？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>用 Snapshot 驱动更新，自动 diff 动画，不用 reloadData 全刷。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">iOS 13+ UITableViewDiffableDataSource / UICollectionViewDiffableDataSource。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="57">
+  <div class="card-head"><span class="q-num">57</span>
+    <h3 class="q-title">Auto Layout 原理？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>约束方程组求解 view 的 frame。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">VFL 已过时，用 NSLayoutConstraint 或 SnapKit。冲突时 priority 低的让路。intrinsicContentSize 影响固有大小。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="58">
+  <div class="card-head"><span class="q-num">58</span>
+    <h3 class="q-title">Content Hugging 和 Compression Resistance？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Hugging：抗拉伸（不想被拉大）；Compression Resistance：抗压缩（不想被压小）。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">UILabel 文字少时 Hugging 高会贴文字宽度；两个 label 抢空间时 priority 决定谁赢。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="59">
+  <div class="card-head"><span class="q-num">59</span>
+    <h3 class="q-title">响应者链（Responder Chain）？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>事件从 first responder 沿 nextResponder 向上传递。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">hitTest 找到最内层 view → 冒泡到 VC → window → application。未处理传 nil。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="60">
+  <div class="card-head"><span class="q-num">60</span>
+    <h3 class="q-title">hitTest 和 pointInside 流程？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>pointInside 判断点是否在 view 内；hitTest 递归找最深 subview。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">自定义不规则点击区域可重写 pointInside。透明 view 默认不响应（alpha&lt;0.01 或 hidden/clipsToBounds）。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="61">
+  <div class="card-head"><span class="q-num">61</span>
+    <h3 class="q-title">离屏渲染是什么？如何避免？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>GPU 当前屏缓冲装不下，额外开缓冲区合成，费性能。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">触发：圆角+masksToBounds、阴影、mask、shouldRasterize。优化：预渲染圆角图、CAShapeLayer、单独 shadow layer。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="62">
+  <div class="card-head"><span class="q-num">62</span>
+    <h3 class="q-title">UIView 渲染流程？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>layoutSubviews → drawRect/CoreGraphics → CALayer 提交 → 渲染服务器 → GPU。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">setNeedsLayout/layoutIfNeeded；setNeedsDisplay 触发 drawRect。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="63">
+  <div class="card-head"><span class="q-num">63</span>
+    <h3 class="q-title">frame、bounds、center 区别？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>frame 相对父 view；bounds 相对自身（origin 常为 0）；center 相对父 view 中心。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">改 bounds.origin 可滚动 content（UIScrollView 原理）。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="64">
+  <div class="card-head"><span class="q-num">64</span>
+    <h3 class="q-title">UIScrollView 缩放和滚动原理？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>contentOffset 控制滚动；contentSize 大于 bounds 才可滚；zoom 改 transform。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">delegate 提供 zoom 的 view。嵌套 scrollView 注意手势冲突。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="65">
+  <div class="card-head"><span class="q-num">65</span>
+    <h3 class="q-title">Safe Area 是什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>避开刘海、状态栏、Home Indicator 的安全布局区域。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">safeAreaLayoutGuide 约束。iPhone X 以后必考虑。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="66">
+  <div class="card-head"><span class="q-num">66</span>
+    <h3 class="q-title">StatusBar 高度和适配？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>传统 20pt；刘海屏 44~47pt 动态。用 safeAreaInsets.top。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">不要写死高度。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="67">
+  <div class="card-head"><span class="q-num">67</span>
+    <h3 class="q-title">XIB/Storyboard 和纯代码布局？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Storyboard 可视化快；纯代码易版本管理、动态 UI、团队协作少冲突。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">大项目倾向代码或 SwiftUI。IBOutlet/IBAction 连接。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="68">
+  <div class="card-head"><span class="q-num">68</span>
+    <h3 class="q-title">UIStackView 原理？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>UIStackView 内部用 Auto Layout 排列 arrangedSubviews。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">distribution、alignment、spacing 控制。嵌套 Stack 做复杂布局。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="69">
+  <div class="card-head"><span class="q-num">69</span>
+    <h3 class="q-title">事件传递和触摸阶段？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>hitTest → 找到 view → touchesBegan/Moved/Ended/Cancelled。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">cancelled 如来电打断。多点触控 getMultipleTouchEnabled。</div>
+  </div>
+</article>
+<article class="card" data-cat="SwiftUI" data-num="70">
+  <div class="card-head"><span class="q-num">70</span>
+    <h3 class="q-title">SwiftUI 和 UIKit 怎么选？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">SwiftUI</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>新项目/简单 UI 用 SwiftUI；复杂自定义控件、老项目用 UIKit。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">2026 面试期望两者都会。SwiftUI 声明式、状态驱动；UIKit 成熟生态。</div>
+  </div>
+</article>
+<article class="card" data-cat="SwiftUI" data-num="71">
+  <div class="card-head"><span class="q-num">71</span>
+    <h3 class="q-title">@State @Binding @ObservedObject @StateObject @EnvironmentObject？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">SwiftUI</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>State 本地值；Binding 双向；StateObject 创建并持有 VM；ObservedObject 外部传入；EnvironmentObject 全局注入。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">StateObject vs ObservedObject：谁创建谁用 StateObject，否则 ObservedObject 可能被重建丢状态。</div>
+  </div>
+</article>
+<article class="card" data-cat="SwiftUI" data-num="72">
+  <div class="card-head"><span class="q-num">72</span>
+    <h3 class="q-title">body 何时刷新？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">SwiftUI</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>@State/@Published 等依赖变时 SwiftUI 重算 body。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">body 里不要做重计算、不要 side effect。用 onAppear/task 做异步。</div>
+  </div>
+</article>
+<article class="card" data-cat="SwiftUI" data-num="73">
+  <div class="card-head"><span class="q-num">73</span>
+    <h3 class="q-title">UIViewRepresentable 怎么用？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">SwiftUI</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>把 UIKit 控件包装成 SwiftUI View。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">makeUIView/updateUIView 或 UIViewControllerRepresentable 包装 VC。</div>
+  </div>
+</article>
+<article class="card" data-cat="SwiftUI" data-num="74">
+  <div class="card-head"><span class="q-num">74</span>
+    <h3 class="q-title">List 和 ScrollView+LazyVStack 区别？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">SwiftUI</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>List 平台风格、编辑、section；LazyVStack 更轻量自定义。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">大数据列表 Lazy 懒加载。</div>
+  </div>
+</article>
+<article class="card" data-cat="SwiftUI" data-num="75">
+  <div class="card-head"><span class="q-num">75</span>
+    <h3 class="q-title">NavigationStack 和 NavigationView？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">SwiftUI</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>iOS 16+ NavigationStack 类型安全路由，NavigationView 已 deprecated。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">NavigationPath 编程式导航。</div>
+  </div>
+</article>
+<article class="card" data-cat="SwiftUI" data-num="76">
+  <div class="card-head"><span class="q-num">76</span>
+    <h3 class="q-title">SwiftUI 性能优化？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">SwiftUI</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>减少 body 重算、EquatableView、Lazy 容器、稳定 id、避免 AnyView。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Instruments SwiftUI 模板分析。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="77">
+  <div class="card-head"><span class="q-num">77</span>
+    <h3 class="q-title">GCD 同步和异步区别？（腾讯/快手高频）<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>sync 阻塞当前队列等任务跑完；async 把任务丢进队列就返回。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">sync 在主队列 sync 主队列 → 死锁。async 不阻塞。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="78">
+  <div class="card-head"><span class="q-num">78</span>
+    <h3 class="q-title">GCD 串行队列和并发队列？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>串行：任务一个接一个；并发：多个任务同时执行（仍受线程池限制）。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">main queue 是串行。global(qos) 是并发。自定义 serial queue 做线程安全访问共享资源。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="79">
+  <div class="card-head"><span class="q-num">79</span>
+    <h3 class="q-title">GCD 死锁场景？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>当前队列 sync 派发到当前队列。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">主线程 main.sync { } 必死锁。子队列 sync 到同一 serial queue 也死锁。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="80">
+  <div class="card-head"><span class="q-num">80</span>
+    <h3 class="q-title">QoS 优先级有哪些？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>userInteractive &gt; userInitiated &gt; utility &gt; background。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">UI 相关 userInteractive；网络请求 userInitiated；下载 background。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="81">
+  <div class="card-head"><span class="q-num">81</span>
+    <h3 class="q-title">NSOperation 和 GCD 区别？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Operation 面向对象、可取消、依赖关系、KVO 进度。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">GCD 轻量底层。复杂任务链用 OperationQueue。BlockOperation。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="82">
+  <div class="card-head"><span class="q-num">82</span>
+    <h3 class="q-title">RunLoop 是什么？（知乎/快手高频）<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>线程的事件循环：处理 Timer、Source、GCD 主队列回调、UI 事件。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">主线程默认 RunLoop。common modes 让 Timer 滚动时也触发。RunLoop 休眠省 CPU。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="83">
+  <div class="card-head"><span class="q-num">83</span>
+    <h3 class="q-title">RunLoop Mode 有哪些？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Default、UITrackingRunLoopMode（滚动时）、common（合并）。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Timer 加到 Default 时 scrollView 滚动 Timer 暂停，需 NSRunLoopCommonModes。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="84">
+  <div class="card-head"><span class="q-num">84</span>
+    <h3 class="q-title">performSelector 和 GCD 区别？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>performSelector 依赖 RunLoop；GCD 是 C API 线程池。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">afterDelay 底层 Timer。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="85">
+  <div class="card-head"><span class="q-num">85</span>
+    <h3 class="q-title">线程安全怎么保证？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>serial queue、锁（NSLock/@synchronized）、actor、原子属性。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">@synchronized(obj) { } OC 常用。Swift 优先 actor 或 serial DispatchQueue。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="86">
+  <div class="card-head"><span class="q-num">86</span>
+    <h3 class="q-title">@synchronized 原理？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>objc_sync_enter/exit 基于对象哈希的递归锁。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">性能一般，简单场景够用。Swift 不推荐，用 actor。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="87">
+  <div class="card-head"><span class="q-num">87</span>
+    <h3 class="q-title">pthread 和 GCD？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>pthread 是 POSIX 线程 API，手动管理；GCD 是苹果封装的线程池。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">iOS 开发几乎不用 pthread 直接写。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="88">
+  <div class="card-head"><span class="q-num">88</span>
+    <h3 class="q-title">主线程为什么不能做耗时操作？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>主线程跑 RunLoop 处理 UI，阻塞则卡顿掉帧。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">网络/解析放后台，结果 dispatch 回 main 更新 UI。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="89">
+  <div class="card-head"><span class="q-num">89</span>
+    <h3 class="q-title">dispatch_once 干什么？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>线程安全单次初始化（单例）。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Swift lazy static 或 let shared = 已等价。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="90">
+  <div class="card-head"><span class="q-num">90</span>
+    <h3 class="q-title">Timer 和 CADisplayLink？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Timer 基于 RunLoop，精度受 mode 影响；CADisplayLink 跟屏幕刷新率。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">游戏/动画用 CADisplayLink 60fps。</div>
+  </div>
+</article>
+<article class="card" data-cat="Runtime" data-num="91">
+  <div class="card-head"><span class="q-num">91</span>
+    <h3 class="q-title">什么是 Runtime？作用？（小红书高频）<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Runtime</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>OC 动态运行时：消息发送、类/方法/属性动态创建、Method Swizzling、KVO。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">编译期只检查语法，运行期才绑定方法。C++ 虚表静态，OC 动态。</div>
+  </div>
+</article>
+<article class="card" data-cat="Runtime" data-num="92">
+  <div class="card-head"><span class="q-num">92</span>
+    <h3 class="q-title">类对象和实例对象区别？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Runtime</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>实例 isa→类对象（存实例方法）；类 isa→元类（存类方法）。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">ivar 在实例；method 在类/元类。</div>
+  </div>
+</article>
+<article class="card" data-cat="Runtime" data-num="93">
+  <div class="card-head"><span class="q-num">93</span>
+    <h3 class="q-title">Method 结构？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Runtime</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>SEL（方法名）+ IMP（函数指针）+ types（参数类型编码）。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">class_getInstanceMethod / method_exchangeImplementations。</div>
+  </div>
+</article>
+<article class="card" data-cat="Runtime" data-num="94">
+  <div class="card-head"><span class="q-num">94</span>
+    <h3 class="q-title">关联对象 Associated Object？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Runtime</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Category 添加「属性」：objc_setAssociatedObject。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">RETAIN/COPY/ASSIGN 策略。解耦扩展存储。</div>
+  </div>
+</article>
+<article class="card" data-cat="数据存储" data-num="95">
+  <div class="card-head"><span class="q-num">95</span>
+    <h3 class="q-title">iOS 数据持久化方式有哪些？（牛客 Top1）<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">数据存储</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>UserDefaults、Keychain、文件、SQLite/Core Data/SwiftData、归档。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">小配置 Defaults；敏感 Keychain；结构化 Core Data/SwiftData；大文件 FileManager；NSCoding/Codable 归档。</div>
+  </div>
+</article>
+<article class="card" data-cat="数据存储" data-num="96">
+  <div class="card-head"><span class="q-num">96</span>
+    <h3 class="q-title">UserDefaults 适合存什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">数据存储</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>用户偏好、开关、小字符串。不适合大数据和敏感信息。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">plist 形式，同步写入。suiteName 做 App Group 共享。</div>
+  </div>
+</article>
+<article class="card" data-cat="数据存储" data-num="97">
+  <div class="card-head"><span class="q-num">97</span>
+    <h3 class="q-title">Keychain 特点？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">数据存储</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>加密存储，适合 token、密码。即使卸载 App 默认也可能保留（可配置）。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">SecItemAdd/CopyMatching。Face ID 保护 AccessControl。</div>
+  </div>
+</article>
+<article class="card" data-cat="数据存储" data-num="98">
+  <div class="card-head"><span class="q-num">98</span>
+    <h3 class="q-title">Core Data 和 SQLite？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">数据存储</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Core Data 是 ORM 对象图管理；SQLite 是关系型数据库引擎。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Core Data 可 SQLite/CloudKit 做 store。SwiftData 是 Swift 原生 ORM iOS 17+。</div>
+  </div>
+</article>
+<article class="card" data-cat="数据存储" data-num="99">
+  <div class="card-head"><span class="q-num">99</span>
+    <h3 class="q-title">Plist 和 JSON 存储？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">数据存储</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Property List 存 NSArray/NSDictionary。JSON 通用交换。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Codable 编 JSON 文件持久化。</div>
+  </div>
+</article>
+<article class="card" data-cat="数据存储" data-num="100">
+  <div class="card-head"><span class="q-num">100</span>
+    <h3 class="q-title">沙盒目录结构？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">数据存储</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Documents（用户数据备份）、Library（Cache/Preferences）、tmp（临时）。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">App 只能访问自己沙盒（除相册等系统 API）。</div>
+  </div>
+</article>
+<article class="card" data-cat="数据存储" data-num="101">
+  <div class="card-head"><span class="q-num">101</span>
+    <h3 class="q-title">App Group 共享数据？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">数据存储</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>同一开发者多个 App/Extension 共享 UserDefaults/文件容器。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">group.com.company.app</div>
+  </div>
+</article>
+<article class="card" data-cat="数据存储" data-num="102">
+  <div class="card-head"><span class="q-num">102</span>
+    <h3 class="q-title">数据库迁移怎么做？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">数据存储</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Core Data lightweight migration；或版本号 + 手动迁移脚本。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">改 model 要规划 migration。</div>
+  </div>
+</article>
+<article class="card" data-cat="网络" data-num="103">
+  <div class="card-head"><span class="q-num">103</span>
+    <h3 class="q-title">HTTP 和 HTTPS 区别？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">网络</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>HTTPS = HTTP + TLS 加密。ATS 默认要求 HTTPS。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">证书校验、中间人攻击。Pinning 防伪造证书。</div>
+  </div>
+</article>
+<article class="card" data-cat="网络" data-num="104">
+  <div class="card-head"><span class="q-num">104</span>
+    <h3 class="q-title">GET 和 POST 区别？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">网络</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>GET 参数在 URL、幂等、可缓存；POST body 传参、改资源。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">上传用 POST/PUT。RESTful API 设计。</div>
+  </div>
+</article>
+<article class="card" data-cat="网络" data-num="105">
+  <div class="card-head"><span class="q-num">105</span>
+    <h3 class="q-title">URLSession 基本用法？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">网络</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>URLSession.shared.dataTask 或 async await data(from:)。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">配置 timeout、cachePolicy。delegate 处理 challenge、后台下载。</div>
+  </div>
+</article>
+<article class="card" data-cat="网络" data-num="106">
+  <div class="card-head"><span class="q-num">106</span>
+    <h3 class="q-title">TCP 三次握手四次挥手？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">网络</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>建立连接 SYN/SYN-ACK/ACK；断开 FIN/ACK 四次。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">iOS 开发常问基础网络。TIME_WAIT。</div>
+  </div>
+</article>
+<article class="card" data-cat="网络" data-num="107">
+  <div class="card-head"><span class="q-num">107</span>
+    <h3 class="q-title">DNS 解析过程？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">网络</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>域名→本地缓存→递归查询 DNS 服务器→IP。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">HTTPDNS 绕过本地 DNS 污染/加速。</div>
+  </div>
+</article>
+<article class="card" data-cat="网络" data-num="108">
+  <div class="card-head"><span class="q-num">108</span>
+    <h3 class="q-title">Cookie 和 Session？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">网络</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Cookie 客户端存；Session 服务端存会话 id。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">URLSession 自动管理 CookieStorage。</div>
+  </div>
+</article>
+<article class="card" data-cat="网络" data-num="109">
+  <div class="card-head"><span class="q-num">109</span>
+    <h3 class="q-title">RESTful API 设计原则？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">网络</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>资源用 URL，动词用 HTTP Method，状态码语义化。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">GET 查 POST 建 PUT 改 DELETE 删。</div>
+  </div>
+</article>
+<article class="card" data-cat="网络" data-num="110">
+  <div class="card-head"><span class="q-num">110</span>
+    <h3 class="q-title">网络层如何做缓存？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">网络</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>URLCache 内存+磁盘；或业务层 SDWebImage/自定义 HTTP 缓存。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Cache-Control、ETag、Last-Modified。</div>
+  </div>
+</article>
+<article class="card" data-cat="网络" data-num="111">
+  <div class="card-head"><span class="q-num">111</span>
+    <h3 class="q-title">弱网优化？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">网络</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>超时重试、降级、本地缓存、请求合并、压缩、HTTP/2。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Reachability 监听网络切换。</div>
+  </div>
+</article>
+<article class="card" data-cat="网络" data-num="112">
+  <div class="card-head"><span class="q-num">112</span>
+    <h3 class="q-title">SSL Pinning 是什么？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">网络</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>App 内置服务器证书公钥，只信任匹配的证书。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">防 Charles 中间人。NSURLSessionDelegate didReceive challenge。</div>
+  </div>
+</article>
+<article class="card" data-cat="架构" data-num="113">
+  <div class="card-head"><span class="q-num">113</span>
+    <h3 class="q-title">MVC 问题和 Massive View Controller？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">架构</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Controller 承担太多：网络、布局、业务逻辑。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">VC 几千行难维护。用 MVVM/MVP/VIPER 拆分。</div>
+  </div>
+</article>
+<article class="card" data-cat="架构" data-num="114">
+  <div class="card-head"><span class="q-num">114</span>
+    <h3 class="q-title">MVVM 是什么？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">架构</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>View 绑定 ViewModel 状态；ViewModel 处理业务不引用 View。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Combine/@Published 或 RxSwift 驱动 UI。便于单测 ViewModel。</div>
+  </div>
+</article>
+<article class="card" data-cat="架构" data-num="115">
+  <div class="card-head"><span class="q-num">115</span>
+    <h3 class="q-title">MVP 和 MVVM 区别？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">架构</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Presenter 手动更新 View；MVVM 数据绑定自动更新。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">MVP 接口多；MVVM 绑定框架成熟。</div>
+  </div>
+</article>
+<article class="card" data-cat="架构" data-num="116">
+  <div class="card-head"><span class="q-num">116</span>
+    <h3 class="q-title">VIPER / Clean Architecture？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">架构</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>View-Interactor-Presenter-Entity-Router 严格分层。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Interactor 纯业务；Router 导航。大型项目用，小项目过重。</div>
+  </div>
+</article>
+<article class="card" data-cat="架构" data-num="117">
+  <div class="card-head"><span class="q-num">117</span>
+    <h3 class="q-title">单例模式优缺点？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">架构</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>全局唯一访问点；难测试、隐式依赖、生命周期长。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">OC: dispatch_once；Swift: static let shared。面试常让手写线程安全单例。</div>
+  </div>
+</article>
+<article class="card" data-cat="架构" data-num="118">
+  <div class="card-head"><span class="q-num">118</span>
+    <h3 class="q-title">.delegate 模式？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">架构</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>一对多回调，protocol + weak delegate 防循环引用。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">UITableViewDelegate/DataSource 是经典。</div>
+  </div>
+</article>
+<article class="card" data-cat="架构" data-num="119">
+  <div class="card-head"><span class="q-num">119</span>
+    <h3 class="q-title">通知 NotificationCenter 和 Delegate？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">架构</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>通知一对多广播，解耦；Delegate 一对一更精确。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Notification 要记得 removeObserver 防泄漏。</div>
+  </div>
+</article>
+<article class="card" data-cat="架构" data-num="120">
+  <div class="card-head"><span class="q-num">120</span>
+    <h3 class="q-title">Coordinator 模式？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">架构</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>导航逻辑从 VC 抽到 Coordinator，VC 不互相 push。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">可测试、复用流程。</div>
+  </div>
+</article>
+<article class="card" data-cat="架构" data-num="121">
+  <div class="card-head"><span class="q-num">121</span>
+    <h3 class="q-title">依赖注入 DI？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">架构</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>外部传入依赖而非内部 new，便于 Mock 测试。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">构造器注入、协议抽象 NetworkService。</div>
+  </div>
+</article>
+<article class="card" data-cat="架构" data-num="122">
+  <div class="card-head"><span class="q-num">122</span>
+    <h3 class="q-title">工厂模式和抽象工厂？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">架构</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>封装对象创建逻辑。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">简单工厂 static method；工厂方法子类决定实例。</div>
+  </div>
+</article>
+<article class="card" data-cat="性能优化" data-num="123">
+  <div class="card-head"><span class="q-num">123</span>
+    <h3 class="q-title">Instruments 常用模板？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">性能优化</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Time Profiler（CPU）、Allocations/Leaks（内存）、Network、Energy。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Signpost 标记关键路径。</div>
+  </div>
+</article>
+<article class="card" data-cat="性能优化" data-num="124">
+  <div class="card-head"><span class="q-num">124</span>
+    <h3 class="q-title">列表卡顿怎么优化？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">性能优化</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>cell 复用、异步解码图片、预估算高度、减少离屏渲染、后台线程算 layout。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">SDWebImage 异步加载+缓存。FPS 60 目标。</div>
+  </div>
+</article>
+<article class="card" data-cat="性能优化" data-num="125">
+  <div class="card-head"><span class="q-num">125</span>
+    <h3 class="q-title">图片加载三级缓存？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">性能优化</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>内存缓存 → 磁盘缓存 → 网络下载。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">SDWebImage/Kingfisher 原理。 downsampling 缩略图省内存。</div>
+  </div>
+</article>
+<article class="card" data-cat="性能优化" data-num="126">
+  <div class="card-head"><span class="q-num">126</span>
+    <h3 class="q-title">启动优化？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">性能优化</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>减少 +load、动态库、Main 函数前耗时；延迟非必要初始化。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">pre-main 阶段 Instruments App Launch。</div>
+  </div>
+</article>
+<article class="card" data-cat="性能优化" data-num="127">
+  <div class="card-head"><span class="q-num">127</span>
+    <h3 class="q-title">包体积优化？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">性能优化</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>资源压缩、无用代码剥离、Bitcode（已变化）、按需加载资源。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Link Map 分析大文件。</div>
+  </div>
+</article>
+<article class="card" data-cat="性能优化" data-num="128">
+  <div class="card-head"><span class="q-num">128</span>
+    <h3 class="q-title">电量优化？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">性能优化</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>减少后台任务、定位精度、网络批量、Energy Log。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Coalesced networking。</div>
+  </div>
+</article>
+<article class="card" data-cat="性能优化" data-num="129">
+  <div class="card-head"><span class="q-num">129</span>
+    <h3 class="q-title">OOM 崩溃怎么查？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">性能优化</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Memory Graph、Allocations 看峰值、大图片、泄漏。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">JetEngine 内存警告处理。</div>
+  </div>
+</article>
+<article class="card" data-cat="性能优化" data-num="130">
+  <div class="card-head"><span class="q-num">130</span>
+    <h3 class="q-title">卡顿监控方案？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">性能优化</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>CADisplayLink 算 FPS；RunLoop 卡顿监控（腾讯 Bugly 方案）。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">主线程 RunLoop 超时上报。</div>
+  </div>
+</article>
+<article class="card" data-cat="工程" data-num="131">
+  <div class="card-head"><span class="q-num">131</span>
+    <h3 class="q-title">App 启动流程？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">工程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>main() → UIApplicationMain → AppDelegate → SceneDelegate → 首屏 VC。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">didFinishLaunching 做初始化。</div>
+  </div>
+</article>
+<article class="card" data-cat="工程" data-num="132">
+  <div class="card-head"><span class="q-num">132</span>
+    <h3 class="q-title">证书和描述文件？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">工程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Development 调试；Distribution 上架；Provisioning Profile 绑 Bundle ID + 证书 + 设备。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">p12 私钥 + cer 公钥。</div>
+  </div>
+</article>
+<article class="card" data-cat="工程" data-num="133">
+  <div class="card-head"><span class="q-num">133</span>
+    <h3 class="q-title">App 打包流程？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">工程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Archive → Validate → Upload App Store Connect → TestFlight/审核。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Export IPA 企业分发。</div>
+  </div>
+</article>
+<article class="card" data-cat="工程" data-num="134">
+  <div class="card-head"><span class="q-num">134</span>
+    <h3 class="q-title">Bitcode 是什么？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">工程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>苹果中间码（现已不要求），曾用于 App Thinning。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">了解即可。</div>
+  </div>
+</article>
+<article class="card" data-cat="工程" data-num="135">
+  <div class="card-head"><span class="q-num">135</span>
+    <h3 class="q-title">Universal Links？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">工程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>HTTPS 链接直接打开 App 指定页面。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">apple-app-site-association 文件。</div>
+  </div>
+</article>
+<article class="card" data-cat="工程" data-num="136">
+  <div class="card-head"><span class="q-num">136</span>
+    <h3 class="q-title">URL Scheme 和 Universal Links？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">工程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Scheme 老方案易被劫持；Universal Links 更安全。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">微信/支付宝跳转。</div>
+  </div>
+</article>
+<article class="card" data-cat="工程" data-num="137">
+  <div class="card-head"><span class="q-num">137</span>
+    <h3 class="q-title">CocoaPods / SPM / Carthage？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">工程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>SPM 苹果官方 Swift Package Manager 趋势；CocoaPods 最常用；Carthage 二进制框架。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Podfile vs Package.swift。</div>
+  </div>
+</article>
+<article class="card" data-cat="工程" data-num="138">
+  <div class="card-head"><span class="q-num">138</span>
+    <h3 class="q-title">单元测试 XCTest？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">工程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>XCTestCase + XCTAssert。Mock 依赖注入。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">UI Test XCUITest 自动化点击。</div>
+  </div>
+</article>
+<article class="card" data-cat="工程" data-num="139">
+  <div class="card-head"><span class="q-num">139</span>
+    <h3 class="q-title">CI/CD Fastlane？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">工程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>自动化打包、截图、上传 TestFlight。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">lane :beta do ... end</div>
+  </div>
+</article>
+<article class="card" data-cat="工程" data-num="140">
+  <div class="card-head"><span class="q-num">140</span>
+    <h3 class="q-title">Crash 收集原理？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">工程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>NSSetUncaughtExceptionHandler、signal 捕获、上报符号化 dSYM。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Firebase Crashlytics、Bugly。</div>
+  </div>
+</article>
+<article class="card" data-cat="AI+iOS" data-num="141">
+  <div class="card-head"><span class="q-num">141</span>
+    <h3 class="q-title">iOS 接入大模型三种方式？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">AI+iOS</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>云端 API、端侧 llama.cpp/MLX、Apple Foundation Models。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">90% 云端；隐私场景端侧。</div>
+  </div>
+</article>
+<article class="card" data-cat="AI+iOS" data-num="142">
+  <div class="card-head"><span class="q-num">142</span>
+    <h3 class="q-title">流式 SSE 在 Swift 怎么接？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">AI+iOS</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>URLSession.bytes(for:) 逐行读 data: 前缀。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">主线程更新 UI。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="143">
+  <div class="card-head"><span class="q-num">143</span>
+    <h3 class="q-title">atomic 和 nonatomic 区别？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>atomic .setter 原子操作线程安全但慢；nonatomic 快但不保证线程安全。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">属性修饰符。OC 属性默认 atomic。UI 属性一般 nonatomic + main thread 访问。</div>
+  </div>
+</article>
+<article class="card" data-cat="内存管理" data-num="144">
+  <div class="card-head"><span class="q-num">144</span>
+    <h3 class="q-title">IBOutlet 为什么用 weak？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">内存管理</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>VC 强引用 view，view 强引用 subview，若 IBOutlet 用 strong 可能多余强引用（通常不会环但 Apple 推荐 weak）。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Storyboard 连接时 view 已被 view hierarchy 持有。weak 避免不必要的 retain。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="145">
+  <div class="card-head"><span class="q-num">145</span>
+    <h3 class="q-title">resignFirstResponder 和第一响应者？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>键盘收起、结束编辑。firstResponder 是当前接收键盘输入的对象。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">view.endEditing(true) 递归 resign。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="146">
+  <div class="card-head"><span class="q-num">146</span>
+    <h3 class="q-title">AppDelegate 和 SceneDelegate 区别？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>iOS 13+ 多窗口用 SceneDelegate 管 UI 生命周期；AppDelegate 管应用级事件。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">单 Scene 项目 SceneDelegate 相当于以前 AppDelegate 的 UI 部分。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="147">
+  <div class="card-head"><span class="q-num">147</span>
+    <h3 class="q-title">didReceiveMemoryWarning 怎么处理？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>系统内存紧张时回调，释放可重建的缓存。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">图片缓存清理、关闭不可见 VC 的重资源。但不要太依赖它（系统可能不调用）。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="148">
+  <div class="card-head"><span class="q-num">148</span>
+    <h3 class="q-title">class cluster 类簇？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>NSNumber、NSArray、NSDictionary 公开类背后隐藏多种私有子类实现。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">initWithInt/initWithFloat 返回不同内部子类。设计模式。</div>
+  </div>
+</article>
+<article class="card" data-cat="Objective-C" data-num="149">
+  <div class="card-head"><span class="q-num">149</span>
+    <h3 class="q-title">Toll-Free Bridging？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Objective-C</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Core Foundation 和 OC 类型可桥接互换，如 CFString ↔ NSString。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">CFBridgingRelease/Retain。ARC 下 __bridge 转移。</div>
+  </div>
+</article>
+<article class="card" data-cat="Swift" data-num="150">
+  <div class="card-head"><span class="q-num">150</span>
+    <h3 class="q-title">map / flatMap / compactMap 区别？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Swift</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>map 一对一变换；flatMap 展平 Optional/数组；compactMap 去掉 nil。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">compactMap 以前叫 flatMap（Swift 4.1 改名）。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="151">
+  <div class="card-head"><span class="q-num">151</span>
+    <h3 class="q-title">dispatch_barrier 作用？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>在并发队列中Barrier 任务前后独占，用于读写锁。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">多读单写：读 concurrent async，写 barrier sync。</div>
+  </div>
+</article>
+<article class="card" data-cat="多线程" data-num="152">
+  <div class="card-head"><span class="q-num">152</span>
+    <h3 class="q-title">NSNotification 是同步还是异步？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">多线程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>post 默认同步通知同一线程的 observer；可 post name object userInfo 到指定 queue。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">addObserver 要选 queue 或在回调里 dispatch 到 main。</div>
+  </div>
+</article>
+<article class="card" data-cat="数据存储" data-num="153">
+  <div class="card-head"><span class="q-num">153</span>
+    <h3 class="q-title">归档 NSCoding 和 Codable？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">数据存储</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>老方案 NSCoding encodeWithCoder；Swift Codable 更简洁。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">NSSecureCoding 防类替换攻击。</div>
+  </div>
+</article>
+<article class="card" data-cat="网络" data-num="154">
+  <div class="card-head"><span class="q-num">154</span>
+    <h3 class="q-title">JSON 和 Plist 解析？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">网络</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>JSONSerialization.jsonObject；Codable JSONDecoder。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Swift 推荐 Codable。ObjC 用 MJExtension/YYModel。</div>
+  </div>
+</article>
+<article class="card" data-cat="架构" data-num="155">
+  <div class="card-head"><span class="q-num">155</span>
+    <h3 class="q-title">Target-Action 模式？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">架构</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>UIControl 事件：addTarget(_:action:for:)。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">按钮点击经典模式。</div>
+  </div>
+</article>
+<article class="card" data-cat="性能优化" data-num="156">
+  <div class="card-head"><span class="q-num">156</span>
+    <h3 class="q-title">CGFloat 底层是什么？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">性能优化</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>32 位设备 CGFloat=Float，64 位 CGFloat=Double。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">typedef 根据架构别名，保证图形计算精度。</div>
+  </div>
+</article>
+<article class="card" data-cat="工程" data-num="157">
+  <div class="card-head"><span class="q-num">157</span>
+    <h3 class="q-title">Info.plist 常用键？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">工程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Bundle ID、版本号、权限描述 UsageDescription、URL Types、ATS 设置。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">NSCameraUsageDescription 等必配否则 crash。</div>
+  </div>
+</article>
+<article class="card" data-cat="工程" data-num="158">
+  <div class="card-head"><span class="q-num">158</span>
+    <h3 class="q-title">dSYM 文件作用？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">工程</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Crash 日志符号化，把地址转成可读函数名行号。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">Archive 时生成，上传 App Store Connect 或自建符号服务器。</div>
+  </div>
+</article>
+<article class="card" data-cat="Runtime" data-num="159">
+  <div class="card-head"><span class="q-num">159</span>
+    <h3 class="q-title">+load 和 +initialize 能否继承触发？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">Runtime</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>+load 父类先于子类各调一次；+initialize 懒加载，子类未实现会用父类实现。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">load 里 Swizzle 要注意顺序。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="160">
+  <div class="card-head"><span class="q-num">160</span>
+    <h3 class="q-title">layoutSubviews 何时调用？<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:999px;margin-left:6px">🔥 高频</span></h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>addSubview、setNeedsLayout、scroll、旋转、约束变化后。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">不要直接调用，用 setNeedsLayout / layoutIfNeeded。</div>
+  </div>
+</article>
+<article class="card" data-cat="UIKit" data-num="161">
+  <div class="card-head"><span class="q-num">161</span>
+    <h3 class="q-title">setNeedsDisplay 和 setNeedsLayout？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">UIKit</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Display 重绘 drawRect；Layout 重新算子 view frame。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">约束布局主要触发 layoutSubviews。</div>
+  </div>
+</article>
+<article class="card" data-cat="SwiftUI" data-num="162">
+  <div class="card-head"><span class="q-num">162</span>
+    <h3 class="q-title">Preview 和 Canvas？</h3>
+    <button class="toggle-btn" onclick="toggleCard(this)">收起</button></div>
+  <div class="card-body">
+    <div class="tag-row"><span class="tag">SwiftUI</span></div>
+    <div class="plain-talk"><span class="label">大白话</span><br>Xcode Canvas 实时预览 SwiftUI，#Preview 宏。</div>
+    <div class="answer-label">详细答案</div>
+    <div class="answer">加速 UI 开发。</div>
+  </div>
+</article>
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 教程首页</a> · <a href="iOS逆向面试题大全.html">iOS 逆向题</a> · <a href="大模型AI应用工程师面试题集合.html">109 道 AI 题</a> · <a href="../iOS原生/01-Swift语言与UIKit基础.html">iOS 原生教程</a></p></div>
+<script>
+function toggleCard(btn) {
+  var b = btn.closest('.card').querySelector('.card-body');
+  b.style.display = b.style.display === 'none' ? '' : 'none';
+  btn.textContent = b.style.display === 'none' ? '展开' : '收起';
+}
+document.querySelectorAll('#filters button').forEach(function(btn) {
+  btn.onclick = function() {
+    document.querySelectorAll('#filters button').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    filterCards(btn.dataset.cat, document.getElementById('searchBox').value);
+  };
+});
+document.getElementById('searchBox').oninput = function() {
+  var active = document.querySelector('#filters button.active');
+  filterCards(active ? active.dataset.cat : 'all', this.value);
+};
+function filterCards(cat, kw) {
+  kw = (kw || '').toLowerCase();
+  document.querySelectorAll('.card').forEach(function(card) {
+    var matchCat = cat === 'all' || card.dataset.cat === cat;
+    var text = card.textContent.toLowerCase();
+    var matchKw = !kw || text.indexOf(kw) >= 0;
+    card.style.display = matchCat && matchKw ? '' : 'none';
+  });
+}
+</script>
+<script src="../_assets/site.js" defer></script>
+</body></html>

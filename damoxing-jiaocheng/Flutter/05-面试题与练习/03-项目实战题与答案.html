@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>03-项目实战题与答案 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 面试题与练习</div>
+    <h1>03-项目实战题与答案</h1>
+    <span class="header-tag">面试题与练习</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>03-项目实战题与答案</h1>
+<blockquote>
+<p>大白话版 · Flutter 完整项目实战题（5 个）<br>
+每题含：需求描述、功能拆解、架构设计思路、关键代码实现（分模块）、验收标准、常见坑与进阶方向<br>
+面向资深 iOS 工程师：全程用 Swift/UIKit 概念类比，先结论后原理</p>
+</blockquote>
+<hr>
+<h2>实战题 1：仿计算器 App</h2>
+<h3>需求描述</h3>
+<p>做一个手机计算器（参考 iPhone 计算器）：支持加减乘除四则运算、连续运算（如 1+2×3 按顺序算也行，不要求乘除优先）、清空（C）、正负号（±）、百分号（%）、小数点。按键要有点击反馈，显示区实时显示当前输入。</p>
+<h3>功能拆解</h3>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>显示区</td>
+<td>顶部大字号显示当前数字/结果</td>
+</tr>
+<tr>
+<td>按键区</td>
+<td>4 列按钮：C / ± / % / ÷、7 8 9 ×、4 5 6 -、1 2 3 +、0 . =</td>
+</tr>
+<tr>
+<td>运算逻辑</td>
+<td>记录"当前值 + 待运算符号"，按 = 结算</td>
+</tr>
+<tr>
+<td>交互反馈</td>
+<td>点击变色/缩放的视觉反馈</td>
+</tr>
+</tbody>
+</table>
+<h3>架构设计思路</h3>
+<ul>
+<li>状态：一个 StatefulWidget 就够，状态字段：<code>_display</code>（显示字符串）、<code>_first</code>（第一个操作数）、<code>_op</code>（运算符）、<code>_waitingForInput</code>（是否在等第二个数）。</li>
+<li>逻辑放 State 的方法里（<code>_onDigit</code> / <code>_onOp</code> / <code>_onEquals</code>），<strong>不引第三方库</strong>。</li>
+<li>UI 用 GridView 或 Column+Row 排按钮，按钮统一抽成 <code>_KeyButton</code> 小组件。</li>
+<li>iOS 类比：相当于一个 UIViewController + 几个 IBAction，逻辑简单，别过度设计。</li>
+</ul>
+<h3>关键代码实现（分模块）</h3>
+<p><strong>1. 状态定义（State 字段）</strong></p>
+<pre class="codehilite"><code class="language-dart">class _CalculatorState extends State&lt;Calculator&gt; {
+  String _display = '0';      // 显示区
+  double? _first;             // 第一个操作数
+  String? _op;                // 当前运算符
+  bool _waitingForInput = false;  // 是否在等第二个数
+</code></pre>
+
+<p><strong>2. 数字键逻辑</strong></p>
+<pre class="codehilite"><code class="language-dart">void _onDigit(String d) {
+  setState(() {
+    if (_waitingForInput) {
+      _display = d;              // 开始新输入
+      _waitingForInput = false;
+    } else {
+      _display = _display == '0' ? d : _display + d;  // 防止 012
+    }
+  });
+}
+</code></pre>
+
+<p><strong>3. 运算符与等号</strong></p>
+<pre class="codehilite"><code class="language-dart">void _onOp(String op) {
+  if (_first == null) {
+    _first = double.parse(_display);   // 第一次按运算符：记录第一个数
+  } else if (!_waitingForInput) {
+    _first = _calculate(_first!, double.parse(_display), _op!);  // 连续运算
+  }
+  _op = op;
+  _waitingForInput = true;
+  setState(() =&gt; _display = _format(_first!));
+}
+
+void _onEquals() {
+  if (_first == null || _op == null) return;
+  final result = _calculate(_first!, double.parse(_display), _op!);
+  setState(() {
+    _display = _format(result);
+    _first = null;
+    _op = null;
+    _waitingForInput = false;
+  });
+}
+
+double _calculate(double a, double b, String op) {
+  switch (op) {
+    case '+': return a + b;
+    case '-': return a - b;
+    case '×': return a * b;
+    case '÷': return b == 0 ? double.nan : a / b;  // 除零处理
+    default: return b;
+  }
+}
+</code></pre>
+
+<p><strong>4. 按钮组件</strong></p>
+<pre class="codehilite"><code class="language-dart">Widget _key(String label, VoidCallback onTap, {Color? bg}) {
+  return Expanded(
+    child: Padding(
+      padding: const EdgeInsets.all(4),
+      child: Material(
+        color: bg ?? Colors.grey.shade800,
+        borderRadius: BorderRadius.circular(40),
+        child: InkWell(        // InkWell 自带点击波纹反馈
+          borderRadius: BorderRadius.circular(40),
+          onTap: onTap,
+          child: Center(
+            child: Text(label, style: const TextStyle(fontSize: 28, color: Colors.white)),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+</code></pre>
+
+<h3>验收标准</h3>
+<ul>
+<li>[ ] 1+2=3；9÷3=3；2×0.5=1</li>
+<li>[ ] 连续运算 1+2+3=6 不卡死、不串值</li>
+<li>[ ] 除零显示"错误"而不是崩溃</li>
+<li>[ ] 点 C 后回到 0 状态</li>
+<li>[ ] 支持小数点（0.5）、正负号、百分号</li>
+<li>[ ] 按钮有点击反馈，布局适配不同屏幕</li>
+</ul>
+<h3>常见坑与进阶方向</h3>
+<ul>
+<li><strong>坑 1：连续按运算符</strong>（1 + + 2）——用 <code>_waitingForInput</code> 标志避免重复记录。</li>
+<li><strong>坑 2：浮点精度</strong>（0.1+0.2=0.30000000000000004）——显示时格式化，<code>_format</code> 去掉多余小数。</li>
+<li><strong>坑 3：除零崩溃</strong>——除以 0 返回 nan/Infinity，显示层判断。</li>
+<li><strong>进阶</strong>：加乘除优先级（中缀转后缀/双栈）、历史记录、深色模式适配、声音反馈、横屏布局。</li>
+</ul>
+<hr>
+<h2>实战题 2：待办清单 App（完整版）</h2>
+<h3>需求描述</h3>
+<p>做一个完整待办 App：①添加待办；②标记完成（打勾+删除线）；③删除（左滑或按钮）；④分类（全部/未完成/已完成 Tab）；⑤本地持久化（重启不丢）；⑥显示未完成数量。</p>
+<h3>功能拆解</h3>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据层</td>
+<td>Todo 模型 + 本地存储（shared_preferences 存 JSON 或 sqflite）</td>
+</tr>
+<tr>
+<td>状态层</td>
+<td>ChangeNotifier（TodoStore）统一管理列表</td>
+</tr>
+<tr>
+<td>UI 层</td>
+<td>输入区 + Tab 筛选 + ListView</td>
+</tr>
+<tr>
+<td>交互</td>
+<td>勾选、删除、Tab 切换</td>
+</tr>
+</tbody>
+</table>
+<h3>架构设计思路</h3>
+<ul>
+<li>用 <strong>Provider + ChangeNotifier</strong> 做状态管理：<code>TodoStore</code> 持有 List<Todo>，暴露 <code>add/remove/toggle</code> 方法，内部自动保存。</li>
+<li>UI 只负责"展示 + 调方法"，不直接改数据 —— 职责分离。</li>
+<li>持久化用 shared_preferences（数据量小，简单）；数据量大再换 sqflite。</li>
+<li>iOS 类比：TodoStore ≈ ObservableObject（@Published），Provider ≈ @EnvironmentObject，UI 用 Consumer 监听，类似 SwiftUI 的 @ObservedObject。</li>
+</ul>
+<h3>关键代码实现（分模块）</h3>
+<p><strong>1. 数据层：Todo 模型</strong></p>
+<pre class="codehilite"><code class="language-dart">class Todo {
+  final String id;      // 用时间戳做唯一 id
+  String title;
+  bool done;
+  DateTime createdAt;
+
+  Todo({required this.id, required this.title, this.done = false, required this.createdAt});
+
+  Map&lt;String, dynamic&gt; toJson() =&gt; {
+    'id': id, 'title': title, 'done': done,
+    'createdAt': createdAt.toIso8601String(),
+  };
+
+  factory Todo.fromJson(Map&lt;String, dynamic&gt; json) =&gt; Todo(
+    id: json['id'] as String,
+    title: json['title'] as String,
+    done: json['done'] as bool,
+    createdAt: DateTime.parse(json['createdAt'] as String),
+  );
+}
+</code></pre>
+
+<p><strong>2. 状态层：TodoStore（ChangeNotifier）</strong></p>
+<pre class="codehilite"><code class="language-dart">class TodoStore extends ChangeNotifier {
+  final List&lt;Todo&gt; _todos = [];
+  List&lt;Todo&gt; get todos =&gt; List.unmodifiable(_todos);
+
+  int get undoneCount =&gt; _todos.where((t) =&gt; !t.done).length;
+
+  Future&lt;void&gt; load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString('todos');
+    if (raw == null) return;
+    final list = jsonDecode(raw) as List;
+    _todos.addAll(list.map((e) =&gt; Todo.fromJson(e as Map&lt;String, dynamic&gt;)));
+    notifyListeners();
+  }
+
+  void add(String title) {
+    _todos.add(Todo(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: title,
+      createdAt: DateTime.now(),
+    ));
+    _save();
+    notifyListeners();
+  }
+
+  void toggle(String id) {
+    final i = _todos.indexWhere((t) =&gt; t.id == id);
+    if (i &gt;= 0) {
+      _todos[i].done = !_todos[i].done;
+      _save();
+      notifyListeners();
+    }
+  }
+
+  void remove(String id) {
+    _todos.removeWhere((t) =&gt; t.id == id);
+    _save();
+    notifyListeners();
+  }
+
+  Future&lt;void&gt; _save() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('todos', jsonEncode(_todos.map((t) =&gt; t.toJson()).toList()));
+  }
+}
+</code></pre>
+
+<p><strong>3. UI 层：主页面</strong></p>
+<pre class="codehilite"><code class="language-dart">class TodoPage extends StatelessWidget {
+  const TodoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('待办清单')),
+      body: Column(
+        children: [
+          const _InputBar(),
+          const _TabFilter(),
+          Expanded(
+            child: Consumer&lt;TodoStore&gt;(      // Consumer 精准监听，只重建这里
+              builder: (context, store, _) {
+                final list = _filterList(store);
+                return ListView.builder(
+                  itemCount: list.length,
+                  itemBuilder: (context, i) {
+                    final todo = list[i];
+                    return ListTile(
+                      leading: Checkbox(
+                        value: todo.done,
+                        onChanged: (_) =&gt; store.toggle(todo.id),
+                      ),
+                      title: Text(todo.title, style: TextStyle(
+                        decoration: todo.done ? TextDecoration.lineThrough : null,
+                      )),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        onPressed: () =&gt; store.remove(todo.id),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          Consumer&lt;TodoStore&gt;(                // 底部计数
+            builder: (context, store, _) =&gt;
+                Padding(padding: const EdgeInsets.all(8), child: Text('剩余 ${store.undoneCount} 项')),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+
+<h3>验收标准</h3>
+<ul>
+<li>[ ] 添加、勾选、删除全部正常，删除线随勾选切换</li>
+<li>[ ] 重启 App 数据不丢（持久化生效）</li>
+<li>[ ] 三个 Tab 筛选正确（全部/未完成/已完成）</li>
+<li>[ ] 底部未完成数实时更新</li>
+<li>[ ] 空列表有友好提示</li>
+</ul>
+<h3>常见坑与进阶方向</h3>
+<ul>
+<li><strong>坑 1：ListView 不刷新</strong>——忘用 Consumer/notifyListeners，列表不会动。</li>
+<li><strong>坑 2：持久化时机</strong>——每次增删改都要 save，别只在退出时存（崩溃就丢）。</li>
+<li><strong>坑 3：id 重复</strong>——用时间戳+随机数，别用 index（删除后顺序变）。</li>
+<li><strong>进阶</strong>：左滑删除（Dismissible）、编辑待办、优先级/截止日期、桌面小组件、离线同步。</li>
+</ul>
+<hr>
+<h2>实战题 3：天气查询 App</h2>
+<h3>需求描述</h3>
+<p>做一个天气查询 App：输入城市名查询实时天气，展示：城市、温度、天气状况（晴/雨等）、湿度、风力；带加载中状态和错误提示；记住上次查询的城市（启动自动查）。</p>
+<h3>功能拆解</h3>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络层</td>
+<td>dio 请求天气 API（如 OpenWeatherMap / 和风天气），解析 Model</td>
+</tr>
+<tr>
+<td>数据层</td>
+<td>WeatherModel（温度/天气/湿度/风力）</td>
+</tr>
+<tr>
+<td>状态层</td>
+<td>ChangeNotifier（WeatherStore）管理"查询中/成功/失败"</td>
+</tr>
+<tr>
+<td>UI 层</td>
+<td>输入框 + 天气卡片 + 加载动画 + 错误重试</td>
+</tr>
+<tr>
+<td>持久化</td>
+<td>shared_preferences 存上次城市</td>
+</tr>
+</tbody>
+</table>
+<h3>架构设计思路</h3>
+<ul>
+<li>分层：<strong>网络（ApiClient）→ 状态（WeatherStore）→ UI（WeatherPage）</strong>，每层只干自己的事。</li>
+<li>WeatherStore 暴露状态枚举：<code>loading / success(data) / error(msg)</code>，UI 按状态渲染不同界面 —— 类似 iOS 的 enum + switch。</li>
+<li>API 密钥放 <code>--dart-define</code>，不要硬编码进代码。</li>
+<li>先写好 Model 的 fromJson（用 json_serializable 也行），再写请求。</li>
+</ul>
+<h3>关键代码实现（分模块）</h3>
+<p><strong>1. Model 层</strong></p>
+<pre class="codehilite"><code class="language-dart">class Weather {
+  final String city;
+  final double temp;      // 温度
+  final String desc;      // 天气描述（晴/多云）
+  final int humidity;     // 湿度 %
+  final double windSpeed; // 风速
+
+  Weather({required this.city, required this.temp, required this.desc,
+      required this.humidity, required this.windSpeed});
+
+  // 假设接口返回形如 {&quot;name&quot;:&quot;北京&quot;,&quot;main&quot;:{&quot;temp&quot;:25.3,&quot;humidity&quot;:60},&quot;weather&quot;:[{&quot;description&quot;:&quot;晴&quot;}],&quot;wind&quot;:{&quot;speed&quot;:3.2}}
+  factory Weather.fromJson(Map&lt;String, dynamic&gt; json, String city) {
+    final main = json['main'] as Map&lt;String, dynamic&gt;;
+    final weather = (json['weather'] as List).first as Map&lt;String, dynamic&gt;;
+    final wind = json['wind'] as Map&lt;String, dynamic&gt;;
+    return Weather(
+      city: city,
+      temp: (main['temp'] as num).toDouble(),
+      desc: weather['description'] as String,
+      humidity: (main['humidity'] as num).toInt(),
+      windSpeed: (wind['speed'] as num).toDouble(),
+    );
+  }
+}
+</code></pre>
+
+<p><strong>2. 网络层：ApiClient</strong></p>
+<pre class="codehilite"><code class="language-dart">class ApiClient {
+  static const _apiKey = String.fromEnvironment('WEATHER_API_KEY');
+  final Dio _dio = Dio();
+
+  Future&lt;Weather&gt; fetchWeather(String city) async {
+    final resp = await _dio.get(
+      'https://api.openweathermap.org/data/2.5/weather',
+      queryParameters: {
+        'q': city,
+        'appid': _apiKey,
+        'units': 'metric',  // 摄氏度
+        'lang': 'zh_cn',
+      },
+    );
+    return Weather.fromJson(resp.data as Map&lt;String, dynamic&gt;, city);
+  }
+}
+</code></pre>
+
+<p><strong>3. 状态层：WeatherStore</strong></p>
+<pre class="codehilite"><code class="language-dart">class WeatherStore extends ChangeNotifier {
+  final ApiClient _api = ApiClient();
+  bool loading = false;
+  Weather? weather;
+  String? error;
+
+  Future&lt;void&gt; query(String city) async {
+    loading = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      weather = await _api.fetchWeather(city);
+    } catch (e) {
+      error = '查询失败：$e';   // 网络错误/城市不存在都在这
+      weather = null;
+    }
+    loading = false;
+    notifyListeners();
+  }
+}
+</code></pre>
+
+<p><strong>4. UI 层（按状态渲染）</strong></p>
+<pre class="codehilite"><code class="language-dart">Widget _buildBody(WeatherStore store) {
+  if (store.loading) return const Center(child: CircularProgressIndicator());
+  if (store.error != null) {
+    return Center(child: Text(store.error!, style: const TextStyle(color: Colors.red)));
+  }
+  final w = store.weather;
+  if (w == null) return const Center(child: Text('输入城市名开始查询'));
+
+  // 成功：展示天气卡片
+  return Center(
+    child: Card(
+      margin: const EdgeInsets.all(24),
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(w.city, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('${w.temp.round()}°C', style: const TextStyle(fontSize: 56)),
+            Text(w.desc, style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 12),
+            Text('湿度 ${w.humidity}%   风速 ${w.windSpeed} m/s'),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+</code></pre>
+
+<h3>验收标准</h3>
+<ul>
+<li>[ ] 输入"北京"能查到天气并展示完整信息</li>
+<li>[ ] 查询中有加载动画，不卡 UI</li>
+<li>[ ] 城市不存在/断网时显示错误提示，可重试</li>
+<li>[ ] 重启后自动查询上次城市</li>
+<li>[ ] 界面在 iPhone SE 和 Pro Max 上都布局正常</li>
+</ul>
+<h3>常见坑与进阶方向</h3>
+<ul>
+<li><strong>坑 1：API Key 泄露</strong>——用 dart-define 注入，别写死在代码里；发布前换生产 Key。</li>
+<li><strong>坑 2：中文城市名编码</strong>——dio 的 queryParameters 会自动编码，手动拼 URL 会 400。</li>
+<li><strong>坑 3：空数据崩溃</strong>——接口字段缺失时 fromJson 用 <code>as num</code> 会抛错，生产建议用容错解析。</li>
+<li><strong>进阶</strong>：定位自动查询（geolocator）、未来 7 天预报、天气图标动画、多城市管理、离线缓存。</li>
+</ul>
+<hr>
+<h2>实战题 4：仿微信聊天界面</h2>
+<h3>需求描述</h3>
+<p>做一个仿微信聊天页：①顶部标题栏（对方昵称）；②消息列表（对方消息靠左、自己靠右，气泡样式）；③底部输入框 + 发送按钮；④发送后消息上屏并可自动滚到底部；⑤消息带时间戳；⑥本地模拟消息数据（不用真网络）。</p>
+<h3>功能拆解</h3>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据层</td>
+<td>Message 模型（文本/方向/时间）</td>
+</tr>
+<tr>
+<td>UI 层</td>
+<td>气泡列表（按方向区分对齐与颜色）</td>
+</tr>
+<tr>
+<td>输入区</td>
+<td>TextField + 发送按钮，键盘处理</td>
+</tr>
+<tr>
+<td>交互</td>
+<td>发送追加消息、滚动到底、软键盘顶起</td>
+</tr>
+</tbody>
+</table>
+<h3>架构设计思路</h3>
+<ul>
+<li>状态：StatefulWidget + List<Message>，setState 追加即可（消息量小不需要状态管理库）。</li>
+<li>气泡用 Align（left/right）+ Container（圆角+背景色），<strong>不要用 Row 硬排</strong>。</li>
+<li>自动滚底：ScrollController 在 setState 后 <code>jumpTo(maxScrollExtent)</code> 或 <code>animateTo</code>。</li>
+<li>键盘顶起：Scaffold 默认 <code>resizeToAvoidBottomInset: true</code> 就会自动避让键盘，别自己手动搞。</li>
+<li>iOS 类比：类似 UITableViewController + 自定义气泡 cell + 底部 inputAccessoryView。</li>
+</ul>
+<h3>关键代码实现（分模块）</h3>
+<p><strong>1. 消息模型</strong></p>
+<pre class="codehilite"><code class="language-dart">class Message {
+  final String text;
+  final bool isMe;        // true=自己，false=对方
+  final DateTime time;
+
+  Message({required this.text, required this.isMe, required this.time});
+}
+</code></pre>
+
+<p><strong>2. 气泡组件（方向决定对齐和颜色）</strong></p>
+<pre class="codehilite"><code class="language-dart">class Bubble extends StatelessWidget {
+  final Message msg;
+  const Bubble({super.key, required this.msg});
+
+  @override
+  Widget build(BuildContext context) {
+    final isMe = msg.isMe;
+    return Align(   // Align 决定靠左还是靠右
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        constraints: const BoxConstraints(maxWidth: 280),  // 限制气泡宽度
+        decoration: BoxDecoration(
+          color: isMe ? const Color(0xFF95EC69) : Colors.white,  // 微信绿 / 白色
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(msg.text, style: const TextStyle(fontSize: 16)),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<p><strong>3. 发送逻辑 + 自动滚底</strong></p>
+<pre class="codehilite"><code class="language-dart">class _ChatPageState extends State&lt;ChatPage&gt; {
+  final List&lt;Message&gt; _messages = [];   // 初始可以放几条模拟数据
+  final TextEditingController _input = TextEditingController();
+  final ScrollController _scroll = ScrollController();
+
+  void _send() {
+    final text = _input.text.trim();
+    if (text.isEmpty) return;
+    setState(() {
+      _messages.add(Message(text: text, isMe: true, time: DateTime.now()));
+    });
+    _input.clear();
+    _scrollToBottom();
+  }
+
+  void _scrollToBottom() {
+    // 帧后滚动，确保 setState 后列表已更新
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scroll.hasClients) {
+        _scroll.animateTo(
+          _scroll.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('小明')),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              controller: _scroll,
+              itemCount: _messages.length,
+              itemBuilder: (context, i) {
+                final msg = _messages[i];
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Bubble(msg: msg),
+                    // 时间戳：小字灰色
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16, bottom: 4),
+                      child: Text(
+                        '${msg.time.hour}:${msg.time.minute.toString().padLeft(2, '0')}',
+                        style: const TextStyle(fontSize: 11, color: Colors.grey),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          // 输入区（Scaffold 自动避让键盘）
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _input,
+                      decoration: const InputDecoration(
+                        hintText: '发送消息...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                        ),
+                      ),
+                      onSubmitted: (_) =&gt; _send(),  // 键盘发送键也能发
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(onPressed: _send, child: const Text('发送')),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+
+<h3>验收标准</h3>
+<ul>
+<li>[ ] 我方消息靠右绿色气泡、对方靠左白色气泡</li>
+<li>[ ] 输入文字点发送，消息上屏并自动滚到底</li>
+<li>[ ] 输入空内容点发送无反应</li>
+<li>[ ] 键盘弹出时输入框不被遮挡</li>
+<li>[ ] 消息多时滚动流畅（builder 按需创建）</li>
+</ul>
+<h3>常见坑与进阶方向</h3>
+<ul>
+<li><strong>坑 1：滚底不生效</strong>——setState 后列表还没更新就滚动，用 <code>addPostFrameCallback</code> 等一帧。</li>
+<li><strong>坑 2：气泡顶满屏</strong>——不加 maxWidth 约束，长文本会撑满全宽。</li>
+<li><strong>坑 3：键盘遮挡</strong>——别自己监听键盘，让 Scaffold 的 resizeToAvoidBottomInset 自动处理。</li>
+<li><strong>进阶</strong>：图片/语音消息、长按复制、消息撤回、已读回执、WebSocket 实时收发、聊天记录分页加载。</li>
+</ul>
+<hr>
+<h2>实战题 5：性能优化改造实战</h2>
+<h3>需求描述</h3>
+<p>给你一个"卡顿的假想 App"（一个 500 条数据的列表，每条带网络图、渐变背景、点击动效），你要做一轮性能优化改造：找出卡顿原因、逐项优化、最后给出优化前后对比数据（可用 DevTools 截图/数据说明）。</p>
+<h3>功能拆解</h3>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>诊断</td>
+<td>用 DevTools Performance/Memory 定位卡顿点</td>
+</tr>
+<tr>
+<td>优化</td>
+<td>列表、图片、重建、重绘四个方向逐个改</td>
+</tr>
+<tr>
+<td>验证</td>
+<td>优化前后帧率/内存对比</td>
+</tr>
+</tbody>
+</table>
+<h3>架构设计思路</h3>
+<p>优化套路 = <strong>定位（哪里卡）→ 归因（为什么卡）→ 修改（怎么改）→ 验证（改没改好）</strong>。<br>
+常见四类问题：<br>
+1. <strong>列表问题</strong>：一次性建 500 条 → 用 builder 按需创建。<br>
+2. <strong>图片问题</strong>：原图直接解码 → cacheWidth 按显示尺寸解码 + 缓存。<br>
+3. <strong>重建问题</strong>：整页 setState 重建所有子组件 → const 化 + 局部刷新 + RepaintBoundary。<br>
+4. <strong>重绘问题</strong>：动画带动整页重绘 → RepaintBoundary 隔离。</p>
+<h3>关键代码实现（分模块）</h3>
+<p><strong>1. 列表优化：用 builder + itemExtent</strong></p>
+<pre class="codehilite"><code class="language-dart">// ❌ 错误写法：一次性创建 500 个
+ListView(children: List.generate(500, (i) =&gt; _item(i)))
+
+// ✅ 正确写法：按需创建 + 固定行高
+ListView.builder(
+  itemExtent: 88,          // 固定行高，滚动性能最好
+  itemCount: 500,
+  itemBuilder: (context, i) =&gt; _item(i),
+)
+</code></pre>
+
+<p><strong>2. 图片优化：限制解码尺寸</strong></p>
+<pre class="codehilite"><code class="language-dart">// ❌ 错误写法：加载原图（一张 4000x3000 的图解码后内存爆炸）
+Image.network(url)
+
+// ✅ 正确写法：按显示尺寸解码（宽 100 就只解码 100 宽的图）
+Image.network(
+  url,
+  width: 100,
+  height: 100,
+  fit: BoxFit.cover,
+  cacheWidth: 100,        // 关键：只解码 100 像素宽
+  cacheHeight: 100,
+)
+// 生产环境再配合 cached_network_image 做磁盘缓存
+</code></pre>
+
+<p><strong>3. 重建优化：const + Consumer 局部刷新</strong></p>
+<pre class="codehilite"><code class="language-dart">// ❌ 错误写法：整个 build 里每次 setState 都重建所有子组件
+// ✅ 正确写法：
+// 1) 静态组件全部 const 化（const Text('标题')）
+// 2) 用 Provider 的 Consumer 只包需要监听的部分
+// 3) 大列表每项用 RepaintBoundary 包裹：
+ListView.builder(
+  itemBuilder: (context, i) =&gt; RepaintBoundary(  // 每项独立重绘层
+    key: ValueKey(i),
+    child: _item(i),
+  ),
+)
+</code></pre>
+
+<p><strong>4. 动画优化：RepaintBoundary 隔离</strong></p>
+<pre class="codehilite"><code class="language-dart">// ❌ 错误：动画区域变化带动整页重绘
+// ✅ 正确：把动画包进 RepaintBoundary，只有它自己重绘
+RepaintBoundary(
+  child: AnimatedContainer(
+    duration: const Duration(milliseconds: 300),
+    // ...动画属性
+  ),
+)
+</code></pre>
+
+<p><strong>5. 避免耗时操作阻塞主线程</strong></p>
+<pre class="codehilite"><code class="language-dart">// ❌ 错误：主线程做重活（大 JSON 解析会卡 UI）
+// final data = jsonDecode(bigString);  // 卡顿元凶
+
+// ✅ 正确：用 compute 丢到后台 Isolate
+final data = await compute(_parseJson, bigString);
+
+// 顶层函数才能传给 compute
+List&lt;dynamic&gt; _parseJson(String source) =&gt; jsonDecode(source) as List;
+</code></pre>
+
+<h3>验收标准</h3>
+<ul>
+<li>[ ] 列表滚动从"明显掉帧"到"丝滑"（DevTools 帧率图：红色帧消失）</li>
+<li>[ ] 图片内存占用明显下降（Memory 面板对比）</li>
+<li>[ ] 不必要重建消失（Debug 模式看 build 调用次数）</li>
+<li>[ ] 给出优化前后对比表（帧率/内存/首屏时间）</li>
+</ul>
+<h3>常见坑与进阶方向</h3>
+<ul>
+<li><strong>坑 1：只优化不验证</strong>——改完不测等于白改，用 DevTools 数据说话。</li>
+<li><strong>坑 2：过早优化</strong>——先定位真正的瓶颈（可能是网络不是 UI），别瞎加缓存。</li>
+<li><strong>坑 3：RepaintBoundary 滥用</strong>——每项都包会反而增加内存，只包"会动的"。</li>
+<li><strong>进阶</strong>：Impeller 渲染引擎、const 构造深度优化、shader 编译预热（SkSL）、包体积 Tree Shaking、启动耗时打点。</li>
+</ul>
+<hr>
+<h2>附：实战项目进阶路线</h2>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>项目</th>
+<th>收获</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>练手</td>
+<td>计算器 → 待办清单</td>
+<td>状态管理、布局、持久化</td>
+</tr>
+<tr>
+<td>进阶</td>
+<td>天气查询 → 聊天界面</td>
+<td>网络、异步、复杂交互</td>
+</tr>
+<tr>
+<td>综合</td>
+<td>性能优化改造</td>
+<td>诊断工具、优化思维</td>
+</tr>
+</tbody>
+</table>
+<p>做完这 5 个实战题，你就具备了真实项目里 80% 的常用能力：<strong>UI 布局、状态管理、网络请求、持久化、列表性能、混合开发</strong>。把它们都跑起来、改造成自己的版本，面试时就是最好的项目案例。</p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

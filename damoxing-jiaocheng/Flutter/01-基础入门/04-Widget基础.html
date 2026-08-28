@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>04-Widget基础 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 基础入门</div>
+    <h1>04-Widget基础</h1>
+    <span class="header-tag">基础入门</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>04-Widget 基础</h1>
+<blockquote>
+<p>大白话版 · 万物皆 Widget（小白向）<br>
+目标：理解 Flutter 最核心的思想，学会用 StatelessWidget / StatefulWidget 和常用基础组件搭界面。</p>
+</blockquote>
+<hr>
+<h2>一、先讲"是什么"：万物皆 Widget 到底是什么意思？</h2>
+<p><strong>一句话版本：在 Flutter 里，屏幕上你看到的一切——文字、图片、按钮、甚至整个页面——都是一个 Widget（小部件）。</strong></p>
+<p>打个比方：</p>
+<blockquote>
+<p>搭 Flutter 界面就像拼<strong>乐高积木</strong>：<br>
+- 每一块积木都是一个 Widget（文字块、图片块、按钮块……）<br>
+- 积木可以套娃：一块大积木里可以放很多小积木<br>
+- 整个 App 就是一棵"积木树"（Widget 树），根是 <code>runApp</code>，往下不断分叉</p>
+<p>iOS 原生里"视图层级"（UIView 套 UIView）你肯定很熟——<strong>Widget 树就是 Flutter 版的视图层级</strong>。</p>
+</blockquote>
+<h3>Widget 的三个特点（大白话）</h3>
+<ol>
+<li><strong>一切皆 Widget</strong>：文字、图片、按钮、输入框、列表、页面、甚至"间距""居中"这种看不见的东西，都是 Widget。</li>
+<li><strong>Widget 嵌套 Widget</strong>：Widget 像俄罗斯套娃，一个套一个，形成一棵树。</li>
+<li><strong>Widget 是不可变的"图纸"</strong>：Widget 本身只是一份"描述"，每次界面变化，Flutter 都会重新"按图纸施工"（重建 Widget 树），但底层只会更新真正变化的部分（这就是 Flutter 高效的秘密）。</li>
+</ol>
+<h3>看一个最简单的 Widget 树</h3>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 这棵树从上到下：MaterialApp → Scaffold → Center → Text
+    return MaterialApp(          // 根：App 外壳
+      home: Scaffold(            // 页面骨架
+        body: Center(            // 居中容器
+          child: Text('我是最小的一棵 Widget 树'),  // 叶子：文字
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<p>这棵树长这样（从上往下看）：</p>
+<pre class="codehilite"><code>MaterialApp          ← 整个 App 的壳
+  └─ Scaffold        ← 一页的骨架（标题栏+身体）
+       └─ Center     ← 把内容放中间
+            └─ Text  ← 显示文字
+</code></pre>
+
+<hr>
+<h2>二、再讲"为什么"：为什么用 Widget 这种设计？</h2>
+<ul>
+<li><strong>简单统一</strong>：只有一个概念（Widget），学一个就能举一反三，不用记一大堆控件类名。</li>
+<li><strong>组合优于继承</strong>：想要"红色的大按钮"，不是去创建一个新类，而是把 <code>ElevatedButton</code> 包在 <code>Padding</code>/<code>SizedBox</code>/<code>ColoredBox</code> 里组合出来。积木嘛，拼就完事了。</li>
+<li><strong>界面 = 代码</strong>：整个 UI 用代码声明，没有 Storyboard / XIB 那种"拖拽 + 代码"双轨制，逻辑清晰、易审查、易复用。</li>
+<li><strong>性能好</strong>：Widget 是不可变描述，Flutter 只对变化部分做最小更新，所以界面再复杂也流畅。</li>
+</ul>
+<hr>
+<h2>三、怎么用：StatelessWidget vs StatefulWidget</h2>
+<p>Flutter 的组件分两大类，先记住一句话：</p>
+<blockquote>
+<p><strong>StatelessWidget（无状态）</strong>：界面内容固定不变，像一张"打印好的名片"。<br>
+<strong>StatefulWidget（有状态）</strong>：界面内容会变，像一块"电子屏幕"，能根据状态刷新。</p>
+</blockquote>
+<h3>3.1 StatelessWidget（无状态组件）</h3>
+<p>内容不会变化的页面用这个。比如"关于页面"、"静态展示页"。</p>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: AboutCard(),   // 使用我们自定义的静态卡片
+        ),
+      ),
+    );
+  }
+}
+
+// 自定义一个无状态组件：一张不会变的&quot;名片&quot;
+class AboutCard extends StatelessWidget {
+  const AboutCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // build 方法就是&quot;按图纸施工&quot;：返回这棵子树长什么样
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,  // 让 Column 只占内容大小
+          children: [
+            const Text('我是无状态组件', style: TextStyle(fontSize: 20)),
+            const SizedBox(height: 8),     // 垂直间距（这也是 Widget！）
+            const Text('我的内容永远不变'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<h3>3.2 StatefulWidget（有状态组件）</h3>
+<p>内容会随用户操作/数据变化的页面用这个，比如"计数器"、"点赞按钮"。</p>
+<p><strong>关键理解（大白话）：</strong><br>
+- <code>StatefulWidget</code> 本身也是"图纸"（不变的壳）<br>
+- 真正的"活数据"放在 <code>State</code> 里（会变的灵魂）<br>
+- 数据一变，调用 <code>setState()</code> 通知 Flutter："我要刷新！"</p>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: CounterPage(),
+    );
+  }
+}
+
+// 第一步：定义 StatefulWidget（一个壳）
+class CounterPage extends StatefulWidget {
+  const CounterPage({super.key});
+
+  // 必须实现 createState，返回对应的 State
+  @override
+  State&lt;CounterPage&gt; createState() =&gt; _CounterPageState();
+}
+
+// 第二步：定义 State（真正的状态和界面）
+// 下划线 _ 开头表示私有（只在当前文件可用）
+class _CounterPageState extends State&lt;CounterPage&gt; {
+  int _count = 0;  // 状态：当前计数
+
+  // 按钮点击时调用的方法
+  void _increment() {
+    setState(() {
+      // 在 setState 里修改状态，界面会自动重建刷新
+      _count++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('计数器')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('你点了 $_count 次', style: const TextStyle(fontSize: 28)),
+            const SizedBox(height: 16),
+            // 按钮：点击后调用 _increment
+            ElevatedButton(
+              onPressed: _increment,   // 点击回调
+              child: const Text('点我 +1'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<p><strong>运行逻辑（大白话）：</strong></p>
+<pre class="codehilite"><code>点击按钮 → 调用 _increment() → setState 把 _count 加 1
+→ Flutter 收到&quot;状态变了&quot; → 重新执行 build() 重建界面
+→ 界面上数字变成新值
+</code></pre>
+
+<blockquote>
+<p>对 iOS 工程师：<code>setState()</code> ≈ 手动触发 <code>view.setNeedsLayout()</code> + 重新渲染。区别是 Flutter 帮你自动 diff，只更新变化的部分。</p>
+</blockquote>
+<hr>
+<h2>四、常用基础组件速查（先会用，再深究）</h2>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>作用</th>
+<th>类比 iOS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Text</code></td>
+<td>显示文字</td>
+<td>UILabel</td>
+</tr>
+<tr>
+<td><code>Image</code></td>
+<td>显示图片</td>
+<td>UIImageView</td>
+</tr>
+<tr>
+<td><code>Icon</code></td>
+<td>显示图标</td>
+<td>UIImageView（系统 SF Symbol）</td>
+</tr>
+<tr>
+<td><code>ElevatedButton</code> / <code>TextButton</code> / <code>OutlinedButton</code></td>
+<td>三种按钮</td>
+<td>UIButton</td>
+</tr>
+<tr>
+<td><code>TextField</code></td>
+<td>文本输入框</td>
+<td>UITextField</td>
+</tr>
+<tr>
+<td><code>Container</code></td>
+<td>万能容器（背景色/圆角/内边距/尺寸）</td>
+<td>UIView + 约束</td>
+</tr>
+<tr>
+<td><code>Row</code></td>
+<td>水平排列子组件</td>
+<td>UIStackView(.horizontal)</td>
+</tr>
+<tr>
+<td><code>Column</code></td>
+<td>垂直排列子组件</td>
+<td>UIStackView(.vertical)</td>
+</tr>
+<tr>
+<td><code>Stack</code></td>
+<td>层叠（子组件叠在一起）</td>
+<td>视图叠放</td>
+</tr>
+<tr>
+<td><code>Card</code></td>
+<td>卡片样式容器</td>
+<td>带圆角阴影的 UIView</td>
+</tr>
+<tr>
+<td><code>ListView</code></td>
+<td>可滚动列表</td>
+<td>UITableView / UICollectionView</td>
+</tr>
+<tr>
+<td><code>AppBar</code></td>
+<td>顶部导航栏</td>
+<td>UINavigationBar</td>
+</tr>
+<tr>
+<td><code>Scaffold</code></td>
+<td>页面骨架</td>
+<td>UIViewController 的 view</td>
+</tr>
+<tr>
+<td><code>Padding</code> / <code>SizedBox</code></td>
+<td>间距 / 固定尺寸</td>
+<td>Auto Layout 约束</td>
+</tr>
+</tbody>
+</table>
+<h3>4.1 文字 Text（≈ UILabel）</h3>
+<pre class="codehilite"><code class="language-dart">const Text(
+  '我是文字',
+  style: TextStyle(
+    fontSize: 20,        // 字号
+    color: Colors.blue,  // 颜色
+    fontWeight: FontWeight.bold,  // 加粗
+  ),
+)
+</code></pre>
+
+<h3>4.2 图片 Image（≈ UIImageView）</h3>
+<pre class="codehilite"><code class="language-dart">// 方式一：显示网络图片
+Image.network('https://example.com/logo.png'),
+
+// 方式二：显示本地资源图片（需在 pubspec.yaml 声明 assets）
+Image.asset('assets/images/logo.png'),
+</code></pre>
+
+<h3>4.3 按钮（≈ UIButton）</h3>
+<pre class="codehilite"><code class="language-dart">// 三种常见按钮
+ElevatedButton(
+  onPressed: () { print('我被点了'); },   // 点击回调
+  child: const Text('实心按钮'),
+),
+TextButton(
+  onPressed: () {},
+  child: const Text('文字按钮'),
+),
+OutlinedButton(
+  onPressed: () {},
+  child: const Text('描边按钮'),
+),
+</code></pre>
+
+<h3>4.4 图标 Icon（≈ SF Symbol）</h3>
+<pre class="codehilite"><code class="language-dart">// 使用 Material 内置图标
+const Icon(Icons.favorite, color: Colors.red, size: 32),
+const Icon(Icons.phone, size: 24),
+</code></pre>
+
+<h3>4.5 布局三兄弟：Row / Column / Stack</h3>
+<pre class="codehilite"><code class="language-dart">// Row：水平排一排（相当于横向 UIStackView）
+Row(
+  children: [
+    const Icon(Icons.star),
+    const SizedBox(width: 8),   // 水平间距
+    const Text('水平排列'),
+  ],
+),
+
+// Column：垂直排一列（相当于纵向 UIStackView）
+Column(
+  children: [
+    const Text('第一行'),
+    const SizedBox(height: 8),
+    const Text('第二行'),
+  ],
+),
+
+// Stack：层叠摆放（子组件可以重叠）
+Stack(
+  children: [
+    Container(width: 100, height: 100, color: Colors.blue),
+    const Positioned(
+      left: 10, top: 10,
+      child: Text('叠在上面的字'),
+    ),
+  ],
+),
+</code></pre>
+
+<h3>4.6 一个综合小例子：把上面组件拼起来</h3>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text('常用组件展示')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('文字 + 图标 + 按钮全家福',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.favorite, color: Colors.red),
+                  SizedBox(width: 8),
+                  Text('点个赞'),
+                  SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: null,  // null 表示禁用（演示用）
+                    child: Text('按钮'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<hr>
+<h2>五、iOS 开发者视角（老司机对照表）</h2>
+<table>
+<thead>
+<tr>
+<th>iOS 原生</th>
+<th>Flutter</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UIView</td>
+<td>Widget</td>
+<td>一切界面的最小单元</td>
+</tr>
+<tr>
+<td>UIViewController</td>
+<td>一个 Widget（通常配 Scaffold）</td>
+<td>一屏内容的管理者</td>
+</tr>
+<tr>
+<td>UILabel</td>
+<td>Text</td>
+<td>显示文字</td>
+</tr>
+<tr>
+<td>UIImageView</td>
+<td>Image / Icon</td>
+<td>显示图片/图标</td>
+</tr>
+<tr>
+<td>UIButton</td>
+<td>ElevatedButton / TextButton / OutlinedButton</td>
+<td>按钮</td>
+</tr>
+<tr>
+<td>UITextField</td>
+<td>TextField</td>
+<td>输入框</td>
+</tr>
+<tr>
+<td>UIStackView</td>
+<td>Row / Column</td>
+<td>线性布局</td>
+</tr>
+<tr>
+<td>Auto Layout</td>
+<td>布局 Widget（Center/Padding/Align 等）</td>
+<td>摆位置</td>
+</tr>
+<tr>
+<td>UITableView</td>
+<td>ListView</td>
+<td>滚动列表</td>
+</tr>
+<tr>
+<td>UINavigationBar</td>
+<td>AppBar</td>
+<td>顶部导航</td>
+</tr>
+<tr>
+<td>setNeedsLayout + 重绘</td>
+<td>setState()</td>
+<td>通知界面刷新</td>
+</tr>
+<tr>
+<td>Storyboard / XIB</td>
+<td>纯代码声明 UI</td>
+<td>Flutter 没有可视化拖拽</td>
+</tr>
+</tbody>
+</table>
+<p><strong>给 iOS 工程师的三句话总结：</strong><br>
+1. 你把"视图层级"的思维直接搬过来，只是名字从 <code>UIView</code> 换成 <code>Widget</code>。<br>
+2. 把"约束/Frame"的思维换成"布局 Widget"（Center、Padding、Row、Column），上手很快。<br>
+3. 状态刷新从"手动 reload"变成 <code>setState()</code>，反而更省心。</p>
+<hr>
+<h2>六、小节小结</h2>
+<ol>
+<li><strong>万物皆 Widget</strong>：Flutter 界面是一棵"Widget 树"，一切皆积木、积木套积木。</li>
+<li><strong>StatelessWidget</strong>：内容不变的静态组件（名片）。</li>
+<li><strong>StatefulWidget</strong>：内容会变的组件，用 <code>setState()</code> 触发刷新（电子屏）。</li>
+<li>常用组件：<code>Text</code> / <code>Image</code> / <code>Icon</code> / 按钮三兄弟 / <code>Container</code> / <code>Row</code> / <code>Column</code> / <code>Stack</code> / <code>ListView</code>。</li>
+<li>布局核心思想：用布局 Widget 摆位置，组合出任意界面。</li>
+</ol>
+<hr>
+<h2>七、本节动手练习（含答案提示）</h2>
+<p><strong>练习 1：判断类型</strong></p>
+<blockquote>
+<p>一个显示"当前时间"的页面，时间每秒变化，应该用 StatelessWidget 还是 StatefulWidget？为什么？</p>
+<p>✅ 答案提示：StatefulWidget。因为时间会变化，需要 State 保存数据并用 setState 刷新。</p>
+</blockquote>
+<p><strong>练习 2：搭一个小界面</strong></p>
+<blockquote>
+<p>用 Column 搭一个竖排界面：上面一个 Icon（点赞图标），中间一段文字，下面一个按钮，整体居中。</p>
+<p>✅ 答案提示：用 <code>Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(...), SizedBox(height: 8), Text(...), SizedBox(height: 8), ElevatedButton(...)])</code>，外面套 <code>Center</code> 或让 Column 占满。</p>
+</blockquote>
+<p><strong>练习 3：理解 setState</strong></p>
+<blockquote>
+<p>下面的代码点击按钮后界面会变吗？为什么？<br>
+<code>dart
+void _increment() {
+  _count++;   // 没有 setState
+}</code></p>
+<p>✅ 答案提示：不会变。<code>_count</code> 虽然改了，但没有调用 <code>setState()</code> 通知 Flutter 重建界面。必须把修改放进 <code>setState(() { _count++; });</code> 里。</p>
+</blockquote>
+<p><strong>练习 4：连线题</strong></p>
+<blockquote>
+<p>连线：<code>Text</code> ↔ ？　<code>Image</code> ↔ ？　<code>Row</code> ↔ ？　<code>ListView</code> ↔ ？　<code>setState</code> ↔ ？</p>
+<p>✅ 答案提示：<code>Text</code> ↔ UILabel；<code>Image</code> ↔ UIImageView；<code>Row</code> ↔ UIStackView(横向)；<code>ListView</code> ↔ UITableView；<code>setState</code> ↔ 通知界面刷新（setNeedsLayout + 重绘）。</p>
+</blockquote>
+<p><strong>练习 5：改造计数器</strong></p>
+<blockquote>
+<p>把计数器改成"点赞数"：图标用 <code>Icons.thumb_up</code>，按钮文字改为"点赞"，点赞数从 100 开始。</p>
+<p>✅ 答案提示：<code>_count</code> 初始值改成 <code>100</code>；<code>Icon(Icons.thumb_up)</code>；按钮 <code>child: Text('点赞')</code>；显示文字改为 <code>'点赞 $_count'</code>。其余逻辑不变。</p>
+</blockquote>
+<hr>
+<h2>下一步</h2>
+<p>恭喜！你已经完成了 <strong>Flutter 基础入门</strong> 的全部 4 篇课程：</p>
+<ol>
+<li>✅ Flutter 是什么</li>
+<li>✅ Dart 语言基础</li>
+<li>✅ 环境搭建与第一个 App</li>
+<li>✅ Widget 基础</li>
+</ol>
+<p>接下来可以继续学习布局与交互（Row/Column/Stack 深入、手势、导航路由、ListView 实战）等进阶内容。建议下一阶段从 <strong>Flutter/02-布局与交互/</strong> 模块开始，继续保持"大白话 + 示例 + 练习"的节奏，把每个基础组件用到滚瓜烂熟。</p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

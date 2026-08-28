@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 02：大模型 API 对接（把 AI 接进你的产品） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 02：大模型 API 对接（把 AI 接进你的产品）</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：掌握对接大模型 API 的完整技能：选哪家、怎么调、流式输出、成本控制、生产级错误处理。<br />
+<strong>这是 AI 应用开发的第一行代码，也是工作中最高频的技能。</strong></p>
+</blockquote>
+<hr />
+<h2>1. API 是什么（大白话）</h2>
+<p><strong>API = 一家公司把模型能力打包成一个"电话"，你打过去说一句话（请求），那边回一句话（响应）。</strong></p>
+<p>你的产品 → 发 HTTP 请求（带问题）→ 大模型公司的服务器 → 返回回答</p>
+<h2>2. 主流 API 选型（2026 年实用版）</h2>
+<table>
+<thead>
+<tr>
+<th>厂商</th>
+<th>模型</th>
+<th>特点</th>
+<th>价格（约）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DeepSeek</strong></td>
+<td>deepseek-chat / deepseek-reasoner</td>
+<td><strong>国产性价比之王</strong>，推理强</td>
+<td>极便宜，几乎白菜价</td>
+</tr>
+<tr>
+<td><strong>阿里通义</strong></td>
+<td>qwen-max / qwen-plus</td>
+<td>中文好，阿里生态</td>
+<td>中档</td>
+</tr>
+<tr>
+<td><strong>OpenAI</strong></td>
+<td>GPT-4o / GPT-4.1</td>
+<td>综合最强，工具调用稳</td>
+<td>贵</td>
+</tr>
+<tr>
+<td><strong>字节豆包</strong></td>
+<td>doubao-pro</td>
+<td>便宜，国内直连</td>
+<td>便宜</td>
+</tr>
+<tr>
+<td><strong>智谱</strong></td>
+<td>glm-4-plus</td>
+<td>中文好，Agent 生态好</td>
+<td>中档</td>
+</tr>
+<tr>
+<td><strong>Kimi</strong></td>
+<td>moonshot-v1</td>
+<td>长文本强（200K 上下文）</td>
+<td>中档</td>
+</tr>
+<tr>
+<td><strong>腾讯混元</strong></td>
+<td>hunyuan-turbo</td>
+<td>腾讯生态，微信场景</td>
+<td>中档</td>
+</tr>
+</tbody>
+</table>
+<p><strong>选择建议：</strong><br />
+- 国内产品（合规要求）：DeepSeek / 通义 / 豆包 / 智谱（国内直连，不需要翻墙）<br />
+- 个人学习练手：DeepSeek（便宜 + 强）<br />
+- 追求效果不差钱：OpenAI GPT-4o</p>
+<p><strong>关键知识点：国内主流 API 全部兼容 OpenAI 的接口格式</strong>——代码几乎可以无缝切换，学会一个就会全部。</p>
+<h2>3. 第一个 API 调用（Python）</h2>
+<pre><code class="language-python"># 需要先注册 DeepSeek 开放平台拿 API Key（https://platform.deepseek.com）
+# 安装：pip install openai
+
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=&quot;sk-你的key&quot;,          # 换成你的
+    base_url=&quot;https://api.deepseek.com&quot;,  # 换成对应厂商
+)
+
+resp = client.chat.completions.create(
+    model=&quot;deepseek-chat&quot;,
+    messages=[
+        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;你是资深 iOS 架构师，回答简洁专业。&quot;},
+        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Swift 中 @MainActor 是干什么的？&quot;},
+    ],
+    temperature=0.7,
+)
+
+print(resp.choices[0].message.content)
+</code></pre>
+<p><strong>Message 结构（理解这个就理解所有 API）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>role</th>
+<th>含义</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>system</td>
+<td>系统设定（人设/规则）</td>
+<td>"你是客服，不说废话"</td>
+</tr>
+<tr>
+<td>user</td>
+<td>用户说的话</td>
+<td>"怎么退款？"</td>
+</tr>
+<tr>
+<td>assistant</td>
+<td>AI 之前说的话</td>
+<td>"请问您的订单号是？"（多轮对话时回传）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>多轮对话的核心技巧</strong>：把历史消息全部塞进 messages 数组，模型就能"记住"上下文。<br />
+注意：消息越多，token 费越高、速度越慢，所以要"滑动窗口"只保留最近 N 轮。</p>
+</blockquote>
+<h2>4. 流式输出（SSE）——生产环境必用</h2>
+<p><strong>为什么必须用流式？</strong> 非流式要等模型生成完一整段才返回，用户干等 5~20 秒，体验极差。流式是"生成一个字推一个字"，用户 0.5 秒就看到响应。</p>
+<pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI(api_key=&quot;sk-你的key&quot;, base_url=&quot;https://api.deepseek.com&quot;)
+
+stream = client.chat.completions.create(
+    model=&quot;deepseek-chat&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;写一首关于秋天的诗&quot;}],
+    stream=True,          # ← 开启流式
+)
+
+for chunk in stream:
+    delta = chunk.choices[0].delta.content
+    if delta:
+        print(delta, end=&quot;&quot;, flush=True)  # 一个字一个字打印
+</code></pre>
+<p><strong>前端配合</strong>：后端用 SSE（Server-Sent Events）转发，前端用 EventSource 或 fetch 读流，实现打字机效果。</p>
+<h2>5. 关键参数详解（生产配置）</h2>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>生产建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>temperature</td>
+<td>随机性</td>
+<td>客服/代码 0.1~0.3；创意 0.8~1.0</td>
+</tr>
+<tr>
+<td>max_tokens</td>
+<td>回答最大长度</td>
+<td>按需设，防止 AI 话痨烧钱</td>
+</tr>
+<tr>
+<td>top_p</td>
+<td>候选范围</td>
+<td>一般用默认，和 temperature 二选一调</td>
+</tr>
+<tr>
+<td>stream</td>
+<td>是否流式</td>
+<td>聊天场景必须 true</td>
+</tr>
+<tr>
+<td>response_format</td>
+<td>强制 JSON</td>
+<td><code>{"type": "json_object"}</code></td>
+</tr>
+<tr>
+<td>messages</td>
+<td>对话历史</td>
+<td>记得做滑动窗口裁剪</td>
+</tr>
+</tbody>
+</table>
+<h2>6. 生产级代码模板（抄这个就够）</h2>
+<pre><code class="language-python">&quot;&quot;&quot;
+生产级 LLM 调用封装：重试 + 限流 + 错误处理 + 成本打印
+&quot;&quot;&quot;
+import time, json
+from openai import OpenAI
+from tenacity import retry, stop_after_attempt, wait_exponential
+
+client = OpenAI(api_key=&quot;sk-你的key&quot;, base_url=&quot;https://api.deepseek.com&quot;)
+
+def count_tokens(text):
+    &quot;&quot;&quot;粗略估算 token 数（中文约 1 字≈1 token，英文 4 字符≈1 token）&quot;&quot;&quot;
+    return len(text) // 2 + 1
+
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=1, max=10))
+def chat(messages, temperature=0.3, max_tokens=1024, json_mode=False):
+    &quot;&quot;&quot;带重试的对话函数：网络抖动/限流会自动重试 3 次&quot;&quot;&quot;
+    try:
+        kwargs = {&quot;temperature&quot;: temperature, &quot;max_tokens&quot;: max_tokens}
+        if json_mode:
+            kwargs[&quot;response_format&quot;] = {&quot;type&quot;: &quot;json_object&quot;}
+        resp = client.chat.completions.create(
+            model=&quot;deepseek-chat&quot;, messages=messages, **kwargs
+        )
+        content = resp.choices[0].message.content
+        # 打印成本（deepseek 单价约 输入0.014元/千token，输出0.028元/千token）
+        usage = resp.usage
+        cost = usage.prompt_tokens / 1000 * 0.014 + usage.completion_tokens / 1000 * 0.028
+        print(f&quot;[成本] 输入{usage.prompt_tokens}token + 输出{usage.completion_tokens}token ≈ {cost:.4f}元&quot;)
+        return content
+    except Exception as e:
+        print(f&quot;[错误] {e}&quot;)
+        raise
+
+# 使用示例：JSON 模式
+def extract_info(text):
+    result = chat([
+        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;提取信息，返回 JSON：{姓名, 电话, 意向}&quot;},
+        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: text},
+    ], json_mode=True)
+    return json.loads(result)
+
+# 使用示例：多轮对话（带历史裁剪）
+def multi_turn(new_user_msg, history, max_rounds=10):
+    history.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: new_user_msg})
+    history = history[-max_rounds*2:]  # 只保留最近 10 轮
+    reply = chat(history)
+    history.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: reply})
+    return reply, history
+</code></pre>
+<h2>7. 成本控制（老板最关心的）</h2>
+<p><strong>Token 计价逻辑：输入 + 输出都花钱，输出比输入贵。</strong></p>
+<table>
+<thead>
+<tr>
+<th>省钱手段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模型降级</td>
+<td>简单任务用便宜的 deepseek-chat，别用 reasoning 模型</td>
+</tr>
+<tr>
+<td>消息裁剪</td>
+<td>只传最近 N 轮对话</td>
+</tr>
+<tr>
+<td>Prompt 精简</td>
+<td>System Prompt 越短越省（每轮都计费！）</td>
+</tr>
+<tr>
+<td>缓存</td>
+<td>相同问题用 Redis 缓存结果</td>
+</tr>
+<tr>
+<td>限流</td>
+<td>给用户限次（如每天 50 次免费额度）</td>
+</tr>
+<tr>
+<td>批量</td>
+<td>离线任务用 batch API（半价）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>真实账本（感受一下）：</strong><br />
+- DeepSeek 输出约 0.028 元/千 token<br />
+- 一次普通客服问答约 500 token 输出 → 约 0.014 元/次<br />
+- 1 万次日活 × 0.014 元 ≈ 每天 140 元 → 每月约 4200 元<br />
+- 对比：GPT-4o 同规模每月要 10 万+ 元</p>
+<h2>8. 常见坑与排查</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>401 错误</td>
+<td>API Key 错了/过期</td>
+<td>检查 key；环境变量别硬编码进代码</td>
+</tr>
+<tr>
+<td>429 错误</td>
+<td>触发限流</td>
+<td>加重试 + 退避（上面模板已处理）</td>
+</tr>
+<tr>
+<td>400 错误</td>
+<td>参数格式不对</td>
+<td>检查 messages 结构</td>
+</tr>
+<tr>
+<td>回答被截断</td>
+<td>max_tokens 太小</td>
+<td>调大</td>
+</tr>
+<tr>
+<td>输出格式不对</td>
+<td>模型没守规矩</td>
+<td>开 json_mode + 提示词强化</td>
+</tr>
+<tr>
+<td>中文乱码</td>
+<td>编码问题</td>
+<td>确保 HTTP 头 UTF-8</td>
+</tr>
+</tbody>
+</table>
+<p><strong>安全红线（重要）：</strong><br />
+- API Key 绝不写进前端代码（会被扒走盗刷）<br />
+- 服务端转发，前端永远不直接调大模型 API<br />
+- 用户输入做敏感词/隐私过滤再进模型<br />
+- 合规：国内产品必须用国内备案的 API 服务</p>
+<hr />
+<h2>小结</h2>
+<ol>
+<li><strong>选型</strong>：国内用 DeepSeek/通义/豆包，全部兼容 OpenAI 格式</li>
+<li><strong>流式是标配</strong>：用户体验的底线</li>
+<li><strong>生产级三件套</strong>：重试 + 限流 + 错误处理</li>
+<li><strong>成本四板斧</strong>：模型降级、消息裁剪、Prompt 精简、缓存</li>
+<li><strong>安全</strong>：Key 只放服务端</li>
+</ol>
+<hr />
+<p><strong>下一步：</strong> 学 <a href="03-RAG企业级实战.html">03-RAG企业级实战.html</a> ——给 AI 装知识库，这是企业落地的第一场景。<br />
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

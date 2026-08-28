@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>练习 03：自测题（检验你的学习成果） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 练习模块</div>
+    <h1>练习 03：自测题（检验你的学习成果）</h1>
+    <span class="header-tag">练习模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>使用方式：先独立作答，再翻对应章节核对。<br />
+每道题后面标注了对应章节，答不上来就回去复习那一章。</p>
+</blockquote>
+<hr />
+<h2>一、基础模块自测</h2>
+<ol>
+<li>用一句话解释"大模型"。（基础 01）</li>
+<li>大模型的"训练"和"推理"分别比喻成什么？（基础 01）</li>
+<li>一个参数到底是什么？举例说明。（基础 02）</li>
+<li>0.5B 参数代表多少个参数？（基础 02）</li>
+<li>参数量决定智商吗？为什么？（基础 02）</li>
+<li>模型文件（如 400MB 的 .gguf）里装的是什么？（基础 02）</li>
+</ol>
+<h2>二、中级模块自测</h2>
+<ol start="7">
+<li>写出大模型推理的 4 个步骤。（中级 01）</li>
+<li>什么是 Token？为什么要分词而不是按字算？（中级 01）</li>
+<li>Embedding 是什么？为什么"意思相近的词，向量也相近"很重要？（中级 01）</li>
+<li>用"图书馆找答案"的比喻解释注意力机制。（中级 01）</li>
+<li>Temperature 调高会有什么效果？写代码时应该调高还是调低？（中级 01）</li>
+<li>什么是流式输出？为什么需要它？（中级 01）</li>
+<li>预训练的核心任务是什么？训练数据从哪来？（中级 02）</li>
+<li>损失函数是干什么的？反向传播是干什么的？（中级 02）</li>
+<li>学习率太大或太小分别会怎样？（中级 02）</li>
+<li>SFT 和 RLHF 分别解决什么问题？（中级 02）</li>
+<li>下载模型时为什么优先选 "Instruct" 版本？（中级 02）</li>
+</ol>
+<h2>三、高级模块自测</h2>
+<ol start="18">
+<li>为什么 GPU 比 CPU 更适合跑大模型？（高级 01）</li>
+<li>量化是什么？Q4_K_M 的 "Q4" 是什么意思？（高级 01）</li>
+<li>GGUF 是什么？和 safetensors 有什么区别？（高级 01）</li>
+<li>什么是幻觉？列举两个减少幻觉的方法。（高级 01）</li>
+<li>Top-P 是干什么的？和 Temperature 有什么区别？（高级 01）</li>
+<li>Decoder-only 为什么能做到"一个模型干所有事"？（高级 02）</li>
+<li>MoE 的"总参数量大但跑得快"是怎么做到的？（高级 02）</li>
+<li>没有 KV Cache 的话，生成第 100 个字要算多少遍？（高级 02）</li>
+<li>LoRA 为什么能省这么多算力？QLoRA 又是什么？（高级 02）</li>
+<li>用你公司/学习场景举一个 RAG 的应用例子。（高级 02）</li>
+<li>System Prompt 是干什么的？（高级 02）</li>
+<li>为什么说"跑模型最看重内存"？16GB 内存能跑多大的模型？（高级 03）</li>
+<li>端侧 AI 相比云端 AI 的优势和劣势是什么？（高级 03）</li>
+</ol>
+<h2>四、实践操作题</h2>
+<ol start="31">
+<li>用命令列出你已安装的所有 Ollama 模型。（练习 01）</li>
+<li>用 Python 调用本地模型，让它用表格回答"CPU 和 GPU 的区别"。（练习 02）</li>
+<li>把你的 3 条笔记做成一个 RAG 知识库，并问它一个问题。（练习 02）</li>
+<li>用温度 0.1 和 1.5 各问同一个创意问题，对比结果差异。（练习 02）</li>
+<li>微调一个 0.5B 模型，让它学会你定制的问答风格。（练习 02）</li>
+</ol>
+<h2>五、开放思考题（无标准答案）</h2>
+<ol start="36">
+<li>如果让你给完全不懂 AI 的朋友讲大模型，你会怎么讲？用你自己的比喻。</li>
+<li>你觉得自己电脑上还能优化什么，让本地模型跑得更快？</li>
+<li>大模型会在你的工作/学习中带来什么改变？想一个你能用上它的场景。</li>
+<li>幻觉是 bug 还是 feature？什么场景下幻觉反而是有用的？</li>
+<li>如果让你设计一个"端侧 AI"产品，你会做什么？</li>
+</ol>
+<hr />
+<h2>参考答案速查</h2>
+<table>
+<thead>
+<tr>
+<th>题号</th>
+<th>答案要点</th>
+<th>对应章节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>根据输入文字预测下一个字的超级接话机</td>
+<td>基础 01</td>
+</tr>
+<tr>
+<td>2</td>
+<td>训练=上学（烧钱），推理=考试（便宜）</td>
+<td>基础 01</td>
+</tr>
+<tr>
+<td>3</td>
+<td>一个数字，代表神经元连接强度</td>
+<td>基础 02</td>
+</tr>
+<tr>
+<td>4</td>
+<td>5 亿个</td>
+<td>基础 02</td>
+</tr>
+<tr>
+<td>5</td>
+<td>影响但不决定；决定上限，不保证达到上限</td>
+<td>基础 02</td>
+</tr>
+<tr>
+<td>6</td>
+<td>训练好的全部参数（几亿个数字）</td>
+<td>基础 02</td>
+</tr>
+<tr>
+<td>7</td>
+<td>拆词 → 向量化 → 注意力 → 概率采样（循环）</td>
+<td>中级 01</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Token 是分词后的小块；按词效率高、信息多</td>
+<td>中级 01</td>
+</tr>
+<tr>
+<td>9</td>
+<td>把词变成数字向量；向量距离 = 语义距离</td>
+<td>中级 01</td>
+</tr>
+<tr>
+<td>10</td>
+<td>快速扫书架 → 盯住最相关的书猛看</td>
+<td>中级 01</td>
+</tr>
+<tr>
+<td>11</td>
+<td>更随机更有创意也更容易胡说；写代码调低</td>
+<td>中级 01</td>
+</tr>
+<tr>
+<td>12</td>
+<td>生成一个字显示一个字；避免干等</td>
+<td>中级 01</td>
+</tr>
+<tr>
+<td>13</td>
+<td>猜下一个字；整个互联网的公开文字</td>
+<td>中级 02</td>
+</tr>
+<tr>
+<td>14</td>
+<td>量化错误程度；逐层算每个参数的责任并调整</td>
+<td>中级 02</td>
+</tr>
+<tr>
+<td>15</td>
+<td>太大震荡到不了谷底；太小训练太慢</td>
+<td>中级 02</td>
+</tr>
+<tr>
+<td>16</td>
+<td>SFT 教它回答问题；RLHF 教它讨人喜欢</td>
+<td>中级 02</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Instruct 版微调过，会好好听话</td>
+<td>中级 02</td>
+</tr>
+<tr>
+<td>18</td>
+<td>GPU 核多、矩阵乘法可并行</td>
+<td>高级 01</td>
+</tr>
+<tr>
+<td>19</td>
+<td>降低参数精度减小体积；4 位量化</td>
+<td>高级 01</td>
+</tr>
+<tr>
+<td>20</td>
+<td>GGUF 是 llama.cpp 的打包格式；safetensors 是训练格式</td>
+<td>高级 01</td>
+</tr>
+<tr>
+<td>21</td>
+<td>一本正经编造事实；RAG / 降低温度 / 提示词约束</td>
+<td>高级 01</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Top-P 砍候选范围；Temperature 调整体随机性</td>
+<td>高级 01</td>
+</tr>
+<tr>
+<td>23</td>
+<td>所有任务都变成"续写"，靠训练模式识别</td>
+<td>高级 02</td>
+</tr>
+<tr>
+<td>24</td>
+<td>总参数大但每次只激活部分专家</td>
+<td>高级 02</td>
+</tr>
+<tr>
+<td>25</td>
+<td>99 遍（第 1 到第 99 个都要重算）</td>
+<td>高级 02</td>
+</tr>
+<tr>
+<td>26</td>
+<td>只训练旁边的小补丁；量化后再 LoRA</td>
+<td>高级 02</td>
+</tr>
+<tr>
+<td>27</td>
+<td>自由发挥（如：把公司制度做成知识库问答）</td>
+<td>高级 02</td>
+</tr>
+<tr>
+<td>28</td>
+<td>幕后设定模型角色和行为的说明书</td>
+<td>高级 02</td>
+</tr>
+<tr>
+<td>29</td>
+<td>参数要全装内存、每字读一遍；16GB 跑 7B 以内</td>
+<td>高级 03</td>
+</tr>
+<tr>
+<td>30</td>
+<td>优势：隐私/离线/免费/快；劣势：能力小</td>
+<td>高级 03</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>六、工作实战模块自测</h2>
+<ol start="41">
+<li>写出 Prompt 万能公式，并用它写一个"周报生成"的 Prompt。（工作实战 01）</li>
+<li>Prompt 里的"角色设定""few-shot（给示例）"分别解决什么问题？（工作实战 01）</li>
+<li>选择大模型 API 时要看哪些维度？（工作实战 02）</li>
+<li>流式输出在 Python 和 Swift 里分别怎么实现？（工作实战 02 / 07）</li>
+<li>企业为什么优先用 RAG 而不是微调来接入内部知识？（工作实战 03）</li>
+<li>RAG 的检索质量怎么提升？写出 3 个进阶手段。（工作实战 03）</li>
+<li>什么是 Function Calling？画出"AI 申请调用工具 → 你执行 → 回传结果"的流程。（工作实战 04）</li>
+<li>Agent 的三大能力是什么？开发 Agent 时最大的安全风险是什么？（工作实战 04）</li>
+<li>什么时候该微调？什么时候该用 RAG？（工作实战 05）</li>
+<li>过拟合是什么？微调时怎么发现和防止？（工作实战 05）</li>
+<li>你的 Mac 上微调模型用什么框架最合适？为什么？（工作实战 05）</li>
+<li>Docker 解决什么问题？AI 服务为什么要用 Docker 部署？（工作实战 06）</li>
+<li>上线一个 AI 服务，至少要监控哪 4 个指标？（工作实战 06）</li>
+<li>AI 应用上线的安全红线有哪些？列举 3 条。（工作实战 06）</li>
+<li>iOS App 接入大模型的 3 条路线是什么？各适合什么场景？（工作实战 07）</li>
+<li>iOS 里 API Key 应该放哪？为什么不能写死在 App 里？（工作实战 07）</li>
+<li>端侧跑模型的方案有哪些？你的 App 适合哪个？（工作实战 07）</li>
+<li>AI App 上架 App Store 要注意哪些合规点？（工作实战 07）</li>
+</ol>
+<h2>七、参考答案速查（工作实战部分）</h2>
+<table>
+<thead>
+<tr>
+<th>题号</th>
+<th>答案要点</th>
+<th>对应章节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>41</td>
+<td>角色 + 任务 + 要求 + 示例（自拟题，体现公式即可）</td>
+<td>实战 01</td>
+</tr>
+<tr>
+<td>42</td>
+<td>角色定行为基调；few-shot 给格式/风格示范</td>
+<td>实战 01</td>
+</tr>
+<tr>
+<td>43</td>
+<td>能力/价格/速度/上下文长度/稳定性/数据合规</td>
+<td>实战 02</td>
+</tr>
+<tr>
+<td>44</td>
+<td>Python 用 stream=True + 迭代 chunk；Swift 用 SSE 解析 bytes.lines</td>
+<td>实战 02/07</td>
+</tr>
+<tr>
+<td>45</td>
+<td>RAG 快、便宜、知识可更新、带出处；微调慢且贵</td>
+<td>实战 03</td>
+</tr>
+<tr>
+<td>46</td>
+<td>混合检索（向量+BM25）、Rerank 重排、查询改写、切分优化</td>
+<td>实战 03</td>
+</tr>
+<tr>
+<td>47</td>
+<td>AI 返回 tool_calls 申请 → 代码执行工具 → 结果回传 → AI 总结</td>
+<td>实战 04</td>
+</tr>
+<tr>
+<td>48</td>
+<td>规划/行动/反思；权限过大（必须最小权限+日志+人工确认）</td>
+<td>实战 04</td>
+</tr>
+<tr>
+<td>49</td>
+<td>风格/格式/能力定制用微调；知识缺失用 RAG</td>
+<td>实战 05</td>
+</tr>
+<tr>
+<td>50</td>
+<td>背答案不泛化；验证集 loss 监控、控制轮数、数据多样</td>
+<td>实战 05</td>
+</tr>
+<tr>
+<td>51</td>
+<td>MLX（Apple Silicon 专用，官方优化，比 PyTorch 快）</td>
+<td>实战 05</td>
+</tr>
+<tr>
+<td>52</td>
+<td>环境一致性、可移植、一键部署；AI 服务依赖多，Docker 隔离</td>
+<td>实战 06</td>
+</tr>
+<tr>
+<td>53</td>
+<td>延迟 P95、错误率、Token 成本、回答质量</td>
+<td>实战 06</td>
+</tr>
+<tr>
+<td>54</td>
+<td>内容审核、隐私合规、提示注入防护、权限隔离、可审计</td>
+<td>实战 06</td>
+</tr>
+<tr>
+<td>55</td>
+<td>云端 API（主流）/ 端侧模型（离线隐私）/ 系统能力（新系统）</td>
+<td>实战 07</td>
+</tr>
+<tr>
+<td>56</td>
+<td>放服务端，App 用临时令牌；写死会被反编译盗刷</td>
+<td>实战 07</td>
+</tr>
+<tr>
+<td>57</td>
+<td>llama.cpp（GGUF，成熟）/ MLX Swift（苹果原生）/ Core ML</td>
+<td>实战 07</td>
+</tr>
+<tr>
+<td>58</td>
+<td>内容审核、隐私清单、生成式 AI 备案、内购合规、功能如实声明</td>
+<td>实战 07</td>
+</tr>
+</tbody>
+</table>
+<h2>结业标准（新版）</h2>
+<ul>
+<li>✅ 1~30 题全部答对 → <strong>理论过关</strong>，可以跟人讲大模型了</li>
+<li>✅ 31~34 题全部完成 → <strong>动手过关</strong>，能做基础 AI 开发了</li>
+<li>✅ 35 题完成 → <strong>进阶达标</strong>，你已经会用大模型做定制开发了</li>
+<li>✅ 41~58 题完成 → <strong>工作实战达标</strong>，具备企业 AI 应用开发能力</li>
+<li>✅ 完成练习/04 的任意 2 个项目 → <strong>面试作品集达标</strong>，可以直接写简历了</li>
+<li>✅ 36~40 题有自己的想法 → <strong>恭喜，你已经有"AI 思维"了</strong></li>
+</ul>
+<p>完成所有题目，你就正式从"大模型小白"毕业了。记得把你做的项目放到 GitHub 上，这是最好的作品集。<br />
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

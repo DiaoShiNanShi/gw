@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生 10：Core Data 与 SwiftData 持久化 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 原生模块</div>
+    <h1>iOS 原生 10：Core Data 与 SwiftData 持久化</h1>
+    <span class="header-tag">iOS 原生模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>聊天记录、离线缓存——数据落盘方案。</p></blockquote><hr>
+<h2>1. 选型</h2>
+<table><thead><tr><th></th><th>Core Data</th><th>SwiftData</th></tr></thead><tbody><tr><td>最低版本</td><td>iOS 3+</td><td>iOS 17+</td></tr><tr><td>写法</td><td>繁琐</td><td>Swift 原生简洁</td></tr><tr><td>成熟度</td><td>极高</td><td>新</td></tr></tbody></table>
+<hr>
+<h2>2. SwiftData 示例</h2>
+<pre><code class="language-swift">@Model class ChatRecord {
+    var role: String
+    var content: String
+    var timestamp: Date
+}</code></pre>
+<hr>
+<h2>3. AI 聊天持久化</h2>
+<p>每条消息存库，启动时加载最近 N 条进上下文窗口。超长的做摘要压缩。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

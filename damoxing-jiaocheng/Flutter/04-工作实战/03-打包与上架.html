@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>03-打包与上架 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 工作实战</div>
+    <h1>03-打包与上架</h1>
+    <span class="header-tag">工作实战</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>03-打包与上架</h1>
+<blockquote>
+<p>大白话版 · 打包与上架（小白向）<br>
+目标：搞懂 iOS/Android 打包流程（含签名）、TestFlight 分发、App Store 上架避坑、Android AAB 与上架、版本管理。</p>
+</blockquote>
+<hr>
+<h2>一、先讲"是什么"：打包上架到底在干什么？</h2>
+<p><strong>一句话版本：把代码"变成"一个能装到手机里的安装包，然后交给应用商店审核上架。</strong></p>
+<p>打个比方（餐厅开分店）：</p>
+<blockquote>
+<ul>
+<li><strong>打包</strong> = 把你的菜谱（代码）+ 食材（资源）做成"标准套餐"，包装成一份可以送到任何一家店的"中央厨房成品"（安装包）</li>
+<li><strong>签名</strong> = 给这份套餐盖上"防伪章"（数字签名），证明"这是我出的，没被篡改"</li>
+<li><strong>上架</strong> = 把成品提交给"市场监管"（App Store / Google Play）审核，审核通过才允许上架售卖</li>
+</ul>
+<p>不同商店要不同的"包装规格"：<br>
+- iOS：只能从 <strong>App Store</strong> 分发，用 IPA 包<br>
+- Android：Google Play 要 <strong>AAB</strong>，其他渠道用 APK</p>
+</blockquote>
+<h3>两种主流安装包格式</h3>
+<table>
+<thead>
+<tr>
+<th>格式</th>
+<th>大白话</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>IPA</strong></td>
+<td>iOS 专用安装包</td>
+<td>App Store / TestFlight</td>
+</tr>
+<tr>
+<td><strong>APK</strong></td>
+<td>Android 传统安装包</td>
+<td>直接安装、各应用市场</td>
+</tr>
+<tr>
+<td><strong>AAB</strong></td>
+<td>Android 新版发布格式</td>
+<td>仅 Google Play（更省空间）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>对 iOS 工程师：这套流程你熟得不能再熟——Xcode Archive → 签名 → 上传 App Store Connect → TestFlight → 审核。Flutter 只是把"在 Xcode 里点按钮"换成了命令行 + 配置文件。</p>
+</blockquote>
+<hr>
+<h2>二、再讲"为什么"：为什么要签名、为什么审核？</h2>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>为什么必须有</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>签名</strong></td>
+<td>证明 App 是你的、没被篡改</td>
+<td>防伪章，防止别人冒充你的 App</td>
+</tr>
+<tr>
+<td><strong>审核</strong></td>
+<td>保证 App 安全合规</td>
+<td>市场监管，防病毒/违规内容</td>
+</tr>
+<tr>
+<td><strong>版本号管理</strong></td>
+<td>区分每一次发布</td>
+<td>包装上的"批次号"，出问题能定位</td>
+</tr>
+<tr>
+<td><strong>TestFlight</strong></td>
+<td>上架前让测试人员/用户试用</td>
+<td>先开"试吃会"，没问题再正式营业</td>
+</tr>
+</tbody>
+</table>
+<p><strong>签名的本质（大白话）：</strong></p>
+<blockquote>
+<p>你的开发者账号 = 一张"身份证"；签名 = 用你的私钥给 App 盖"电子章"。<br>
+用户安装时系统验证这个章：章是真的 → 允许装；章不对 → 拒绝装（防篡改）。</p>
+</blockquote>
+<hr>
+<h2>三、怎么用：打包上架全流程</h2>
+<h3>3.1 打包前的准备（通用）</h3>
+<p><strong>第一步：确认项目能正常构建</strong></p>
+<pre class="codehilite"><code class="language-bash"># 检查依赖
+flutter pub get
+
+# 本地跑一遍确认没问题
+flutter run
+
+# 跑测试（可选但推荐）
+flutter test
+</code></pre>
+
+<p><strong>第二步：检查 App 配置</strong></p>
+<pre class="codehilite"><code class="language-yaml"># pubspec.yaml 里的版本号（先想好版本策略）
+version: 1.0.0+1
+# 含义：1.0.0 是&quot;版本号&quot;（用户看到），+1 是&quot;构建号&quot;（开发者用，必须递增）
+</code></pre>
+
+<h3>3.2 iOS 打包流程（含签名）</h3>
+<p><strong>前提准备（一次性的）：</strong><br>
+1. 注册 Apple Developer 账号（$99/年）<br>
+2. 在 <a href="https://developer.apple.com">developer.apple.com</a> 创建 App ID<br>
+3. 在 Xcode 里配置 Team（登录你的开发者账号）<br>
+4. 创建证书（Certificates）和描述文件（Profiles）——Xcode 现在大多自动管理（Automatically manage signing）</p>
+<p><strong>打包步骤：</strong></p>
+<pre class="codehilite"><code class="language-bash"># 1. 构建 iOS Release 包
+flutter build ios --release
+
+# 2. 打开 Xcode（产物在 build/ios/iphoneos/）
+open ios/Runner.xcworkspace
+</code></pre>
+
+<p>然后在 Xcode 里（和你平时一模一样）：<br>
+1. 选择 <strong>Any iOS Device (arm64)</strong> 作为目标设备<br>
+2. 菜单：Product → <strong>Archive</strong>（归档）<br>
+3. Archive 完成后打开 <strong>Organizer</strong>（Window → Organizer）<br>
+4. 选 Distribute App → App Store Connect → Upload</p>
+<p>或者用命令行（Fastlane 老熟人了）：</p>
+<pre class="codehilite"><code class="language-bash"># 用 fastlane 上传（配置 Fastfile 后）
+fastlane upload_testflight
+</code></pre>
+
+<p><strong>签名相关常见报错（必看）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>报错</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"No signing certificate found"</td>
+<td>没配置证书</td>
+<td>Xcode 登录账号 + Automatically manage signing</td>
+</tr>
+<tr>
+<td>"Provisioning profile doesn't include this device"</td>
+<td>真机调试缺设备</td>
+<td>把设备 UDID 加进描述文件</td>
+</tr>
+<tr>
+<td>"App ID 冲突"</td>
+<td>Bundle ID 已被占用</td>
+<td>换一个唯一的 Bundle ID（如 com.xxx.todoapp）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>对 iOS 工程师：这就是你平时 Xcode 的 Archive + Distribute 流程，Flutter 不改变任何签名逻辑，只是 <code>flutter build ios</code> 帮你把 Dart 代码编译好。</p>
+</blockquote>
+<h3>3.3 TestFlight 分发（上架前试吃）</h3>
+<p><strong>大白话：</strong> TestFlight 是苹果官方的"试吃会"——把包上传后，测试人员（最多 10000 人）通过 TestFlight App 安装体验。</p>
+<p><strong>流程：</strong><br>
+1. 上传包到 App Store Connect（上一步的 Upload 已搞定）<br>
+2. 打开 <a href="https://appstoreconnect.apple.com">appstoreconnect.apple.com</a> → 你的 App → TestFlight<br>
+3. 添加测试人员（邮箱或公开链接）<br>
+4. 测试人员在手机上装 TestFlight App → 接受邀请 → 安装测试版</p>
+<p><strong>TestFlight 小知识：</strong><br>
+- 测试版有效期 90 天<br>
+- 可以分"内部测试组"（自己团队）和"外部测试组"（外部用户，需要 Beta App Review）<br>
+- <strong>TestFlight 审核 ≠ 上架审核</strong>：TestFlight 快，上架慢（一般 1-3 天）</p>
+<h3>3.4 App Store 上架避坑指南（重点）</h3>
+<p><strong>上架步骤（App Store Connect 里填写）：</strong><br>
+1. 新建 App（选 Bundle ID）<br>
+2. 填基本信息：名称、副标题、描述、关键词、分类<br>
+3. 上传截图（6.7/6.5/5.5 英寸等尺寸）<br>
+4. 填隐私政策网址（必填！）<br>
+5. 选"自动发布"或"手动发布"<br>
+6. 提交审核</p>
+<p><strong>避坑清单（高频被拒原因）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>坑</th>
+<th>大白话</th>
+<th>解决办法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>缺少隐私政策</td>
+<td>收集用户数据必须声明</td>
+<td>准备隐私政策网页，App 内也要有链接</td>
+</tr>
+<tr>
+<td>使用私有 API</td>
+<td>调了苹果不允许的接口</td>
+<td>检查代码，去掉私有 API</td>
+</tr>
+<tr>
+<td>截图与实际不符</td>
+<td>截图有功能实际没有</td>
+<td>截图必须真实</td>
+</tr>
+<tr>
+<td>需要登录才能看到核心功能</td>
+<td>审核员进不去 App</td>
+<td>提供审核专用演示账号</td>
+</tr>
+<tr>
+<td>诱导评分</td>
+<td>弹窗诱导用户打五星</td>
+<td>去掉，改用合规评分组件</td>
+</tr>
+<tr>
+<td>2.1 大礼包（账号问题）</td>
+<td>账号异常或信息不全</td>
+<td>补充公司信息、联系人、出口合规</td>
+</tr>
+</tbody>
+</table>
+<p><strong>审核时间：</strong> 一般 1-3 天；被拒后修改重新提交，别急着重复提交相同版本。</p>
+<h3>3.5 Android 打包（AAB 与上架）</h3>
+<p><strong>前提准备：</strong><br>
+1. 创建签名密钥（Keystore，类似 iOS 的证书）</p>
+<pre class="codehilite"><code class="language-bash"># 生成密钥（一次性的，务必保存好！）
+keytool -genkey -v -keystore ~/key.jks \
+  -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+</code></pre>
+
+<ol>
+<li>在 <code>android/key.properties</code> 配置密钥（注意别提交到 git！）</li>
+</ol>
+<pre class="codehilite"><code class="language-properties">storePassword=你的密码
+keyPassword=你的密码
+keyAlias=upload
+storeFile=/Users/you/key.jks
+</code></pre>
+
+<ol>
+<li>在 <code>android/app/build.gradle</code> 里配置签名（参考 Flutter 官方文档配置 signingConfigs）</li>
+</ol>
+<p><strong>打包命令：</strong></p>
+<pre class="codehilite"><code class="language-bash"># 1. 构建 AAB（Google Play 专用，更省空间）
+flutter build appbundle --release
+# 产物：build/app/outputs/bundle/release/app-release.aab
+
+# 2. 构建 APK（直接安装 / 国内应用市场）
+flutter build apk --release
+# 产物：build/app/outputs/flutter-apk/app-release.apk
+</code></pre>
+
+<p><strong>上传 Google Play：</strong><br>
+1. 注册 Google Play 开发者账号（$25 一次性）<br>
+2. 在 Play Console 创建应用<br>
+3. 上传 AAB 文件<br>
+4. 填商品详情、内容评级（IARC 问卷）、隐私政策<br>
+5. 提交审核（Google 审核通常几小时-几天）</p>
+<p><strong>Android 常见坑：</strong></p>
+<table>
+<thead>
+<tr>
+<th>坑</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>签名密钥丢了</td>
+<td>无法更新已上架 App！<strong>一定备份好 key.jks</strong></td>
+</tr>
+<tr>
+<td>版本号不递增</td>
+<td>Google Play 拒绝相同版本号</td>
+</tr>
+<tr>
+<td>64 位要求</td>
+<td>新版 Flutter 默认支持，别手动关</td>
+</tr>
+<tr>
+<td>国内渠道（华为/小米等）</td>
+<td>各自要求不同，一般传 APK 或按要求传 AAB</td>
+</tr>
+</tbody>
+</table>
+<h3>3.6 版本管理（发布节奏）</h3>
+<p><strong>大白话：</strong> 版本号是"App 的身份证批次"，管理好版本 = 知道每个用户用的哪版、出了问题能追溯。</p>
+<p><strong>版本号规则（语义化版本，SemVer）：</strong></p>
+<pre class="codehilite"><code>主版本.次版本.补丁版本
+  1   .  2  .  3
+
+主版本：大改（不兼容）→ 1.0.0 → 2.0.0
+次版本：加功能（兼容）→ 1.0.0 → 1.1.0
+补丁版本：修 bug → 1.0.0 → 1.0.1
+</code></pre>
+
+<p><strong>发布策略（大白话）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>版本示例</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>开发中</td>
+<td>0.1.0</td>
+<td>内部测试</td>
+</tr>
+<tr>
+<td>内测</td>
+<td>0.9.0</td>
+<td>TestFlight / 内测群</td>
+</tr>
+<tr>
+<td>正式发布</td>
+<td>1.0.0</td>
+<td>App Store / Google Play</td>
+</tr>
+<tr>
+<td>修复</td>
+<td>1.0.1</td>
+<td>小修小补</td>
+</tr>
+<tr>
+<td>大更新</td>
+<td>1.1.0 / 2.0.0</td>
+<td>加功能 / 重构</td>
+</tr>
+</tbody>
+</table>
+<p><strong>版本管理工具：</strong><br>
+- Git 打 tag：<code>git tag v1.0.0</code><br>
+- 变更日志（CHANGELOG.md）：记录每个版本改了什么（用户和审核都喜欢）<br>
+- pubspec 里的 <code>version: 1.0.0+1</code> 要和 Git tag 保持一致</p>
+<hr>
+<h2>四、iOS 开发者视角（老司机对照表）</h2>
+<table>
+<thead>
+<tr>
+<th>iOS 原生</th>
+<th>Flutter</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Xcode Archive</td>
+<td>flutter build ios + Xcode Archive</td>
+<td>归档</td>
+</tr>
+<tr>
+<td>Code Signing（证书+描述文件）</td>
+<td>同一套签名流程</td>
+<td>签名</td>
+</tr>
+<tr>
+<td>App Store Connect</td>
+<td>App Store Connect（一样）</td>
+<td>上架后台</td>
+</tr>
+<tr>
+<td>TestFlight</td>
+<td>TestFlight（一样）</td>
+<td>试吃会</td>
+</tr>
+<tr>
+<td>Xcode Organizer</td>
+<td>Organizer（一样）</td>
+<td>管理归档</td>
+</tr>
+<tr>
+<td>Info.plist 配置</td>
+<td>pubspec + Info.plist</td>
+<td>应用配置</td>
+</tr>
+<tr>
+<td>iTunes Connect 审核</td>
+<td>App Store 审核（一样）</td>
+<td>审核</td>
+</tr>
+<tr>
+<td>Fastlane deliver</td>
+<td>fastlane（通用）</td>
+<td>自动化上传</td>
+</tr>
+<tr>
+<td>gradle（Android 那边）</td>
+<td>flutter build appbundle</td>
+<td>Android 打包</td>
+</tr>
+</tbody>
+</table>
+<p><strong>给 iOS 工程师的真心话：</strong><br>
+- iOS 打包上架流程<strong>和原生完全一样</strong>——还是 Xcode Archive、还是 App Store Connect、还是 TestFlight。你只是多了一步 <code>flutter build ios</code>。<br>
+- 你需要新学的主要是 <strong>Android 打包</strong>（签名密钥、AAB、Google Play），但对 iOS 老司机来说，概念全部对应：key.jks ≈ 证书，AAB ≈ IPA，Play Console ≈ App Store Connect。<br>
+- 版本号 <code>1.0.0+1</code> 里 <code>+1</code> 就是 iOS 的 Build Number，<code>1.0.0</code> 是 CFBundleShortVersionString，完全对应。</p>
+<hr>
+<h2>五、小节小结</h2>
+<ol>
+<li>打包 = 把代码做成安装包；签名 = 盖防伪章；上架 = 过审核。</li>
+<li>iOS：<code>flutter build ios</code> → Xcode Archive → 上传 App Store Connect → TestFlight 分发 → 提交审核。</li>
+<li>iOS 避坑：隐私政策、审核账号、截图真实、别诱导评分、别用私有 API。</li>
+<li>Android：生成 keystore → 配置签名 → <code>flutter build appbundle</code>（Google Play）/ <code>flutter build apk</code>（其他渠道）。</li>
+<li>Android 避坑：<strong>密钥一定备份</strong>（丢了无法更新）、版本号递增、64 位。</li>
+<li>版本管理：语义化版本（主.次.补丁），Git tag + CHANGELOG 配合。</li>
+</ol>
+<hr>
+<h2>六、本节动手练习（含答案提示）</h2>
+<p><strong>练习 1：格式选择</strong></p>
+<blockquote>
+<p>上架 Google Play 应该构建什么格式？想直接发 APK 给朋友安装呢？</p>
+<p>✅ 答案提示：Google Play 用 AAB（<code>flutter build appbundle</code>，更省空间）；直接安装用 APK（<code>flutter build apk</code>）。</p>
+</blockquote>
+<p><strong>练习 2：签名理解</strong></p>
+<blockquote>
+<p>为什么签名密钥（keystore）丢失会出大问题？</p>
+<p>✅ 答案提示：签名是 App 的"防伪章"，商店和系统靠它验证 App 是你的。密钥丢了就无法用同一身份发布更新，已上架的 App 只能下架重来。</p>
+</blockquote>
+<p><strong>练习 3：版本号</strong></p>
+<blockquote>
+<p>现在是 1.0.0，修了一个 bug 应该用什么版本号？加了一个大功能呢？</p>
+<p>✅ 答案提示：修 bug → 1.0.1（补丁版本+1）；加大功能 → 1.1.0（次版本+1）。大重构不兼容才到 2.0.0。</p>
+</blockquote>
+<p><strong>练习 4：上架流程</strong></p>
+<blockquote>
+<p>iOS 上架到 App Store 的完整流程是什么（按顺序）？</p>
+<p>✅ 答案提示：<code>flutter build ios --release</code> → Xcode 里 Archive → Organizer 里 Distribute 上传 App Store Connect → 填商品信息（名称/截图/隐私政策）→ 提交审核 → 审核通过发布。</p>
+</blockquote>
+<p><strong>练习 5：TestFlight 作用</strong></p>
+<blockquote>
+<p>TestFlight 和 App Store 正式上架有什么区别？</p>
+<p>✅ 答案提示：TestFlight 是测试分发渠道（最多 1 万人、有效期 90 天、审核快），用于正式发布前让测试人员试用；App Store 正式上架要完整审核（1-3 天），面向所有用户。</p>
+</blockquote>
+<hr>
+<h2>下一步</h2>
+<p>会打包上架了，最后来点实战：常用插件选型 + 一个完整小项目从 0 到 1。</p>
+<p>👉 下一篇：<a href="04-常用插件与实战案例.html">04-常用插件与实战案例.html</a></p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

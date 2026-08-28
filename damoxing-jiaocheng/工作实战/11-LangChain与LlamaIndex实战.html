@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 11：LangChain 与 LlamaIndex 实战 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 11：LangChain 与 LlamaIndex 实战</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>企业级实战章节。</p></blockquote><hr>
+<h2>1. 为什么需要框架</h2>
+<p>裸调 API 很快变成意大利面。LangChain/LlamaIndex 提供：链式调用、记忆、工具、RAG 流水线。</p>
+<hr>
+<h2>2. LangChain 核心概念</h2>
+<table><thead><tr><th>概念</th><th>作用</th></tr></thead><tbody><tr><td>Chain</td><td>多步串联</td></tr><tr><td>Memory</td><td>对话历史</td></tr><tr><td>Tool</td><td>外部工具</td></tr><tr><td>Agent</td><td>自主规划</td></tr><tr><td>Retriever</td><td>RAG 检索器</td></tr></tbody></table>
+<hr>
+<h2>3. 最小 RAG 示例</h2>
+<pre><code class="language-python">from langchain_community.vectorstores import Chroma
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain.chains import RetrievalQA
+
+vectordb = Chroma.from_documents(docs, OpenAIEmbeddings())
+qa = RetrievalQA.from_chain_type(llm=ChatOpenAI(), retriever=vectordb.as_retriever())
+print(qa.invoke('年假几天？'))</code></pre>
+<hr>
+<h2>4. LlamaIndex 特点</h2>
+<p>专注 RAG 和数据索引，文档加载、切分、索引一条龙。适合「知识库问答」场景。</p>
+<hr>
+<h2>5. 选型</h2>
+<p>快速原型 LangChain；重度 RAG 用 LlamaIndex；生产可考虑自研封装减依赖。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

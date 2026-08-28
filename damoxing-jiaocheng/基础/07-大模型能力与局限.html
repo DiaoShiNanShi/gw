@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 07：大模型能做什么、不能做什么（避坑指南） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础模块</div>
+    <h1>基础 07：大模型能做什么、不能做什么（避坑指南）</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>别神话 AI，也别低估它。搞清楚边界才能用好。</p></blockquote><hr>
+<h2>1. 擅长的事</h2>
+<table><thead><tr><th>能力</th><th>例子</th><th>可靠度</th></tr></thead><tbody><tr><td>文本生成</td><td>写文章、邮件、文案</td><td>高</td></tr><tr><td>翻译润色</td><td>中英互译、改语气</td><td>高</td></tr><tr><td>代码辅助</td><td>写函数、改 bug、解释代码</td><td>中高</td></tr><tr><td>知识问答</td><td>通识、概念解释</td><td>中（可能幻觉）</td></tr><tr><td>摘要提取</td><td>长文总结</td><td>中高</td></tr><tr><td>格式转换</td><td>JSON、表格、Markdown</td><td>中</td></tr></tbody></table>
+<hr>
+<h2>2. 不擅长 / 危险的事</h2>
+<table><thead><tr><th>场景</th><th>为什么</th><th>怎么办</th></tr></thead><tbody><tr><td>精确计算</td><td>它是猜不是算</td><td>用计算器/代码执行</td></tr><tr><td>实时信息</td><td>训练有截止日期</td><td>RAG/联网搜索</td></tr><tr><td>私有数据</td><td>没学过你公司内部</td><td>RAG/微调</td></tr><tr><td>100% 事实</td><td>会幻觉</td><td>引用来源、人工审核</td></tr><tr><td>医疗法律定论</td><td>责任风险</td><td>免责声明+专家复核</td></tr><tr><td>长期记忆</td><td>窗口有限</td><td>外置数据库</td></tr></tbody></table>
+<hr>
+<h2>3. 幻觉（Hallucination）</h2>
+<p><strong>大白话：</strong>AI 一本正经地胡说八道。因为它目标是「像人说话」，不是「说真话」。</p><p><strong>缓解：</strong>RAG 给依据、降低 temperature、要求引用、评测集监控。</p>
+<hr>
+<h2>4. 能力边界速记</h2>
+<blockquote>大模型 = 超强语言模式匹配器，不是数据库、不是计算器、不是搜索引擎。<br>凡是需要<strong>精确、实时、私有、可追责</strong>的，都要加工程手段。</blockquote>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

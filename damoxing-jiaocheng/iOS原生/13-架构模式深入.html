@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生 13：架构模式深入（MVC / MVVM / VIPER / Clean） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 原生模块</div>
+    <h1>iOS 原生 13：架构模式深入（MVC / MVVM / VIPER / Clean）</h1>
+    <span class="header-tag">iOS 原生模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>大项目怎么分层，AI 模块怎么插进去。</p></blockquote><hr>
+<h2>1. 模式对比</h2>
+<table><thead><tr><th>模式</th><th>复杂度</th><th>适合</th></tr></thead><tbody><tr><td>MVC</td><td>低</td><td>小项目</td></tr><tr><td>MVVM</td><td>中</td><td>主流</td></tr><tr><td>VIPER</td><td>高</td><td>大团队</td></tr><tr><td>Clean</td><td>高</td><td>可测试性要求高</td></tr></tbody></table>
+<hr>
+<h2>2. AI 模块放置</h2>
+<pre>Presentation(ChatView)
+  → Domain(ChatUseCase)
+    → Data(AIRepository)
+      → Remote(CloudAPI) / Local(LLMEngine)</pre>
+<hr>
+<h2>3. 依赖注入</h2>
+<p>用 Protocol + 构造器注入，测试时换 MockLLMService。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

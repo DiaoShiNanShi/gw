@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>高级 01：核心技术名词（上）——矩阵、量化、GGUF、采样 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 高级模块</div>
+    <h1>高级 01：核心技术名词（上）——矩阵、量化、GGUF、采样</h1>
+    <span class="header-tag">高级模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：搞懂技术文章里最常出现的 4 组硬核名词，从此能看懂 80% 的 AI 技术帖。<br />
+大白话原则不变：每个名词都配比喻和例子。</p>
+</blockquote>
+<hr />
+<h2>1. 矩阵乘法（Matrix Multiplication）：GPU 存在的意义</h2>
+<p><strong>大白话：矩阵乘法 = 把一张"数字表格"和另一张"数字表格"按规则相乘，得到一张新表格。大模型的所有计算，本质上都是海量的矩阵乘法。</strong></p>
+<p>大模型的参数是表格（矩阵），输入的文字也是表格。让模型"思考"，就是不断地让这些表格相乘。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+<code>输入向量（1 行 4 列）     参数矩阵（4 行 3 列）     输出（1 行 3 列）
+┌─────────────┐   ┌───────────────┐   ┌───────────────┐
+│ 0.5 0.2 1.0 │ × │ 0.1 0.3 0.7 │   │ 0.25 0.95 1.1 │
+│ 0.4 0.8 0.6 │   │ 0.2 0.6 0.9 │ = │ ...           │
+└─────────────┘   └───────────────┘   └───────────────┘</code><br />
+模型越大，矩阵越大，乘法次数越多。一次 70B 模型的推理，要做的矩阵乘法次数是个天文数字（10 的 18 次方级别）。</p>
+</blockquote>
+<p><strong>为什么 GPU 快？</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>CPU</th>
+<th>GPU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>比喻</td>
+<td>一个天才博士</td>
+<td>一万个普通工人</td>
+</tr>
+<tr>
+<td>特点</td>
+<td>单核极强，但核少（8~16 核）</td>
+<td>单核弱，但核极多（几千上万个核）</td>
+</tr>
+<tr>
+<td>适合</td>
+<td>逻辑复杂、步骤分明的任务</td>
+<td>大量重复、可并行的计算</td>
+</tr>
+<tr>
+<td>跑大模型</td>
+<td>慢（一次只能算一个数）</td>
+<td>快（几千个核同时算不同的数）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>矩阵乘法极度适合并行</strong>：每个格子之间互不干扰，可以同时算。GPU 几千个核一起上，所以大模型必须在 GPU 上跑才快。</p>
+<h2>2. 量化（Quantization）：给模型"减肥"</h2>
+<p><strong>大白话：量化 = 把参数从"高精度数字"降级成"低精度数字"，从而大幅减小体积、降低内存占用，代价是稍微损失一点精度。</strong></p>
+<p>模型参数默认是 FP16（16 位浮点数，占 2 字节）。量化就是把它压缩：</p>
+<table>
+<thead>
+<tr>
+<th>量化级别</th>
+<th>每个参数占</th>
+<th>体积对比（以 7B 模型为例）</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FP16（原始）</td>
+<td>2 字节</td>
+<td>约 14GB</td>
+<td>精度最高，吃内存</td>
+</tr>
+<tr>
+<td>INT8 / Q8</td>
+<td>1 字节</td>
+<td>约 7GB</td>
+<td>几乎无损</td>
+</tr>
+<tr>
+<td>INT4 / Q4</td>
+<td>0.5 字节</td>
+<td>约 3.5~4GB</td>
+<td>轻微损失，肉眼几乎不可见</td>
+</tr>
+<tr>
+<td>INT2 / Q2</td>
+<td>0.25 字节</td>
+<td>约 1.75GB</td>
+<td>明显变笨，不推荐</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>示例</strong><br />
+你之前看到的 Qwen2.5-0.5B <strong>Q4_K_M</strong>.gguf：<br />
+- 0.5B 参数原始 FP16 = 约 1.0GB<br />
+- Q4 量化后 ≈ 0.4GB（400MB）<br />
+- 少了 60%，智商只下降一点点——这就是量化的魅力。</p>
+</blockquote>
+<p><strong>相关名词：</strong><br />
+- <strong>Q4_K_M</strong>：Q4 = 4 位量化；K = K-quant 量化方法；M = 中间档位（还有 S 小档、L 大档，M 是平衡档，最常用）。<br />
+- <strong>GGUF 里的量化</strong>：GGUF 文件里直接打包了量化好的参数，下载即用，不用自己量化。</p>
+<h2>3. GGUF：大模型的一种"打包格式"</h2>
+<p><strong>大白话：GGUF 就像 ZIP 压缩包，把模型的参数、词表、配置信息打包成一个文件，让 llama.cpp 这类推理引擎能直接加载运行。</strong></p>
+<ul>
+<li><strong>格式</strong>：GGUF（GPT-Generated Unified Format）</li>
+<li><strong>谁在用</strong>：llama.cpp、Ollama、LM Studio 等本地推理工具</li>
+<li><strong>为什么重要</strong>：不同框架格式不通用（PyTorch 的 .bin/.safetensors、GGUF、MLX 的 .npz），GGUF 是本地部署最主流的格式</li>
+</ul>
+<blockquote>
+<p><strong>示例</strong><br />
+下载模型时你会看到两种常见格式：<br />
+<code>Qwen2.5-0.5B-Instruct-GGUF/Qwen2.5-0.5B-Instruct-Q4_K_M.gguf  ← 本地部署用这个
+Qwen2.5-0.5B-Instruct/safetensors（一堆文件）                   ← PyTorch 训练用</code></p>
+</blockquote>
+<h2>4. 采样策略：Top-K / Top-P / Temperature</h2>
+<p>前面讲过"按概率抽签选下一个字"，但直接按原始概率抽，容易抽到明显不合理的冷门字。所以工程上用 <strong>Top-K</strong> 和 <strong>Top-P</strong> 把候选范围先砍小，再抽签。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+模型算出下一个字的概率表：<br />
+<code>"好" 35%  "棒" 20%  "吗" 15%  "看" 8%  "啊" 5%  "的" 4%  "了" 3%  "香蕉" 0.5% ...</code></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>规则</th>
+<th>上例效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Top-K</strong></td>
+<td>只保留概率最高的 K 个字</td>
+<td>K=5 → 候选剩 [好 棒 吗 看 啊]</td>
+</tr>
+<tr>
+<td><strong>Top-P</strong></td>
+<td>按概率从高到低累加，直到总和超过 P，只保留这些</td>
+<td>P=0.9 → 累加 [好35+棒20+吗15+看8+啊5+的4+了3=90%] → 候选剩 7 个</td>
+</tr>
+<tr>
+<td><strong>Temperature</strong></td>
+<td>调整整体随机性</td>
+<td>低温度 → 好更容易被选中；高温度 → 香蕉也可能被选中</td>
+</tr>
+</tbody>
+</table>
+<p><strong>实际应用中的组合拳：</strong></p>
+<pre><code>Top-P = 0.9  （先砍掉明显不合理的）
+Temperature = 0.7 （再调随机程度）
+</code></pre>
+<ul>
+<li>写代码、写事实类回答：Temperature 调低（0.1~0.3），要准确</li>
+<li>写故事、头脑风暴：Temperature 调高（0.8~1.2），要有创意</li>
+</ul>
+<h2>5. 幻觉（Hallucination）：AI 一本正经地胡说八道</h2>
+<p><strong>大白话：幻觉 = 模型一本正经、语气坚定地编造出根本不存在的事实。它不是在"骗你"，它是在"猜"，猜错了而已。</strong></p>
+<p>为什么会有幻觉？<br />
+1. 模型本质是"猜下一个字"，不是查数据库<br />
+2. 训练数据本身就有错误信息<br />
+3. 模型不知道"自己不知道"，它没有这个意识<br />
+4. 温度太高时，更容易瞎编</p>
+<blockquote>
+<p><strong>示例</strong><br />
+你问："李白的手机号是多少？"<br />
+模型可能一本正经答："李白的手机号是 138-xxxx-xxxx，他喜欢用 iPhone。"<br />
+——全是编的。李白是唐朝人，根本没有手机。</p>
+<p>你问："《红楼梦》的作者是谁？"（它有把握）<br />
+模型答："曹雪芹。"（正确）</p>
+<p>关键在于：<strong>这两种回答，模型内部的"自信程度"其实没法区分</strong>——它没有"我确定/我不确定"的意识。</p>
+</blockquote>
+<p><strong>怎么减少幻觉？</strong><br />
+- 用 <strong>RAG</strong>：先检索真实资料，再让模型基于资料回答（见高级 02）<br />
+- 降低 Temperature<br />
+- 提示词里加"如果你不确定，请直接说不知道"</p>
+<hr />
+<p><strong>下一步：</strong> 学 <a href="02-核心技术名词（下）.html">02-核心技术名词（下）.html</a>。<br />
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

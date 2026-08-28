@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 18：微调数据工程（数据比模型重要） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 18：微调数据工程（数据比模型重要）</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>企业级实战章节。</p></blockquote><hr>
+<h2>1. 数据质量 > 数量</h2>
+<p>1000 条精标 > 10 万条垃圾。Garbage in, garbage out。</p>
+<hr>
+<h2>2. SFT 数据格式</h2>
+<pre><code class="language-json">{"messages":[{"role":"system","content":"你是客服"},{"role":"user","content":"退货"},{"role":"assistant","content":"请提供订单号..."}]}</code></pre>
+<hr>
+<h2>3. 数据清洗</h2>
+<ul><li>去重（MinHash）</li><li>去有害/偏见内容</li><li>长度过滤</li><li>格式统一</li><li>人工抽检 5~10%</li></ul>
+<hr>
+<h2>4. 数据增强</h2>
+<p>同一问题换说法、回译、GPT 生成变体（需人工审核）。</p>
+<hr>
+<h2>5. 版本管理</h2>
+<p>数据集像代码一样 git/DVC 管理，可复现训练。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

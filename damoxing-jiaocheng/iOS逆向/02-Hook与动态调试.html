@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 逆向 02：Hook 与动态调试（Frida / Method Swizzling） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 逆向模块</div>
+    <h1>iOS 逆向 02：Hook 与动态调试（Frida / Method Swizzling）</h1>
+    <span class="header-tag">iOS 逆向模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>⚠️ 仅用于学习和自己 App 的安全测试。Hook 他人 App 用于破解/盗刷属于违法行为。</p>
+<p>学习目标：搞懂 Hook 原理，会用 Frida 做最基本的函数拦截。</p>
+</blockquote>
+<hr>
+<h2>1. Hook 是什么？（大白话）</h2>
+<p><strong>Hook = 拦路虎。</strong>函数本来要执行 A 逻辑，你在中间插一脚，改成先执行你的代码 B，再决定是否继续 A。</p>
+<table>
+<thead><tr><th>方式</th><th>原理</th><th>典型场景</th></tr></thead>
+<tbody>
+<tr><td>Method Swizzling</td><td>OC runtime 交换方法 IMP</td><td>埋点、调试自己的 App</td></tr>
+<tr><td>Fishhook</td><td>改符号表，Hook C 函数</td><td>拦截 printf、open 等</td></tr>
+<tr><td>Frida</td><td>注入 JS 引擎，动态插桩</td><td>运行时改任意 App 逻辑（需越狱/调试权限）</td></tr>
+<tr><td>Substrate/Cydia</td><td>越狱插件框架</td><td>系统级 Hook</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>2. Method Swizzling（开发里也会用）</h2>
+<pre><code class="language-swift">// Swift 中常用 NSObject 子类 + @objc 方法 swizzle（仅调试/自家 App）
+extension UIViewController {
+    @objc func debug_viewDidAppear(_ animated: Bool) {
+        print("[VC] \(type(of: self)) appeared")
+        debug_viewDidAppear(animated)  // 调用原实现
+    }
+}
+// 生产环境慎用 swizzle，App Store 审核对私有 API / 恶意 swizzle 敏感
+</code></pre>
+<hr>
+<h2>3. Frida 入门（Python + JS）</h2>
+<pre><code class="language-bash"># 1. 越狱机安装 frida-server，USB 连接 Mac
+# 2. frida-ps -U                    # 列出进程
+# 3. frida -U -f com.example.app -l hook.js --no-pause
+</code></pre>
+<pre><code class="language-javascript">// hook.js — 拦截 NSURLSession 请求 URL（学习用）
+if (ObjC.available) {
+    var className = "NSURLSession";
+    var method = "- dataTaskWithRequest:completionHandler:";
+    Interceptor.attach(ObjC.classes.NSURLSession[method].implementation, {
+        onEnter: function(args) {
+            var request = new ObjC.Object(args[2]);
+            console.log("Request URL: " + request.URL().absoluteString());
+        }
+    });
+}
+</code></pre>
+<p><strong>AI App 安全测试：</strong>Hook 自己的 App，看 API Key 是否从 Keychain/内存里明文可读。</p>
+<hr>
+<h2>4. LLDB 基础</h2>
+<pre><code class="language-bash"># Xcode 附加进程后，LLDB 命令：
+# po object          打印对象
+# bt                 调用栈
+# br set -n function 下断点
+# memory read 0x...  读内存
+</code></pre>
+<hr>
+<h2>小结</h2>
+<ol>
+<li>Hook 分 OC Runtime、C 符号、Frida 动态注入</li>
+<li>Frida 是逆向入门最友好的动态工具</li>
+<li>用 Hook 审计自己 App 的密钥和网络，是 AI 工程师该有的安全意识</li>
+</ol>
+<p><strong>下一步：</strong> <a href="03-静态分析与砸壳.html">03-静态分析与砸壳</a></p>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

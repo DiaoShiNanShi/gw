@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 01：Prompt 工程实战（提示词是 AI 时代的写作能力） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 01：Prompt 工程实战（提示词是 AI 时代的写作能力）</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：掌握现实工作中每天都要用的提示词技巧。<br />
+<strong>Prompt 工程 = 跟 AI 打交道的说明书设计能力。</strong> 不会写提示词，再强的模型也白搭。<br />
+这一章是"投入产出比"最高的一章——90% 的 AI 工作场景只需要 Prompt 工程，不需要微调。</p>
+</blockquote>
+<hr />
+<div class="demo-card" data-demo="prompt-demo"></div>
+<h2>1. 好提示词 vs 烂提示词（先感受差距）</h2>
+<blockquote>
+<p><strong>烂提示词：</strong><br />
+<code>帮我写个活动方案</code><br />
+结果：一段泛泛而谈、谁都能写的废话。</p>
+<p><strong>好提示词：</strong><br />
+<code>你是某互联网公司的运营总监，有 8 年活动策划经验。
+请为我们的咖啡品牌写一份"冬季新品上市"的线上推广方案。
+要求：
+1. 目标人群是 25-35 岁都市白领
+2. 包含 3 个传播渠道、每个渠道的具体玩法
+3. 预算控制在 10 万以内
+4. 用 Markdown 表格输出，最后附一句话总结</code><br />
+结果：一份结构完整、可直接讨论的方案。</p>
+</blockquote>
+<p><strong>差距在哪？</strong> 好提示词回答了 AI 的 4 个问题：<strong>你是谁（角色）、要给谁（对象）、要什么（任务）、什么标准（约束）。</strong></p>
+<h2>2. Prompt 万能公式（背下来）</h2>
+<pre><code>[角色] + [任务] + [背景/对象] + [约束条件] + [输出格式]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>角色</strong></td>
+<td>限定 AI 的专业视角</td>
+<td>"你是资深 iOS 架构师"</td>
+</tr>
+<tr>
+<td><strong>任务</strong></td>
+<td>明确要干什么</td>
+<td>"审查下面代码的内存泄漏风险"</td>
+</tr>
+<tr>
+<td><strong>背景/对象</strong></td>
+<td>给足上下文</td>
+<td>"项目用 SwiftUI + Core Data，iOS 15 起"</td>
+</tr>
+<tr>
+<td><strong>约束条件</strong></td>
+<td>限制范围</td>
+<td>"只列真正有问题的，不列风格建议"</td>
+</tr>
+<tr>
+<td><strong>输出格式</strong></td>
+<td>规定产出样子</td>
+<td>"用表格输出，每行一个问题 + 修复代码"</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>工作中的真实用法示例（结合你的 iOS 背景）：</strong><br />
+<code>你是一名资深 iOS 工程师。请审查以下 Swift 代码：
+[粘贴代码]
+背景：SwiftUI 页面，数据从网络加载。
+要求：1. 只指出内存泄漏、循环引用、线程安全问题；
+      2. 每个问题给修复代码；
+      3. 用表格输出。如果没发现问题，直接说"未发现"，不要凑数。</code></p>
+</blockquote>
+<h2>3. 六大实战技巧（逐个击破）</h2>
+<h3>技巧 1：Few-shot（给示例，比讲道理管用 10 倍）</h3>
+<p><strong>大白话：与其描述你要什么，不如直接给它看 1~3 个例子。</strong></p>
+<blockquote>
+<p>想让它把用户留言分类：<br />
+```<br />
+把下面的留言分类为：投诉 / 咨询 / 表扬 / 其他。</p>
+<p>示例 1："你们 app 闪退了三次！" → 投诉<br />
+示例 2："怎么退款？" → 咨询<br />
+示例 3："客服态度很好，点赞！" → 表扬</p>
+<p>现在分类："这个功能太好用了，推荐给朋友了"<br />
+```<br />
+输出：表扬</p>
+</blockquote>
+<h3>技巧 2：CoT（思维链）——让它"先想后说"</h3>
+<p><strong>大白话：让 AI 分步思考再给答案，复杂问题准确率大幅提升。</strong></p>
+<blockquote>
+<p>数学题对比：<br />
+```<br />
+❌ 问："一个班级 30 人，男生占 40%，后来转来 6 个男生，现在男生比例是多少？"<br />
+   答（容易错）："46%"（它可能直接跳步算错）</p>
+<p>✅ 加一句："请一步一步思考，最后再给答案。"<br />
+   答：原来男生 30×40%=12 人 → 转来后男生 12+6=18 人 → 总人数 30+6=36 人 → 18÷36=50%<br />
+```<br />
+<strong>工程实现</strong>：很多 API 支持给 assistant 留思考空间，或直接在提示词里写"一步步来"。</p>
+</blockquote>
+<h3>技巧 3：结构化输出（让 AI 返回 JSON，程序才能用）</h3>
+<p><strong>大白话：跟 AI 要"标准格式"的数据，否则程序没法解析。</strong></p>
+<blockquote>
+<p>```<br />
+提取下面这段文本的信息，返回 JSON：<br />
+{"姓名": "...", "电话": "...", "地址": "...", "意向": "购买/咨询/无意向"}</p>
+<p>文本：你好，我叫王芳，电话 13800138000，住在朝阳区，想了解一下你们的套餐。<br />
+<code>输出：</code>json<br />
+{"姓名": "王芳", "电话": "13800138000", "地址": "朝阳区", "意向": "咨询"}<br />
+```</p>
+<p><strong>工程最佳实践</strong>：OpenAI 系 API 有 <code>response_format: {"type": "json_object"}</code> 参数，强制 JSON 输出（见实战 02）。</p>
+</blockquote>
+<h3>技巧 4：System Prompt 设计（产品的"人设底座"）</h3>
+<p><strong>大白话：System Prompt 是每一轮对话都生效的"总设定"，写一次管全程。</strong></p>
+<blockquote>
+<p>企业 AI 客服的 System Prompt 设计模板：<br />
+<code>你是"XX银行"的智能客服"小银"。
+人设：耐心、专业、不说废话。
+知识边界：只回答银行卡、贷款、理财相关问题。
+行为规则：
+1. 不知道的问题，回答"这个问题我记下来，让专员回电您"。
+2. 绝不编造利率、政策。
+3. 用户情绪激动时，先安抚再解答。
+输出要求：回答控制在 100 字内，口语化。</code></p>
+</blockquote>
+<h3>技巧 5：约束与防呆（堵住 AI 的嘴）</h3>
+<table>
+<thead>
+<tr>
+<th>防呆手段</th>
+<th>写法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>限制编造</td>
+<td>"如果信息不足，直接说'资料不足'，不要猜测"</td>
+</tr>
+<tr>
+<td>限制废话</td>
+<td>"只回答结果，不要解释过程"</td>
+</tr>
+<tr>
+<td>限制长度</td>
+<td>"50 字以内" / "不超过 3 条"</td>
+</tr>
+<tr>
+<td>限制语言</td>
+<td>"全程用中文回答"</td>
+</tr>
+<tr>
+<td>负面约束</td>
+<td>"不要使用'首先其次最后'这类词"</td>
+</tr>
+</tbody>
+</table>
+<h3>技巧 6：多轮优化（把 AI 当同事，来回改）</h3>
+<pre><code>第 1 轮：写一封客户催款邮件
+第 2 轮：语气太生硬了，改成客气但坚定
+第 3 轮：加上&quot;逾期会影响信用记录&quot;的提醒，放最后一段
+第 4 轮：压缩到 150 字以内
+</code></pre>
+<p><strong>工作中没有一次到位的提示词，都是迭代出来的。</strong></p>
+<h2>4. Prompt 的"能力边界"（认清现实）</h2>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>Prompt 能不能解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>知识截止后的事（如最新政策）</td>
+<td>❌ 不行，要 RAG</td>
+</tr>
+<tr>
+<td>公司内部资料</td>
+<td>❌ 不行，要 RAG</td>
+</tr>
+<tr>
+<td>需要查数据库、调接口</td>
+<td>❌ 不行，要 Function Calling / Agent</td>
+</tr>
+<tr>
+<td>需要稳定输出特定格式</td>
+<td>✅ 基本能，但复杂格式要用 JSON mode</td>
+</tr>
+<tr>
+<td>需要让模型学会新知识</td>
+<td>⚠️ 提示词能"临时教"，但记不住，要微调</td>
+</tr>
+<tr>
+<td>需要特定语气风格</td>
+<td>✅ 能，System Prompt 就能</td>
+</tr>
+</tbody>
+</table>
+<p><strong>工作决策口诀：能用 Prompt 解决的不做 RAG，能用 RAG 解决的不做微调。</strong></p>
+<h2>5. Prompt 模板库（工作中直接抄）</h2>
+<h3>模板 A：文档总结</h3>
+<pre><code>你是资深分析师。总结以下内容，输出：
+1. 核心观点（3 条以内）
+2. 关键数据（用表格）
+3. 潜在风险
+4. 一句话结论
+内容：{粘贴内容}
+</code></pre>
+<h3>模板 B：代码审查</h3>
+<pre><code>你是高级 {语言} 工程师。审查以下代码：
+{粘贴代码}
+要求：1. 只关注 bug、性能、安全问题；2. 每条给修复代码；3. 无问题就说无问题。
+</code></pre>
+<h3>模板 C：面试官模拟</h3>
+<pre><code>你是 {岗位} 的资深面试官。你会用 10 个问题层层递进面试候选人。
+现在开始：第 1 个问题问 {主题}。我回答后，你点评并追问下一个更深入的问题。
+</code></pre>
+<h3>模板 D：日报生成</h3>
+<pre><code>根据以下工作记录，生成一份简洁的日报，格式：今日完成 / 明日计划 / 遇到的问题。
+工作记录：{粘贴}
+</code></pre>
+<hr />
+<h2>小结</h2>
+<ol>
+<li><strong>万能公式</strong>：角色 + 任务 + 背景 + 约束 + 格式</li>
+<li><strong>Few-shot 给例子</strong> &gt; 讲道理</li>
+<li><strong>复杂问题加 CoT</strong>：让它一步一步想</li>
+<li><strong>要程序用的数据，强制 JSON 输出</strong></li>
+<li><strong>System Prompt 管全局，写一次管全程</strong></li>
+<li><strong>决策口诀</strong>：Prompt → RAG → 微调，能用前者不用后者</li>
+</ol>
+<hr />
+<p><strong>下一步：</strong> 学 <a href="02-大模型API对接.html">02-大模型API对接.html</a> ——把提示词变成真正的产品。<br />
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

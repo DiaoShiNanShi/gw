@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 逆向 03：静态分析与砸壳 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 逆向模块</div>
+    <h1>iOS 逆向 03：静态分析与砸壳</h1>
+    <span class="header-tag">iOS 逆向模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>⚠️ 仅分析有授权的 IPA（自己的 App 或书面授权）。</p>
+<p>学习目标：砸壳、class-dump、Hopper 看伪代码的基本流程。</p>
+</blockquote>
+<hr>
+<h2>1. 为什么要砸壳？</h2>
+<p>App Store 下载的 App，主二进制被苹果 <strong>FairPlay DRM</strong> 加密。直接 class-dump / Hopper 打开是乱码，需要先在<strong>运行时内存</strong>里 dump 出解密后的 Mach-O（砸壳）。</p>
+<hr>
+<h2>2. 砸壳流程（概念）</h2>
+<ol>
+<li>越狱设备安装 App，运行到内存解密</li>
+<li>用 frida-ios-dump / clutch / dumpdecrypted 从内存导出 Mach-O</li>
+<li>替换 IPA 里的原二进制 → 得到脱壳 IPA</li>
+</ol>
+<pre><code class="language-bash"># frida-ios-dump 示例（需配置 ios_ipa_dump 环境）
+# python dump.py com.target.app
+# 输出 save 目录下的脱壳 IPA
+</code></pre>
+<hr>
+<h2>3. class-dump 导出头文件</h2>
+<pre><code class="language-bash">class-dump -H YourApp -o headers/
+# 得到所有 OC 类的 @interface 声明，快速了解 App 结构
+# Swift 类名会被 mangled，需要 demangle 或看 Hopper
+</code></pre>
+<hr>
+<h2>4. Hopper / IDA 静态分析</h2>
+<ol>
+<li>打开脱壳后的 Mach-O</li>
+<li>看 <strong>Strings</strong> 窗口：常能发现 API URL、Key 变量名、调试日志</li>
+<li>找 <strong>-[ClassName method:]</strong> 跟关键逻辑（登录、支付、AI 请求）</li>
+<li>伪代码（F5）阅读算法流程</li>
+</ol>
+<blockquote>
+<p><strong>AI App 审计清单：</strong><br>
+- Strings 里有没有 sk-、api_key、Bearer<br>
+- 是否硬编码 DeepSeek/OpenAI URL<br>
+- 证书校验是否可被 bypass</p>
+</blockquote>
+<hr>
+<h2>5. 加固与对抗（了解即可）</h2>
+<table>
+<thead><tr><th>加固手段</th><th>逆向难度</th></tr></thead>
+<tbody>
+<tr><td>字符串加密</td><td>Strings 搜不到 Key</td></tr>
+<tr><td>代码混淆</td><td>类名方法名无意义</td></tr>
+<tr><td>反调试 ptrace</td><td>附加 debugger 就退出</td></tr>
+<tr><td>完整性校验</td><td>改 binary 就 crash</td></tr>
+</tbody>
+</table>
+<p><strong>下一步：</strong> <a href="04-逆向实战与合规.html">04-逆向实战与合规</a></p>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

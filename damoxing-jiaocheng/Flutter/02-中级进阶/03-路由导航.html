@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>03-路由导航 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 中级进阶</div>
+    <h1>03-路由导航</h1>
+    <span class="header-tag">中级进阶</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>03-路由导航</h1>
+<blockquote>
+<p>大白话版 · 页面跳转与传参（小白向）<br>
+目标：学会用 Navigator 跳转页面、命名路由、页面间传值（值/对象/回传结果）、并了解路由拦截与深链。</p>
+</blockquote>
+<hr>
+<h2>一、先讲"是什么"：路由（Route）到底是什么？</h2>
+<p><strong>一句话版本：路由 = "页面跳转的路线"。你告诉 App"我要去哪个页面"，App 负责把你送过去（也能把你送回来）。</strong></p>
+<p>打个比方：</p>
+<blockquote>
+<p>你逛一个商场（App）：<br>
+- 每个店铺（页面）都有自己的"门牌号"（路由地址）<br>
+- 你想从 1 楼（首页）去 3 楼咖啡店（详情页）——这就是一次<strong>路由跳转</strong><br>
+- 喝完咖啡你坐电梯回 1 楼——这就是<strong>返回</strong><br>
+- 商场里的"导航台"就是 <strong>Navigator（导航器）</strong>，它知道所有路线，还帮你"记着"你来时的路（维护一个"页面栈"）</p>
+</blockquote>
+<h3>页面栈（Navigator 的"电梯记录"）</h3>
+<p>Navigator 用"栈"（Stack）管理页面：每跳进一个新页面就<strong>压栈</strong>（入栈），每返回一次就<strong>出栈</strong>。</p>
+<pre class="codehilite"><code>栈底                   栈顶
+[首页] → [详情页] → [支付页]
+   ↑ 压栈（push）          ↑ 出栈（pop）回到详情页
+</code></pre>
+
+<ul>
+<li><code>push</code>：把新页面压到栈顶（跳转）</li>
+<li><code>pop</code>：把栈顶页面弹出去（返回）</li>
+</ul>
+<blockquote>
+<p>对 iOS 工程师：这就是 <code>UINavigationController</code> 的 pushViewController / popViewController，一模一样的栈模型。</p>
+</blockquote>
+<hr>
+<h2>二、再讲"为什么"：为什么要学路由？</h2>
+<ol>
+<li><strong>任何 App 都要多页面</strong>：跳转是基本功，面试必问。</li>
+<li><strong>页面要传数据</strong>：从列表点进详情，得把"点了哪一条"告诉详情页；详情页操作完，可能要"带结果回去"（比如选完地址返回首页）。</li>
+<li><strong>工程化需要命名路由</strong>：项目大了之后，用"名字"跳转比直接 new 一个页面更清晰、更好维护。</li>
+<li><strong>高级能力</strong>：路由拦截（比如"没登录就跳登录页"）、深链（外部链接直接打开 App 某个页面）都是真实业务需求。</li>
+</ol>
+<hr>
+<h2>三、怎么用：四种跳转姿势逐个击破</h2>
+<h3>3.1 姿势一：普通跳转（直接 new 目标页面）</h3>
+<p>最直接的方式，适合页面少的小项目：</p>
+<pre class="codehilite"><code class="language-dart">import 'package:flutter/material.dart';
+
+// 首页
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('首页')),
+      body: Center(
+        child: ElevatedButton(
+          // Navigator.push：跳转到新页面
+          // MaterialPageRoute：给新页面包一个&quot;带过渡动画的路线&quot;
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =&gt; const DetailPage()),
+            );
+          },
+          child: const Text('去详情页'),
+        ),
+      ),
+    );
+  }
+}
+
+// 详情页
+class DetailPage extends StatelessWidget {
+  const DetailPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('详情页')),
+      body: Center(
+        child: ElevatedButton(
+          // Navigator.pop：返回上一页
+          onPressed: () =&gt; Navigator.pop(context),
+          child: const Text('返回'),
+        ),
+      ),
+    );
+  }
+}
+
+void main() =&gt; runApp(const MaterialApp(home: HomePage()));
+</code></pre>
+
+<h3>3.2 姿势二：页面传值（跳转时带数据过去）</h3>
+<p>用 <code>构造函数参数</code> 传值，最简单直接：</p>
+<pre class="codehilite"><code class="language-dart">// 详情页：接收一个 id 和名字
+class DetailPage extends StatelessWidget {
+  final int id;
+  final String name;
+  const DetailPage({super.key, required this.id, required this.name});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('详情：$name')),
+      body: Center(child: Text('拿到了 id=$id, name=$name')),
+    );
+  }
+}
+
+// 首页跳转时把数据传进去
+Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) =&gt; DetailPage(id: 1001, name: '苹果'),  // 传值！
+  ),
+);
+</code></pre>
+
+<p><strong>传递复杂对象也一样</strong>：只要目标页面构造函数接收那个对象就行：</p>
+<pre class="codehilite"><code class="language-dart">// 假设有个商品类
+class Product {
+  final int id;
+  final String title;
+  final double price;
+  Product({required this.id, required this.title, required this.price});
+}
+
+// 详情页直接接收 Product 对象
+class ProductPage extends StatelessWidget {
+  final Product product;
+  const ProductPage({super.key, required this.product});
+  // ... 界面里直接用 product.title / product.price
+}
+
+// 跳转
+Navigator.push(
+  context,
+  MaterialPageRoute(builder: (context) =&gt; ProductPage(product: myProduct)),
+);
+</code></pre>
+
+<h3>3.3 姿势三：结果回传（从下一页带数据回来）</h3>
+<p>比如"选择城市"页面选完，要把选中的城市传回首页。用 <code>push</code> 的返回值（Future）实现：</p>
+<pre class="codehilite"><code class="language-dart">// 首页：发起跳转，并 await 结果
+Future&lt;void&gt; _selectCity(BuildContext context) async {
+  // push 返回的是一个 Future，结果就是下一页 pop 时传回来的值
+  final result = await Navigator.push&lt;String&gt;(
+    context,
+    MaterialPageRoute(builder: (context) =&gt; const CityPickerPage()),
+  );
+
+  // result 为空说明用户没选就返回了（返回 null）
+  if (result != null) {
+    // 用结果做点什么（这里示例是打印）
+    debugPrint('用户选择了城市：$result');
+  }
+}
+
+// 选择城市页：选中后把值传回去
+class CityPickerPage extends StatelessWidget {
+  const CityPickerPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('选择城市')),
+      body: ListView(
+        children: ['北京', '上海', '广州', '深圳'].map((city) {
+          return ListTile(
+            title: Text(city),
+            // 点击城市：pop 的时候把值带回去！
+            onTap: () =&gt; Navigator.pop(context, city),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+</code></pre>
+
+<p><strong>大白话理解回传：</strong></p>
+<blockquote>
+<p><code>await Navigator.push(...)</code> = "你去下一页办事，办完把结果带回来我再继续"。<br>
+下一页 <code>Navigator.pop(context, 值)</code> = "我办完了，把结果交给你"。</p>
+</blockquote>
+<h3>3.4 姿势四：命名路由（给页面起个"门牌号"）</h3>
+<p>项目大了，把路由集中注册，用"名字"跳转，好维护：</p>
+<pre class="codehilite"><code class="language-dart">void main() {
+  runApp(
+    MaterialApp(
+      // 初始页面：'/'
+      initialRoute: '/',
+      // 路由表：门牌号 → 页面
+      routes: {
+        '/': (context) =&gt; const HomePage(),
+        '/detail': (context) =&gt; const DetailPage(),
+        '/settings': (context) =&gt; const SettingsPage(),
+      },
+    ),
+  );
+}
+
+// 用名字跳转
+Navigator.pushNamed(context, '/detail');
+
+// 用名字跳转 + 传参（通过 arguments）
+Navigator.pushNamed(context, '/detail', arguments: Product(id: 1, title: '香蕉', price: 5.0));
+
+// 目标页面里接收参数
+class DetailPage extends StatelessWidget {
+  const DetailPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    // 取出 arguments 参数
+    final product = ModalRoute.of(context)!.settings.arguments as Product;
+    return Scaffold(body: Center(child: Text('收到商品：${product.title}')));
+  }
+}
+</code></pre>
+
+<blockquote>
+<p>对 iOS 工程师：命名路由 ≈ 注册表形式的"页面工厂"，比直接用类跳转更像 storyboard 里的 segue identifier。</p>
+</blockquote>
+<hr>
+<h2>四、路由拦截与深链（进阶了解）</h2>
+<h3>4.1 路由拦截（onGenerateRoute）</h3>
+<p><strong>大白话：</strong> 在每次跳转前，先经过一个"保安"检查。保安可以：放行、拦截、重定向到别的页面。</p>
+<p>典型场景：<strong>未登录用户访问"我的订单"，强制跳转到登录页。</strong></p>
+<pre class="codehilite"><code class="language-dart">MaterialApp(
+  onGenerateRoute: (settings) {
+    // settings.name 就是要去的路由名字
+    if (settings.name == '/orders') {
+      // 假设这里判断未登录
+      bool isLoggedIn = false;
+      if (!isLoggedIn) {
+        // 拦截！改道去登录页
+        return MaterialPageRoute(builder: (context) =&gt; const LoginPage());
+      }
+    }
+    // 其余正常放行
+    return MaterialPageRoute(builder: (context) =&gt; const HomePage());
+  },
+)
+</code></pre>
+
+<h3>4.2 深链（Deep Link）</h3>
+<p><strong>大白话：</strong> 用户点一个外部链接（比如短信里的 <code>myapp://product/123</code>），直接打开 App 并跳到对应页面。</p>
+<ul>
+<li>原理：在 iOS 端配置 <code>URL Scheme</code>（Info.plist）或 Universal Links，Android 配置 intent-filter，App 收到链接后解析并跳转。</li>
+<li>Flutter 里常用包：<code>app_links</code> / <code>uni_links</code>。</li>
+<li>了解即可，实战时按官方文档配置。</li>
+</ul>
+<hr>
+<h2>五、iOS 开发者视角（老司机对照表）</h2>
+<table>
+<thead>
+<tr>
+<th>iOS 原生</th>
+<th>Flutter</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UINavigationController</td>
+<td>Navigator</td>
+<td>页面导航器（栈管理）</td>
+</tr>
+<tr>
+<td>pushViewController</td>
+<td>Navigator.push</td>
+<td>压栈跳转</td>
+</tr>
+<tr>
+<td>popViewController</td>
+<td>Navigator.pop</td>
+<td>出栈返回</td>
+</tr>
+<tr>
+<td>构造函数传值 / 属性传值</td>
+<td>构造函数参数传值</td>
+<td>跳转传参</td>
+</tr>
+<tr>
+<td>闭包回调 / delegate 回传</td>
+<td>await push 返回值 + pop(值)</td>
+<td>结果回传</td>
+</tr>
+<tr>
+<td>storyboard segue</td>
+<td>命名路由（routes）</td>
+<td>注册式跳转</td>
+</tr>
+<tr>
+<td>navigationController 代理拦截</td>
+<td>onGenerateRoute</td>
+<td>路由拦截</td>
+</tr>
+<tr>
+<td>URL Scheme / Universal Link</td>
+<td>深链（app_links 包）</td>
+<td>外部链接打开页面</td>
+</tr>
+<tr>
+<td>navigationController?.viewControllers</td>
+<td>Navigator 的栈</td>
+<td>页面栈</td>
+</tr>
+</tbody>
+</table>
+<p><strong>给 iOS 工程师的真心话：</strong><br>
+- 栈模型、push/pop 你完全不用重新学，就是把 <code>navigationController</code> 换成了 <code>Navigator</code>。<br>
+- 最不一样的是"结果回传"：iOS 用 delegate/闭包，Flutter 用 <code>await push</code> 拿返回值，<strong>其实更简单</strong>，像 Swift Concurrency 一样顺手。<br>
+- 命名路由 + <code>arguments</code> 有点像 <code>performSegue(withIdentifier:)</code> 传 <code>sender</code>，概念互通。</p>
+<hr>
+<h2>六、小节小结</h2>
+<ol>
+<li>路由 = 页面跳转路线，Navigator 用"栈"管理（push 入栈 / pop 出栈）。</li>
+<li>三种传值：构造函数传参（带数据过去）、<code>pop(值)</code> + <code>await push</code>（带结果回来）、<code>arguments</code>（命名路由传参）。</li>
+<li>命名路由：集中注册 + 名字跳转，适合大项目。</li>
+<li>路由拦截：<code>onGenerateRoute</code> 做"保安"，可实现登录校验、重定向。</li>
+<li>深链：外部链接打开指定页面，实战按需配置。</li>
+</ol>
+<hr>
+<h2>七、本节动手练习（含答案提示）</h2>
+<p><strong>练习 1：判断跳转方式</strong></p>
+<blockquote>
+<p>从首页跳转到"选择地址页"，选完地址要把地址带回首页。应该用哪种方式？</p>
+<p>✅ 答案提示：用 <code>await Navigator.push&lt;String&gt;(...)</code> 跳转，地址页 <code>Navigator.pop(context, 地址字符串)</code> 回传，首页 await 拿到结果。</p>
+</blockquote>
+<p><strong>练习 2：补全代码</strong></p>
+<blockquote>
+<p>下面代码跳转时把 <code>name: '张三'</code> 传给详情页，补全缺失部分：<br>
+<code>dart
+Navigator.push(
+  context,
+  MaterialPageRoute(builder: (context) =&gt; ____),
+);</code></p>
+<p>✅ 答案提示：<code>DetailPage(name: '张三')</code>（前提 DetailPage 构造函数有 <code>required this.name</code>）。</p>
+</blockquote>
+<p><strong>练习 3：理解 pop 返回值</strong></p>
+<blockquote>
+<p><code>Navigator.pop(context)</code> 和 <code>Navigator.pop(context, '北京')</code> 有什么区别？</p>
+<p>✅ 答案提示：前者只返回上一页、不带数据；后者返回上一页的同时把 <code>'北京'</code> 作为结果传回去，上一页的 <code>await push</code> 能拿到这个值。</p>
+</blockquote>
+<p><strong>练习 4：实现拦截</strong></p>
+<blockquote>
+<p>需求：未登录用户点击"我的订单"时，自动跳转到登录页。用什么实现？</p>
+<p>✅ 答案提示：用 <code>MaterialApp.onGenerateRoute</code> 做路由拦截：当 <code>settings.name == '/orders'</code> 且未登录时，返回 <code>LoginPage</code> 的 route 而非订单页。</p>
+</blockquote>
+<p><strong>练习 5：概念连线</strong></p>
+<blockquote>
+<p>连线：<code>Navigator</code> ↔ ？　<code>push</code> ↔ ？　<code>pop</code> ↔ ？　<code>URL Scheme</code> ↔ ？</p>
+<p>✅ 答案提示：<code>Navigator</code> ↔ UINavigationController；<code>push</code> ↔ pushViewController；<code>pop</code> ↔ popViewController；<code>URL Scheme</code> ↔ 深链。</p>
+</blockquote>
+<hr>
+<h2>下一步</h2>
+<p>页面能跳、数据能传了，接下来学 App 最核心的能力——请求网络数据。</p>
+<p>👉 下一篇：<a href="04-网络与异步.html">04-网络与异步.html</a></p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

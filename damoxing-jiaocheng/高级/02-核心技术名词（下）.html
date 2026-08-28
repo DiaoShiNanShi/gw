@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>高级 02：核心技术名词（下）——架构、加速、微调、RAG - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 高级模块</div>
+    <h1>高级 02：核心技术名词（下）——架构、加速、微调、RAG</h1>
+    <span class="header-tag">高级模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：搞懂剩下的高频硬核名词：Decoder-only、MoE、KV Cache、Flash Attention、LoRA、RAG、Prompt/System Prompt。<br />
+读完这章，技术文章里 95% 的名词你都能看懂。</p>
+</blockquote>
+<hr />
+<h2>1. Decoder-only：现在主流大模型的统一架构</h2>
+<p><strong>大白话：Decoder-only = 只负责"一个字一个字往前续写"的模型。ChatGPT、Qwen、Llama 全都是这种架构。</strong></p>
+<p>Transformer 架构最初有两个部件：<br />
+- <strong>Encoder（编码器）</strong>：把整段输入"读完"再理解——适合翻译、分类<br />
+- <strong>Decoder（解码器）</strong>：一个字一个字往后"续写"——适合生成</p>
+<p>现在的大模型<strong>全部只用 Decoder</strong>：你给它任何输入，它就一路"续写"下去，直到它觉得该停了。前面学的推理 4 步就是这个过程。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+<code>输入："写一首关于春天的诗"
+→ 模型续写："春风拂面柳丝长，"
+→ 继续续写："燕子归来绕画梁。"
+→ ……直到模型输出 &lt;结束&gt; 标记</code><br />
+你可能会问："那它怎么知道我是在问问题还是在让它写诗？"<br />
+答案：全靠训练时学会的模式。它学到的模式是："人类给我这段文字，通常希望我接着写 XXX"。</p>
+</blockquote>
+<p><strong>为什么全能？</strong> 聊天、翻译、写代码、总结——对 Decoder-only 来说<strong>全是一个任务：续写</strong>。把"翻译成英文：你好"当作输入，它学到的模式就是"这种输入后面应该跟英文翻译"。这就是"一个模型干所有事"的原理。</p>
+<h2>2. MoE（Mixture of Experts）：专家混合，省算力的大招</h2>
+<p><strong>大白话：MoE = 一个模型里有十几个"专家子网络"，但每次只激活其中 2~3 个专家来处理问题，其他专家休息。</strong></p>
+<blockquote>
+<p><strong>示例</strong><br />
+想象一家公司有 12 个专家：3 个数学专家、3 个文学专家、2 个代码专家、2 个历史专家、2 个通用专家。<br />
+你问数学题 → 只叫醒 2 个数学专家 + 1 个通用专家干活，其他 9 个睡觉。<br />
+表面上看公司有 12 个人（总参数量大），但每次只付 3 个人的工资（实际计算量小）。</p>
+<p>这就是 MoE 的"参数多但算得快"的秘密：<br />
+- <strong>总参数量</strong>：几百亿甚至万亿（听起来很大）<br />
+- <strong>激活参数量</strong>：每次只算一小部分（实际跑起来很快）</p>
+<p><strong>代表模型</strong>：Mixtral 8x7B（8 个专家 × 7B，总参数 47B，但每次只激活 13B）、DeepSeek-V3（总参数 671B，每次只激活 37B）。</p>
+</blockquote>
+<h2>3. KV Cache：让 AI 别再重复劳动</h2>
+<p><strong>大白话：KV Cache = 把已经算过的"历史内容"缓存起来，下次接着用，避免每生成一个字都从头算一遍。</strong></p>
+<p>生成每个新字时，模型都要"回顾"之前所有的字。如果不缓存，每生成一个字都要把前面的所有内容重新算一遍——生成第 100 个字要重算 99 次，慢到爆炸。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+<code>第 1 个字："你"（算了 1 遍）
+第 2 个字："好"（如果不缓存，要重新算"你"+"好"= 2 遍）
+第 3 个字："！"（要重新算"你好"+"！"= 3 遍）
+...
+第 100 个字：重算 100 遍 = 总共算了 1+2+3+...+100 = 5050 遍！</code><br />
+有了 KV Cache：每个字只算 1 遍，总共只要 100 遍，<strong>快了 50 倍</strong>。</p>
+</blockquote>
+<p><strong>代价</strong>：缓存要占内存。上下文越长，缓存越大。这也是"长对话变卡、上下文有上限"的一个原因。</p>
+<h2>4. Flash Attention：让注意力计算"飞起来"</h2>
+<p><strong>大白话：Flash Attention = 一种让注意力计算又快又省内存的工程优化技巧，不改变模型结果，只改计算方式。</strong></p>
+<p>原理：传统注意力要把整个注意力矩阵算完存下来（很占内存），Flash Attention 把计算分块进行，边算边用，<strong>内存占用从 O(n²) 降到 O(n)</strong>（n 是序列长度）。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+处理 1000 token 的输入：<br />
+<code>传统注意力：需要 1000×1000 = 100 万个位置的矩阵，全部放内存
+Flash Attention：分块计算，内存占用大幅减少，速度提升数倍</code><br />
+现在所有主流框架（PyTorch、MLX、llama.cpp）默认都用它，你几乎感觉不到它存在，但没它长上下文根本跑不动。</p>
+</blockquote>
+<h2>5. LoRA：花小钱办大事的微调</h2>
+<p><strong>大白话：LoRA = 不大改原模型，只在旁边"贴"一个很小的补丁矩阵，训练时只训练补丁，效果却接近全量微调。</strong></p>
+<p>全量微调 7B 模型：要调整 70 亿个参数，需要多张专业显卡。<br />
+LoRA 微调 7B 模型：<strong>冻结全部 70 亿参数不动，只训练旁边新增的几百万参数</strong>（相当于原模型的 1%），一张消费级显卡就能搞定。</p>
+<blockquote>
+<p><strong>示例</strong><br />
+想象一个公司有 1000 名员工（原模型参数）。<br />
+全量微调 = 给 1000 名员工重新培训，费时费力费钱。<br />
+LoRA = 给每个部门配一个小本子，上面只写 10 条新规则，培训 10 个小组长，效果接近全员培训。</p>
+<p>训练完的 LoRA 补丁很小（几十 MB），可以随时"贴"到不同模型上：<br />
+- 下载 Qwen2.5-7B 原版 + 你训练的中文 LoRA 补丁（50MB）<br />
+- 随时可以拆掉补丁恢复原版</p>
+</blockquote>
+<p><strong>相关名词：</strong><br />
+- <strong>QLoRA</strong>：先把模型量化（Q4）再 LoRA，4GB 显存的显卡都能微调 7B 模型——个人玩家微调标配。<br />
+- <strong>LoRA 文件</strong>：训练完保存的就是那个小补丁（.safetensors），几十到几百 MB。</p>
+<h2>6. RAG（检索增强生成）：给 AI 装一个"资料库"</h2>
+<p><strong>大白话：RAG = 先到资料库里"查资料"，再把查到的资料喂给模型，让它"照着资料回答"。解决 AI 不知道最新信息/内部资料/爱胡说八道的问题。</strong></p>
+<p>模型的知识截止在训练那天，之后的事它不知道，公司内部资料它更不知道。RAG 就是解决这个问题：</p>
+<blockquote>
+<p><strong>示例（公司内部 AI 助手）</strong><br />
+```<br />
+员工问："我们公司今年的年假政策是什么？"</p>
+<p>没有 RAG：模型答"我建议您查看公司手册"（它不知道，训练数据里没有）</p>
+<p>有 RAG：<br />
+第 1 步：把员工的问题转成向量，在公司资料库里搜索<br />
+第 2 步：找到《2026年员工手册》第 12 页相关内容<br />
+第 3 步：把问题 + 资料一起喂给模型："根据以下资料回答问题：……"<br />
+第 4 步：模型照着资料回答："年假为 15 天，入职满一年后生效。"<br />
+```</p>
+</blockquote>
+<p><strong>RAG 三件套：</strong><br />
+1. <strong>文档入库</strong>：把资料切片 → 转成向量 → 存进向量数据库<br />
+2. <strong>检索</strong>：问题转向量 → 在库里找最相似的片段<br />
+3. <strong>生成</strong>：问题 + 检索到的资料 → 大模型生成回答</p>
+<p><strong>为什么 RAG 能减少幻觉？</strong> 因为它把"凭空猜"变成了"照本宣科"——模型有了资料依据，编的概率大幅降低。</p>
+<h2>7. Prompt / System Prompt：给 AI 的"使用说明书"</h2>
+<p><strong>大白话：Prompt = 你发给模型的那段话；System Prompt = 在对话开始前，藏在幕后告诉模型"你是谁、该怎么表现"的设定说明。</strong></p>
+<blockquote>
+<p><strong>示例</strong><br />
+```<br />
+System Prompt（用户看不见，但模型每轮都记得）：<br />
+"你是一个耐心的中文老师，回答要简单易懂，用比喻解释概念。"</p>
+<p>用户问：什么是内存？<br />
+模型答：内存就像你的工作台，台子越大，能同时摊开的东西越多……<br />
+```</p>
+</blockquote>
+<p><strong>为什么 System Prompt 重要？</strong><br />
+- 它是模型行为的"总开关"：语气、角色、边界、格式全由它控制<br />
+- 好的 System Prompt 能大幅提升回答质量<br />
+- 这就是为什么所有 AI 产品（ChatGPT、文心一言、各种助手）都有"系统设定"</p>
+<p><strong>Prompt 技巧速查（Prompt Engineering 入门）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>技巧</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>给角色</td>
+<td>"你是一位资深 iOS 架构师"</td>
+</tr>
+<tr>
+<td>给格式</td>
+<td>"用表格回答，分三列"</td>
+</tr>
+<tr>
+<td>给示例（Few-shot）</td>
+<td>"比如：问'什么是内存'答'工作台'。现在回答：什么是 CPU？"</td>
+</tr>
+<tr>
+<td>给边界</td>
+<td>"如果不知道，直接说不知道"</td>
+</tr>
+<tr>
+<td>分步要求</td>
+<td>"先分析需求，再给方案，最后写代码"</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><strong>下一步：</strong> 学 <a href="03-架构与性能优化.html">03-架构与性能优化.html</a> ——了解本地推理引擎和端侧 AI。<br />
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

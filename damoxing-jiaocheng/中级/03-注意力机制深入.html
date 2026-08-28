@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>中级 03：注意力机制深入（Q/K/V 到底怎么回事） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 中级模块</div>
+    <h1>中级 03：注意力机制深入（Q/K/V 到底怎么回事）</h1>
+    <span class="header-tag">中级模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>Self-Attention 是大模型「聪明」的根本原因。这章把 Q/K/V 讲到能画出来。</p></blockquote><hr>
+<h2>1. 图书馆比喻（复习）</h2>
+<p>处理「电池要不要换」时，「要不要」和「换」关系最紧，「电池」是主语——Attention 就是自动学会这种「该看谁」。</p>
+<hr>
+<h2>2. Q/K/V 三兄弟</h2>
+<table><thead><tr><th>符号</th><th>全称</th><th>大白话</th></tr></thead><tbody><tr><td>Q</td><td>Query 查询</td><td>我在找什么信息？</td></tr><tr><td>K</td><td>Key 键</td><td>我有什么信息可供匹配？</td></tr><tr><td>V</td><td>Value 值</td><td>匹配上了，实际拿走的内容</td></tr></tbody></table>
+<hr>
+<h2>3. 计算步骤（简化）</h2>
+<ol><li>每个 token 生成 Q、K、V 三个向量</li><li>Q 和所有 K 做点积 → 相似度分数</li><li>Softmax 变概率（加起来=100%）</li><li>用概率加权求和所有 V → 输出</li></ol><pre><code class="language-text">Attention(Q,K,V) = softmax(Q·K^T / √d_k) · V
+
+除以 √d_k：防止点积太大，Softmax 梯度消失</code></pre>
+<hr>
+<h2>4. Multi-Head 多头</h2>
+<p>8~32 个头并行算，每个头学不同模式：一个管语法、一个管指代、一个管情感……最后拼起来。</p>
+<hr>
+<h2>5. 复杂度问题</h2>
+<p>序列长度 n，Attention 复杂度 O(n²)。所以 128K 上下文很贵，Flash Attention 是优化这个。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

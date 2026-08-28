@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 06：主流开源模型全景（Llama / Qwen / DeepSeek / Mistral） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础模块</div>
+    <h1>基础 06：主流开源模型全景（Llama / Qwen / DeepSeek / Mistral）</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>2026 年模型选型速查表——谁强、谁便宜、谁能本地跑。</p></blockquote><hr>
+<h2>1. 国际开源</h2>
+<table><thead><tr><th>模型</th><th>参数量</th><th>特点</th><th>本地跑</th></tr></thead><tbody><tr><td>Llama 3.1</td><td>8B/70B/405B</td><td>Meta 标杆，生态好</td><td>8B Q4 可跑</td></tr><tr><td>Mistral</td><td>7B/22B</td><td>欧洲，推理快</td><td>7B 轻松</td></tr><tr><td>Gemma</td><td>2B/7B</td><td>Google 轻量</td><td>手机可试</td></tr><tr><td>Phi-3</td><td>3.8B</td><td>微软小钢炮</td><td>极轻量</td></tr></tbody></table>
+<hr>
+<h2>2. 国产开源/API</h2>
+<table><thead><tr><th>模型</th><th>特点</th><th>适合</th></tr></thead><tbody><tr><td>Qwen 2.5</td><td>阿里，多语言强，工具调用好</td><td>国内首选</td></tr><tr><td>DeepSeek V3/R1</td><td>性价比极高，推理强</td><td>API+本地</td></tr><tr><td>GLM-4</td><td>智谱，长上下文</td><td>企业</td></tr><tr><td>Yi</td><td>零一，中英好</td><td>通用</td></tr></tbody></table>
+<hr>
+<h2>3. 闭源 API</h2>
+<table><thead><tr><th></th><th>强项</th><th>价格感</th></tr></thead><tbody><tr><td>GPT-4o</td><td>全能、多模态</td><td>贵</td></tr><tr><td>Claude 3.5+</td><td>长文、代码、安全</td><td>中高</td></tr><tr><td>Gemini</td><td>多模态、长窗口</td><td>中</td></tr></tbody></table>
+<hr>
+<h2>4. 选型决策树</h2>
+<pre>需要最强能力？→ GPT-4o / Claude
+需要便宜+国内？→ DeepSeek / Qwen API
+需要本地离线？→ Qwen2.5-7B-Q4 / Llama-3.1-8B
+需要端侧 iOS？→ 0.5B~3B 量化 / Apple FM
+需要代码？→ DeepSeek Coder / GPT-4o</pre>
+<hr>
+<h2>5. 许可证注意</h2>
+<ul><li>Llama：超 7 亿月活需授权</li><li>Qwen/DeepSeek：相对宽松，商用前读 License</li><li>闭源 API：数据出境、备案合规</li></ul>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 07：iOS 端 AI 开发（Swift 接入大模型 + 端侧模型） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 07：iOS 端 AI 开发（Swift 接入大模型 + 端侧模型）</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：结合你的 iOS 开发主业，掌握 App 里接入 AI 的完整方案：<br />
+云端 API 接入、端侧模型集成（MLX Swift / llama.cpp）、SwiftUI AI 应用实战、App Store 合规。<br />
+<strong>这是 iOS 开发者转型 AI 的最短路径。</strong></p>
+</blockquote>
+<hr />
+<h2>1. iOS 接入 AI 的三条路线（先选方向）</h2>
+<table>
+<thead>
+<tr>
+<th>路线</th>
+<th>方案</th>
+<th>特点</th>
+<th>适合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A. 云端 API</strong></td>
+<td>接 DeepSeek/通义等 API</td>
+<td>模型强、实现快、要联网</td>
+<td>90% 的 App 场景</td>
+</tr>
+<tr>
+<td><strong>B. 端侧模型</strong></td>
+<td>模型打包进 App（llama.cpp / MLX）</td>
+<td>离线、隐私、免费，但模型小</td>
+<td>隐私敏感/离线场景</td>
+</tr>
+<tr>
+<td><strong>C. 系统能力</strong></td>
+<td>Apple FoundationModels（iOS 26+）</td>
+<td>苹果官方，未来趋势</td>
+<td>新系统适配</td>
+</tr>
+</tbody>
+</table>
+<p><strong>关联模块：</strong> 做 App 建议继续学 <a href="../iOS原生/01-Swift语言与UIKit基础.html">iOS 原生</a> 和 <a href="../iOS逆向/01-逆向基础与环境.html">iOS 逆向（安全审计）</a>。</p>
+<hr />
+<h2>2. 路线 A：Swift 调用云端大模型 API（最常用）</h2>
+<p><strong>核心：用 URLSession 发 HTTP 请求，和 Python 调 API 是一回事。</strong></p>
+<pre><code class="language-swift">//
+//  AIClient.swift
+//  云端大模型 API 封装（OpenAI 兼容格式，DeepSeek/通义/豆包通用）
+//
+
+import Foundation
+
+struct ChatMessage: Codable {
+    let role: String      // &quot;system&quot; / &quot;user&quot; / &quot;assistant&quot;
+    let content: String
+}
+
+struct ChatRequest: Codable {
+    let model: String
+    let messages: [ChatMessage]
+    let temperature: Double?
+    let stream: Bool?
+}
+
+struct ChatResponse: Codable {
+    struct Choice: Codable {
+        struct Message: Codable {
+            let content: String?
+        }
+        let message: Message
+    }
+    let choices: [Choice]
+}
+
+final class AIClient {
+    private let baseURL = &quot;https://api.deepseek.com/v1/chat/completions&quot;
+    private let apiKey = &quot;sk-你的key&quot;      // 注意：正式产品 Key 必须放服务端，App 里用&quot;临时令牌&quot;换取
+
+    func chat(messages: [ChatMessage], temperature: Double = 0.3) async throws -&gt; String {
+        var request = URLRequest(url: URL(string: baseURL)!)
+        request.httpMethod = &quot;POST&quot;
+        request.setValue(&quot;application/json&quot;, forHTTPHeaderField: &quot;Content-Type&quot;)
+        request.setValue(&quot;Bearer \(apiKey)&quot;, forHTTPHeaderField: &quot;Authorization&quot;)
+
+        let body = ChatRequest(
+            model: &quot;deepseek-chat&quot;,
+            messages: messages,
+            temperature: temperature,
+            stream: false
+        )
+        request.httpBody = try JSONEncoder().encode(body)
+
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let response = try JSONDecoder().decode(ChatResponse.self, from: data)
+        return response.choices.first?.message.content ?? &quot;&quot;
+    }
+}
+
+// 使用示例（SwiftUI 里）
+// let reply = try await AIClient().chat(messages: [
+//     .init(role: &quot;system&quot;, content: &quot;你是专业 iOS 工程师&quot;),
+//     .init(role: &quot;user&quot;, content: &quot;什么是 @MainActor？&quot;),
+// ])
+</code></pre>
+<p><strong>生产注意：</strong><br />
+1. <strong>API Key 绝不能写死在 App 里</strong>（反编译会被扒走盗刷）<br />
+2. 正确姿势：App 请求你的服务端 → 服务端带 Key 调大模型 → 返回结果<br />
+3. 或用大厂 App 专用方案（腾讯云/阿里云的"临时密钥"机制）</p>
+<h2>3. 路线 A 进阶：流式输出（打字机效果）</h2>
+<pre><code class="language-swift">// 流式接收：URLSession + async sequence
+func chatStream(messages: [ChatMessage]) -&gt; AsyncThrowingStream&lt;String, Error&gt; {
+    AsyncThrowingStream { continuation in
+        let task = Task {
+            var request = URLRequest(url: URL(string: baseURL)!)
+            request.httpMethod = &quot;POST&quot;
+            request.setValue(&quot;application/json&quot;, forHTTPHeaderField: &quot;Content-Type&quot;)
+            request.setValue(&quot;Bearer \(apiKey)&quot;, forHTTPHeaderField: &quot;Authorization&quot;)
+            let body = ChatRequest(model: &quot;deepseek-chat&quot;, messages: messages, temperature: 0.3, stream: true)
+            request.httpBody = try JSONEncoder().encode(body)
+
+            let (bytes, _) = try await URLSession.shared.bytes(for: request)
+            // 解析 SSE：data: {...}\n\n
+            var buffer = &quot;&quot;
+            for try await line in bytes.lines {
+                if line.hasPrefix(&quot;data: &quot;) {
+                    let payload = line.dropFirst(6)
+                    if payload == &quot;[DONE]&quot; { break }
+                    if let json = try? JSONSerialization.jsonObject(with: Data(payload)) as? [String: Any],
+                       let choices = json[&quot;choices&quot;] as? [[String: Any]],
+                       let delta = choices.first?[&quot;delta&quot;] as? [String: Any],
+                       let content = delta[&quot;content&quot;] as? String {
+                        continuation.yield(content)
+                    }
+                }
+            }
+            continuation.finish()
+        }
+        continuation.onTermination = { _ in task.cancel() }
+    }
+}
+
+// SwiftUI 中使用
+// .task {
+//     for try await text in ai.chatStream(messages: msgs) {
+//         reply += text
+//     }
+// }
+</code></pre>
+<h2>4. 路线 B：端侧模型（把模型装进 App）</h2>
+<p><strong>方案对比：</strong></p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>说明</th>
+<th>模型大小</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>llama.cpp iOS</strong></td>
+<td>C++ 引擎编译进 App，跑 GGUF</td>
+<td>0.5B~3B 合适</td>
+</tr>
+<tr>
+<td><strong>MLX Swift</strong></td>
+<td>苹果 MLX 的 Swift 版本</td>
+<td>需要 iOS 18+</td>
+</tr>
+<tr>
+<td><strong>Core ML + 转换</strong></td>
+<td>苹果原生，性能好但转换麻烦</td>
+<td>中小模型</td>
+</tr>
+<tr>
+<td><strong>Ollama 客户端</strong></td>
+<td>App 连电脑/服务器上的 Ollama</td>
+<td>不打包进 App</td>
+</tr>
+</tbody>
+</table>
+<p><strong>推荐路径（结合你的技术栈）：</strong><br />
+- 想要"离线的 App AI"：用 <strong>llama.cpp 的 iOS 工程</strong>（llama.cpp 官方有 iOS 示例，支持 Metal GPU 加速）<br />
+- 想要"原生 Swift 体验"：用 <strong>MLX Swift</strong>（苹果官方，Swift 原生 API）</p>
+<h3>llama.cpp 接入 iOS 的最小流程</h3>
+<pre><code>1. 把 llama.cpp 仓库作为依赖引入（支持 CocoaPods / SPM）
+2. 下载 GGUF 模型（如 Qwen2.5-0.5B-Instruct-Q4_K_M.gguf，400MB）
+3. 模型文件打进 App Bundle 或首次启动时下载
+4. 代码：
+</code></pre>
+<pre><code class="language-swift">import llama // 或 llms
+
+// 初始化模型
+let modelPath = Bundle.main.path(forResource: &quot;qwen2.5-0.5b-q4&quot;, ofType: &quot;gguf&quot;)!
+llama_backend_init()
+let ctx = llama_init_from_file(modelPath, 512)
+
+// 组装提示词（llama.cpp 按 token 处理）
+let prompt = &quot;USER: 你好\nASSISTANT:&quot;
+
+// 生成（逐 token 采样）
+// for i in 0..&lt;maxTokens {
+//     让模型预测下一个 token → 解码成文字 → append 到输出
+// }
+
+llama_backend_free()
+</code></pre>
+<blockquote>
+<p>说明：llama.cpp 的 Swift 调用封装较底层（涉及 C 指针），建议直接用官方 iOS 示例工程改造，或者用现成封装库（如 <code>llama-swift</code>、<code>GGMLSwift</code>）。核心思路和你之前分析的 ITPhone 的 LocalLLMClient 一致：<code>llama.cpp 引擎 + 动态加载 + 逐 token 生成 + 流式回调到 UI</code>。</p>
+</blockquote>
+<h3>MLX Swift 示例（苹果官方，更 Swift 化）</h3>
+<pre><code class="language-swift">import MLX
+import MLXLMCommon
+import MLXLLM
+
+// 加载模型（MLX 格式）
+let config = ModelConfiguration.quant0_5B  // 预置的 Qwen 配置
+let container = try await LLMModelFactory.shared.loadContainer(configuration: config)
+
+// 生成回答
+let messages = [UserMessage(content: &quot;用一句话解释什么是大模型&quot;)]
+let output = try await container.perform { context in
+    try MLXLMCommon.generate(messages: messages, parameters: GenerateParameters(), context: context)
+}
+print(output)
+</code></pre>
+<h2>5. 路线 C：Apple FoundationModels（iOS 26+ 白嫖苹果模型）</h2>
+<p><strong>大白话：苹果系统内置了 AI 能力，你的 App 直接调用，不需要自己部署模型。</strong></p>
+<pre><code class="language-swift">// iOS 26+ 可用（你之前分析的 ITPhone 就用它做最高级）
+import FoundationModels
+
+let session = LLMSession(model: .init(configuration: .builtIn))  // 苹果内置模型
+let response = try await session.complete(&quot;写一首关于秋天的诗&quot;)
+</code></pre>
+<p><strong>适合</strong>：新系统适配 + 苹果生态独占功能。注意：最低系统版本要求高，老用户会走其他降级方案。</p>
+<h2>6. SwiftUI AI 应用实战（聊天界面完整代码）</h2>
+<pre><code class="language-swift">//
+//  ChatView.swift —— 完整可运行的 AI 聊天页
+//
+import SwiftUI
+
+struct ChatView: View {
+    @State private var messages: [ChatMessage] = [
+        .init(role: &quot;system&quot;, content: &quot;你是友好专业的 AI 助手&quot;)
+    ]
+    @State private var input = &quot;&quot;
+    @State private var isThinking = false
+    private let ai = AIClient()
+
+    var body: some View {
+        VStack {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    ForEach(Array(messages.enumerated()), id: \.offset) { _, msg in
+                        if msg.role != &quot;system&quot; {
+                            BubbleView(msg: msg)
+                                .id(msg.id)
+                        }
+                    }
+                    if isThinking {
+                        HStack { ProgressView(); Text(&quot;思考中...&quot;) }
+                    }
+                }
+                .onChange(of: messages.count) { _ in
+                    withAnimation { proxy.scrollTo(messages.count - 1, anchor: .bottom) }
+                }
+            }
+
+            HStack {
+                TextField(&quot;输入消息...&quot;, text: $input, axis: .vertical)
+                    .textFieldStyle(.roundedBorder)
+                Button {
+                    Task { await send() }
+                } label: {
+                    Image(systemName: &quot;arrow.up.circle.fill&quot;).font(.title2)
+                }
+                .disabled(input.isEmpty || isThinking)
+            }
+            .padding()
+        }
+    }
+
+    func send() async {
+        let text = input
+        input = &quot;&quot;
+        messages.append(.init(role: &quot;user&quot;, content: text))
+        isThinking = true
+        do {
+            let reply = try await ai.chat(messages: messages)
+            messages.append(.init(role: &quot;assistant&quot;, content: reply))
+        } catch {
+            messages.append(.init(role: &quot;assistant&quot;, content: &quot;出错了：\(error.localizedDescription)&quot;))
+        }
+        isThinking = false
+    }
+}
+
+struct BubbleView: View {
+    let msg: ChatMessage
+    var body: some View {
+        HStack {
+            if msg.role == &quot;user&quot; { Spacer() }
+            Text(msg.content)
+                .padding(12)
+                .background(msg.role == &quot;user&quot; ? Color.blue.opacity(0.8) : Color.gray.opacity(0.2))
+                .foregroundStyle(msg.role == &quot;user&quot; ? .white : .primary)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            if msg.role == &quot;assistant&quot; { Spacer() }
+        }
+        .padding(.horizontal)
+    }
+}
+</code></pre>
+<h2>7. iOS AI 功能清单（工作中最常见的需求）</h2>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>实现要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI 聊天</td>
+<td>路线 A + 流式输出</td>
+</tr>
+<tr>
+<td>智能客服</td>
+<td>RAG + 知识库（服务端做）</td>
+</tr>
+<tr>
+<td>内容总结</td>
+<td>API 调用 + 结果展示</td>
+</tr>
+<tr>
+<td>语音助手</td>
+<td>语音识别（系统 Speech）+ LLM + TTS</td>
+</tr>
+<tr>
+<td>图片理解</td>
+<td>多模态 API（GPT-4o / Qwen-VL）</td>
+</tr>
+<tr>
+<td>离线翻译</td>
+<td>端侧小模型（路线 B）</td>
+</tr>
+<tr>
+<td>本地知识库</td>
+<td>端侧 Embedding + 向量检索（App 内）</td>
+</tr>
+<tr>
+<td>AI 写作助手</td>
+<td>API + 模板化 Prompt</td>
+</tr>
+</tbody>
+</table>
+<h2>8. App Store 上架与合规（AI App 必踩的坑）</h2>
+<table>
+<thead>
+<tr>
+<th>风险点</th>
+<th>说明</th>
+<th>对策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>内容审核</strong></td>
+<td>生成内容涉黄/涉政会被下架</td>
+<td>接内容安全 API + 用户举报机制</td>
+</tr>
+<tr>
+<td><strong>隐私清单</strong></td>
+<td>Apple 要求声明数据用途</td>
+<td>PrivacyInfo.xcprivacy 写清楚</td>
+</tr>
+<tr>
+<td><strong>数据上传</strong></td>
+<td>用户对话内容出网</td>
+<td>隐私政策明示 + 首次弹窗授权</td>
+</tr>
+<tr>
+<td><strong>ATT 追踪</strong></td>
+<td>用 IDFA 追踪需授权</td>
+<td>一般 AI App 别用 IDFA</td>
+</tr>
+<tr>
+<td><strong>"隐藏功能"判定</strong></td>
+<td>审核发现隐藏的 AI 功能可能被拒</td>
+<td>功能提前声明，别藏</td>
+</tr>
+<tr>
+<td><strong>内购合规</strong></td>
+<td>AI 功能收费走 IAP</td>
+<td>虚拟服务必须走苹果内购</td>
+</tr>
+<tr>
+<td><strong>App 审核问答</strong></td>
+<td>审核员会实测 AI 功能</td>
+<td>准备安全兜底回答，敏感问题拒绝回答</td>
+</tr>
+</tbody>
+</table>
+<p><strong>重点提醒（结合你之前的白包分析）：</strong><br />
+- 国内广告 SDK（穿山甲/广点通）+ 远端下发逻辑，在 App Store 有"隐藏功能"判定风险<br />
+- AI 生成内容功能在国内上架必须过<strong>生成式 AI 备案</strong>（网信办），个人开发者注意<br />
+- 儿童类 App 接广告限制更严，AI 内容也要符合儿童保护要求</p>
+<h2>9. iOS AI 开发学习路径（结合你的基础）</h2>
+<pre><code>第 1 步：API 调通（本教程第 2 节代码）→ 会发请求、会解析
+第 2 步：流式输出（第 3 节）→ 打字机效果
+第 3 步：SwiftUI 聊天界面（第 6 节）→ 完整可运行 App
+第 4 步：服务端代理（Key 放服务端）+ RAG 知识库
+第 5 步：端侧模型（llama.cpp / MLX Swift）→ 离线能力
+第 6 步：上架合规（第 8 节）→ 过审
+</code></pre>
+<p><strong>对你的特别优势</strong>：你有原生 iOS 功底，补上"API 对接 + Prompt + RAG"就是完整的 AI 应用工程师。市场上最缺的就是"懂原生 + 懂 AI 落地"的人。</p>
+<hr />
+<h2>小结</h2>
+<ol>
+<li><strong>三条路线</strong>：云端 API（主流）/ 端侧模型（离线隐私）/ 系统能力（新系统）</li>
+<li><strong>Key 安全</strong>：永远放服务端，App 不存密钥</li>
+<li><strong>流式输出是体验底线</strong>：URLSession + SSE 解析</li>
+<li><strong>端侧方案</strong>：llama.cpp（C 底层，稳）/ MLX Swift（苹果原生，新）</li>
+<li><strong>合规是生死线</strong>：内容审核、隐私清单、生成式 AI 备案</li>
+</ol>
+<hr />
+<p><strong>下一步：</strong> 去 <a href="../练习/04-工作实战项目.html">练习/04-工作实战项目.html</a> 做企业级项目，把这些技能串起来。<br />
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

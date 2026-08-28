@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../_assets/site.css">
+<title>01-布局与页面 - Flutter 学习模块</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; Flutter 模块 &nbsp;/&nbsp; 中级进阶</div>
+    <h1>01-布局与页面</h1>
+    <span class="header-tag">中级进阶</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<h1>01-布局与页面</h1>
+<blockquote>
+<p>大白话版 · 常用布局组件与页面搭建（小白向）<br>
+目标：学会用 Container / Row / Column / Stack / Expanded / Flex / ListView / GridView 搭出各种页面，并理解"布局套路"。</p>
+</blockquote>
+<hr>
+<h2>一、先讲"是什么"：布局到底在布什么？</h2>
+<p><strong>一句话版本：布局 = 决定"每个零件放在屏幕的哪个位置、占多大地方"。</strong></p>
+<p>打个比方：</p>
+<blockquote>
+<p>你要布置一个客厅（屏幕）：<br>
+- <strong>Row</strong> = 沙发、茶几、电视柜在<strong>一排</strong>摆开（水平排列）<br>
+- <strong>Column</strong> = 书架从上到下<strong>一列</strong>摆（垂直排列）<br>
+- <strong>Stack</strong> = 装饰画<strong>叠在</strong>墙纸上面（层叠）<br>
+- <strong>Container</strong> = 一个能调大小、颜色、圆角的"收纳盒"（万能容器）<br>
+- <strong>Expanded</strong> = 告诉某个家具"剩下的空间都给你"（弹性分配）</p>
+<p>布局组件就是这些"摆放规则"，让你不用像原生那样一个个算坐标，而是用"声明式"的语言说清楚怎么摆。</p>
+</blockquote>
+<h3>布局思维的关键转变（对 iOS 工程师特别重要）</h3>
+<ul>
+<li>iOS 原生：用 Auto Layout 约束（leading/trailing/top/bottom/width/height）描述相对关系。</li>
+<li>Flutter：用"布局组件嵌套"描述结构。<strong>你不再想"这个控件离左边 16pt"，而是想"这个控件外面包一层 Padding，左边 16"</strong>。</li>
+</ul>
+<hr>
+<h2>二、再讲"为什么"：为什么 Flutter 要用组件嵌套来布局？</h2>
+<ol>
+<li><strong>代码即结构</strong>：看代码就能脑补出页面长啥样，不用切 Storyboard。</li>
+<li><strong>组合自由</strong>：Row 套 Column、Column 套 Row、任意嵌套，能摆出任何复杂页面。</li>
+<li><strong>无需计算坐标</strong>：不用手动算 frame，组件自己会根据"父容器的约束"决定大小。</li>
+<li><strong>跨平台一致</strong>：布局逻辑一套，iOS/Android 渲染结果一样。</li>
+</ol>
+<hr>
+<h2>三、怎么用：逐个击破常用布局组件</h2>
+<h3>3.1 Container（万能收纳盒）</h3>
+<p><code>Container</code> 是 Flutter 里最常用的"万能盒子"，可以设置：大小、背景色、圆角、边框、内边距、外边距、对齐方式。</p>
+<pre class="codehilite"><code class="language-dart">Container(
+  width: 200,                    // 宽
+  height: 100,                   // 高
+  margin: const EdgeInsets.all(16),     // 外边距（盒子外留白）
+  padding: const EdgeInsets.all(8),     // 内边距（盒子内留白）
+  decoration: BoxDecoration(            // 装饰：颜色、圆角、边框、阴影
+    color: Colors.blue,                 // 背景色
+    borderRadius: BorderRadius.circular(12),  // 圆角
+    boxShadow: const [                  // 阴影
+      BoxShadow(color: Colors.grey, blurRadius: 8),
+    ],
+  ),
+  alignment: Alignment.center,   // 内部内容居中
+  child: const Text('我是收纳盒里的内容'),
+)
+</code></pre>
+
+<blockquote>
+<p>对 iOS 工程师：<code>Container</code> ≈ 一个可设置背景色、圆角、阴影的 <code>UIView</code>，<code>padding</code> ≈ <code>layoutMargins</code>，<code>margin</code> ≈ 约束间距。</p>
+</blockquote>
+<h3>3.2 Row 与 Column（一横一竖两兄弟）</h3>
+<ul>
+<li><code>Row</code>：子组件<strong>水平</strong>排列（像横向 UIStackView）</li>
+<li><code>Column</code>：子组件<strong>垂直</strong>排列（像纵向 UIStackView）</li>
+</ul>
+<pre class="codehilite"><code class="language-dart">// 水平排列：头像 + 名字 + 年龄
+Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,  // 主轴（水平）方向分配方式
+  crossAxisAlignment: CrossAxisAlignment.center,      // 交叉轴（垂直）方向对齐
+  children: [
+    Icon(Icons.account_circle, size: 40),
+    const Text('小明'),
+    const Text('18岁'),
+  ],
+),
+
+// 垂直排列：标题 + 内容 + 按钮
+Column(
+  mainAxisAlignment: MainAxisAlignment.center,  // 主轴（垂直）居中
+  crossAxisAlignment: CrossAxisAlignment.start, // 交叉轴（水平）靠左
+  children: [
+    const Text('标题', style: TextStyle(fontSize: 20)),
+    const SizedBox(height: 8),   // 间距
+    const Text('内容描述...'),
+    const SizedBox(height: 16),
+    ElevatedButton(onPressed: () {}, child: const Text('按钮')),
+  ],
+),
+</code></pre>
+
+<p><strong>MainAxisAlignment 常用值（大白话）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>效果</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>start</code></td>
+<td>从开头排</td>
+<td>都靠左（Column）</td>
+</tr>
+<tr>
+<td><code>center</code></td>
+<td>居中排</td>
+<td>都居中</td>
+</tr>
+<tr>
+<td><code>end</code></td>
+<td>从结尾排</td>
+<td>都靠右</td>
+</tr>
+<tr>
+<td><code>spaceBetween</code></td>
+<td>两端贴边，中间均匀分布</td>
+<td>字与字拉开</td>
+</tr>
+<tr>
+<td><code>spaceEvenly</code></td>
+<td>每个间距相等</td>
+<td>均匀铺开</td>
+</tr>
+</tbody>
+</table>
+<h3>3.3 Expanded 与 Flex（弹性空间分配）</h3>
+<p><code>Expanded</code> 是布局的灵魂：它让子组件<strong>瓜分父容器剩余的空间</strong>。</p>
+<pre class="codehilite"><code class="language-dart">// 三块横条：中间那块占 2 份，两边各 1 份
+Row(
+  children: [
+    Expanded(
+      flex: 1,   // 占 1 份
+      child: Container(color: Colors.red, height: 100),
+    ),
+    Expanded(
+      flex: 2,   // 占 2 份（是别人的两倍宽）
+      child: Container(color: Colors.green, height: 100),
+    ),
+    Expanded(
+      flex: 1,
+      child: Container(color: Colors.blue, height: 100),
+    ),
+  ],
+)
+// 结果：红:绿:蓝 = 1:2:1 的宽度比例
+</code></pre>
+
+<blockquote>
+<p>对 iOS 工程师：<code>Expanded(flex: n)</code> ≈ 自动布局里的等宽约束 / 分布比例（类似 <code>UIStackView</code> 的 <code>distribution: .fillEqually</code> 但可以自定义权重）。</p>
+</blockquote>
+<p><strong>Flex 是什么？</strong> Row 和 Column 都是 <code>Flex</code> 的子类。<code>Flex</code> 是"通用弹性布局"，<code>Flex(direction: Axis.horizontal)</code> 就等于 Row，<code>Flex(direction: Axis.vertical)</code> 就等于 Column。一般直接用 Row/Column 就行，Flex 了解即可。</p>
+<h3>3.4 Stack（层叠布局）</h3>
+<p><code>Stack</code> 让子组件<strong>叠在一起</strong>，后面的盖在前面的上面。配合 <code>Positioned</code> 可以精确定位。</p>
+<pre class="codehilite"><code class="language-dart">// 在背景图上叠一个&quot;返回按钮&quot;和&quot;底部标题&quot;
+Stack(
+  children: [
+    // 第一层：背景图
+    Container(
+      width: 300, height: 200,
+      color: Colors.grey,
+    ),
+    // 第二层：左上角返回按钮（Positioned 精确定位）
+    const Positioned(
+      left: 10, top: 10,
+      child: Icon(Icons.arrow_back, color: Colors.white),
+    ),
+    // 第三层：底部居中标题
+    const Positioned(
+      left: 0, right: 0, bottom: 10,
+      child: Text('叠在底部的标题', textAlign: TextAlign.center),
+    ),
+  ],
+)
+</code></pre>
+
+<blockquote>
+<p>对 iOS 工程师：<code>Stack</code> ≈ 在同一个父 view 上叠放多个子 view（用 frame 定位），<code>Positioned</code> ≈ 设置 frame 的偏移。</p>
+</blockquote>
+<h3>3.5 ListView（滚动列表，≈ UITableView）</h3>
+<p>列表是 App 里最常见的组件。ListView 有两种玩法：</p>
+<pre class="codehilite"><code class="language-dart">// 玩法一：少量固定条目（简单直接）
+ListView(
+  children: [
+    ListTile(leading: Icon(Icons.star), title: Text('条目 1')),
+    ListTile(leading: Icon(Icons.star), title: Text('条目 2')),
+    ListTile(leading: Icon(Icons.star), title: Text('条目 3')),
+  ],
+),
+
+// 玩法二：大量数据（用 builder 按需生成，性能好，≈ cellForRowAt）
+ListView.builder(
+  itemCount: 100,                    // 一共 100 条
+  itemBuilder: (context, index) {    // 每条怎么画
+    return ListTile(
+      leading: const Icon(Icons.list),
+      title: Text('第 $index 条数据'),
+    );
+  },
+),
+</code></pre>
+
+<blockquote>
+<p>对 iOS 工程师：<code>ListView.builder</code> 的 <code>itemBuilder</code> ≈ <code>cellForRowAt</code> 代理方法，都是"按需创建 cell"，性能思路完全一样。</p>
+</blockquote>
+<h3>3.6 GridView（网格布局，≈ UICollectionView）</h3>
+<pre class="codehilite"><code class="language-dart">// 三列网格：图片墙、商品列表都可以用它
+GridView.count(
+  crossAxisCount: 3,                  // 每行 3 列
+  mainAxisSpacing: 8,                 // 行间距
+  crossAxisSpacing: 8,                // 列间距
+  children: List.generate(9, (index) {
+    return Container(
+      color: Colors.primaries[index % Colors.primaries.length],
+      child: Center(child: Text('$index')),
+    );
+  }),
+),
+</code></pre>
+
+<blockquote>
+<p>对 iOS 工程师：<code>GridView.count(crossAxisCount: 3)</code> ≈ 三列的 UICollectionView 流水布局。</p>
+</blockquote>
+<hr>
+<h2>四、布局套路（面试常考 + 实战必用）</h2>
+<h3>套路 1：居中显示 → Center 包一层</h3>
+<pre class="codehilite"><code class="language-dart">Center(child: Text('居中文字'))
+</code></pre>
+
+<h3>套路 2：卡片列表 → Column 套 Card</h3>
+<pre class="codehilite"><code class="language-dart">Column(
+  children: [
+    Card(child: ListTile(title: Text('第一张卡片'))),
+    Card(child: ListTile(title: Text('第二张卡片'))),
+  ],
+)
+</code></pre>
+
+<h3>套路 3：头部 + 内容 + 底部按钮 → Column + Expanded</h3>
+<pre class="codehilite"><code class="language-dart">Column(
+  children: [
+    const Text('顶部标题'),          // 固定
+    Expanded(child: ListView(...)),  // 中间内容占满剩余空间并可滚动
+    ElevatedButton(onPressed: () {}, child: const Text('底部按钮')),  // 固定
+  ],
+)
+</code></pre>
+
+<h3>套路 4：头像 + 信息 + 按钮 → Row + Expanded</h3>
+<pre class="codehilite"><code class="language-dart">Row(
+  children: [
+    const CircleAvatar(child: Icon(Icons.person)),  // 头像
+    const SizedBox(width: 12),
+    const Expanded(child: Text('姓名和描述信息，超出会自动换行...')),
+    ElevatedButton(onPressed: () {}, child: const Text('关注')),
+  ],
+)
+</code></pre>
+
+<h3>响应式（适配不同屏幕）</h3>
+<p><strong>大白话</strong>：同一个页面，在 iPhone 14 和 iPad 上都能好看地显示，就叫响应式。</p>
+<p>简单做法：<br>
+1. 多用 <code>Expanded</code> / <code>Flexible</code> 弹性布局，别写死宽度。<br>
+2. 用 <code>MediaQuery</code> 获取屏幕尺寸，大屏换布局。</p>
+<pre class="codehilite"><code class="language-dart">// 获取屏幕宽度（相当于 UIScreen.main.bounds.width）
+double screenWidth = MediaQuery.of(context).size.width;
+
+// 大屏（&gt;600 宽，比如 iPad）显示两列，小屏显示一列
+GridView.count(
+  crossAxisCount: screenWidth &gt; 600 ? 2 : 1,
+  children: [...],
+)
+</code></pre>
+
+<hr>
+<h2>五、iOS 开发者视角（老司机对照表）</h2>
+<table>
+<thead>
+<tr>
+<th>iOS 原生</th>
+<th>Flutter</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UIView + Auto Layout 约束</td>
+<td>Container / Padding / Center</td>
+<td>万能容器 + 间距 + 居中</td>
+</tr>
+<tr>
+<td>UIStackView(.horizontal)</td>
+<td>Row</td>
+<td>水平排列</td>
+</tr>
+<tr>
+<td>UIStackView(.vertical)</td>
+<td>Column</td>
+<td>垂直排列</td>
+</tr>
+<tr>
+<td>等宽约束 / fillEqually</td>
+<td>Expanded(flex: n)</td>
+<td>弹性分配空间</td>
+</tr>
+<tr>
+<td>子 view 叠放 + frame</td>
+<td>Stack + Positioned</td>
+<td>层叠定位</td>
+</tr>
+<tr>
+<td>UITableView</td>
+<td>ListView / ListView.builder</td>
+<td>滚动列表</td>
+</tr>
+<tr>
+<td>UICollectionView</td>
+<td>GridView</td>
+<td>网格布局</td>
+</tr>
+<tr>
+<td>UIScreen.bounds</td>
+<td>MediaQuery.of(context).size</td>
+<td>屏幕尺寸</td>
+</tr>
+<tr>
+<td>UIEdgeInsets</td>
+<td>EdgeInsets</td>
+<td>内边距</td>
+</tr>
+<tr>
+<td>Storyboard 约束优先级</td>
+<td>Expanded flex</td>
+<td>空间权重</td>
+</tr>
+</tbody>
+</table>
+<p><strong>给 iOS 工程师的真心话：</strong><br>
+你最大的"坑"是习惯用约束精确控制位置，而 Flutter 更强调"结构决定布局"。多写几个页面后你会发现，Flutter 的布局代码比 Auto Layout 直观得多——因为你看代码就知道结构，而不是去解一坨约束方程组。</p>
+<hr>
+<h2>六、小节小结</h2>
+<ol>
+<li>布局 = 用组件嵌套描述"零件放哪、占多大"。</li>
+<li><code>Container</code> 是万能盒子（颜色/圆角/边距/阴影）。</li>
+<li><code>Row</code> 横排、<code>Column</code> 竖排、<code>Stack</code> 层叠，是三大布局基石。</li>
+<li><code>Expanded</code> 弹性分配空间，解决"剩余空间给谁"的问题。</li>
+<li><code>ListView</code> 做列表、<code>GridView</code> 做网格，都是按需生成的性能王者。</li>
+<li>响应式核心：弹性布局 + <code>MediaQuery</code> 判断屏幕宽度。</li>
+</ol>
+<hr>
+<h2>七、本节动手练习（含答案提示）</h2>
+<p><strong>练习 1：三选一</strong></p>
+<blockquote>
+<p>想实现"三个按钮等宽横排"，应该用哪个组件组合？写出核心代码。</p>
+<p>✅ 答案提示：<code>Row</code> + 三个 <code>Expanded</code> 各包一个按钮：<br>
+<code>dart
+Row(children: [
+  Expanded(child: ElevatedButton(...)),
+  SizedBox(width: 8),
+  Expanded(child: ElevatedButton(...)),
+  SizedBox(width: 8),
+  Expanded(child: ElevatedButton(...)),
+])</code></p>
+</blockquote>
+<p><strong>练习 2：实现头像+文字+按钮</strong></p>
+<blockquote>
+<p>实现一个"左侧圆形头像、中间姓名文字（可换行）、右侧关注按钮"的行布局。</p>
+<p>✅ 答案提示：<code>Row</code> + <code>CircleAvatar</code> + <code>Expanded(Text)</code> + <code>ElevatedButton</code>（见"套路 4"）。</p>
+</blockquote>
+<p><strong>练习 3：理解 Expanded</strong></p>
+<blockquote>
+<p>一个 Row 里有两个 Expanded，flex 分别为 1 和 3，总宽 400，两个容器各多宽？</p>
+<p>✅ 答案提示：总份数 1+3=4，每份 400/4=100。第一个 1×100=100，第二个 3×100=300。</p>
+</blockquote>
+<p><strong>练习 4：列表优化</strong></p>
+<blockquote>
+<p>有 10000 条数据要展示，应该用 <code>ListView(children: [...])</code> 还是 <code>ListView.builder</code>？为什么？</p>
+<p>✅ 答案提示：用 <code>ListView.builder</code>。它是按需生成（懒加载），只有滚动到可见区域才创建条目，性能好；直接传 10000 个 children 会一次性全部创建，卡顿甚至崩溃。</p>
+</blockquote>
+<p><strong>练习 5：响应式判断</strong></p>
+<blockquote>
+<p>在 iPad 上（宽 1024）希望一行显示 4 个商品，在 iPhone 上（宽 390）一行显示 2 个，怎么写？</p>
+<p>✅ 答案提示：<br>
+<code>dart
+double w = MediaQuery.of(context).size.width;
+GridView.count(crossAxisCount: w &gt; 600 ? 4 : 2, ...);</code></p>
+</blockquote>
+<hr>
+<h2>下一步</h2>
+<p>布局已经上手，接下来解决一个进阶问题：页面里的"数据状态"怎么管理？</p>
+<p>👉 下一篇：<a href="02-状态管理.html">02-状态管理.html</a></p>
+<blockquote>
+<p><em>内容由 AI 生成，仅供参考。</em></p>
+</blockquote>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程 · Flutter 学习模块</p>
+</div>
+<script src="../../_assets/site.js" defer></script>
+<script src="../../_assets/playground.js" defer></script>
+</body>
+</html>

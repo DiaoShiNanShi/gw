@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 02：参数与参数量 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础模块</div>
+    <h1>基础 02：参数与参数量</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote>
+<p>学习目标：搞懂"一个参数到底是什么""参数量是怎么回事""参数量影响智商吗"。<br />
+这三个问题是大模型一切知识的根基。</p>
+</blockquote>
+<hr />
+<h2>1. 一个参数，到底是什么？</h2>
+<p><strong>一个参数，本质上就是一个数字。</strong></p>
+<p>就这么简单。但关键是这个数字代表什么——它代表<strong>两个神经元之间"连接"的强度</strong>。</p>
+<p>打个比方：想象你大脑里有两个神经元，一个负责"看"，一个负责"说"。它们之间有一根神经连接，这根连接"粗"还是"细"，决定了信号传过去的强弱。<strong>这个"粗细程度"，就是一个参数。</strong></p>
+<p>用电脑的话说：</p>
+<pre><code>参数 = 一个浮点数，比如 0.3721 或者 -1.8654
+权重（Weight）= 参数的同义词，更强调它&quot;加权&quot;的作用
+</code></pre>
+<blockquote>
+<p><strong>示例</strong><br />
+假设一个迷你模型只有 2 个参数：<br />
+<code>参数1 = 0.9   （"看到'你'字，往'好'字方向走 0.9 的力"）
+参数2 = -0.4  （"看到'电'字，往'饭'字方向压 0.4 的力"）</code><br />
+整个模型就是一堆这样的小数字。模型"思考"的过程，就是这些数字不断参与计算的过程。</p>
+</blockquote>
+<h2>2. 参数量是怎么回事？</h2>
+<p><strong>参数量 = 这张"连接强度表"里有多少个数字。</strong></p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>参数量</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Qwen2.5-0.5B</td>
+<td>5 亿</td>
+<td>微型大脑，手机能跑</td>
+</tr>
+<tr>
+<td>Qwen2.5-1.5B</td>
+<td>15 亿</td>
+<td>小型大脑</td>
+</tr>
+<tr>
+<td>Llama 3.1-8B</td>
+<td>80 亿</td>
+<td>中型大脑，家用电脑能跑</td>
+</tr>
+<tr>
+<td>Llama 3.1-70B</td>
+<td>700 亿</td>
+<td>大型大脑，需要专业显卡</td>
+</tr>
+<tr>
+<td>GPT-4 级别</td>
+<td>约 1.8 万亿</td>
+<td>巨型大脑，需要整个数据中心</td>
+</tr>
+</tbody>
+</table>
+<p>把参数想象成<strong>肌肉纤维</strong>：<br />
+- 参数少 = 小婴儿的肌肉：力气小，但好养活<br />
+- 参数多 = 健身教练的肌肉：力气大，但每天要吃 6 顿饭（烧钱烧电）</p>
+<blockquote>
+<p><strong>示例（怎么算模型文件多大）</strong><br />
+5 亿参数，每个数字量化后占 0.5 字节（Q4 量化）：<br />
+5 亿 × 0.5 字节 ≈ 250MB ~ 400MB（加词表等杂项）<br />
+所以你下载的 400MB 模型文件，里面装的就是 5 亿个小数字。</p>
+</blockquote>
+<h2>3. 参数量影响智商吗？</h2>
+<p><strong>影响，但不是唯一因素，甚至不是决定因素。</strong></p>
+<p>参数 = 大脑的"容量上限"，但智商还取决于：</p>
+<table>
+<thead>
+<tr>
+<th>因素</th>
+<th>比喻</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>参数量</td>
+<td>大脑容量</td>
+<td>容量大，能装更多知识、处理更复杂的关系</td>
+</tr>
+<tr>
+<td>训练数据量</td>
+<td>读了多少书</td>
+<td>模型是"喂"出来的，喂垃圾出来就是傻子</td>
+</tr>
+<tr>
+<td>训练质量</td>
+<td>请了多好的老师</td>
+<td>同样的书，教法不同效果天差地别</td>
+</tr>
+<tr>
+<td>架构设计</td>
+<td>大脑结构好不好</td>
+<td>结构（如注意力机制）决定参数利用率</td>
+</tr>
+</tbody>
+</table>
+<p><strong>准确说法：参数量决定"上限"，不保证"达到上限"。</strong></p>
+<blockquote>
+<p><strong>示例</strong><br />
+0.5B 模型（5 亿参数）能流畅聊天、答简单问题；<br />
+但让它做高中数学题、写复杂代码，它就露馅了——<br />
+不是它不努力，是它 5 亿个数字能承载的"复杂度"就这么多，<br />
+这是物理上限。就像让小学生做高数，换多好的老师也没用。</p>
+</blockquote>
+<h2>4. 参数是怎么"长"出来的？（训练的作用）</h2>
+<p>参数不是设计者手动写的，是<strong>训练过程中自动调整出来的</strong>：</p>
+<pre><code>初始状态：5 亿个随机数字（一个&quot;什么都不会&quot;的脑子）
+    ↓ 喂海量文字，猜下一个字
+    ↓ 猜错了 → 微调所有数字（反向传播，见中级 02）
+    ↓ 反复几十万次……
+最终状态：5 亿个&quot;学会接话&quot;的数字（这就是你下载的模型文件）
+</code></pre>
+<blockquote>
+<p><strong>示例</strong><br />
+训练开始时，模型参数是随机的，猜"中国的首都是？"后面接什么：<br />
+<code>第 1 轮：接"的"？  ×（错）→ 参数微调
+第 100 轮：接"北京"的概率 30% → 继续调
+第 10000 轮：接"北京"的概率 95% → 学得不错</code><br />
+参数从"乱猜"到"会猜"，全靠一次次猜错后的小幅调整。</p>
+</blockquote>
+<h2>5. 为什么说"参数多 = 贵"？</h2>
+<p>跑大模型有三笔开销，全跟参数挂钩：</p>
+<table>
+<thead>
+<tr>
+<th>开销</th>
+<th>原因</th>
+<th>大白话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内存/显存</td>
+<td>参数必须整个装进内存才能算</td>
+<td>5 亿参数 ≈ 400MB+ 内存，80 亿参数 ≈ 5GB+ 内存</td>
+</tr>
+<tr>
+<td>推理速度</td>
+<td>每生成一个字，要把所有参数读一遍</td>
+<td>参数越多，每字越慢</td>
+</tr>
+<tr>
+<td>训练成本</td>
+<td>训练时所有参数都要反复调整</td>
+<td>参数越多，训练越烧钱</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>示例</strong><br />
+你的 Mac（16GB 内存）：<br />
+- 跑 7B 模型（量化后约 4.5GB）→ 没问题，流畅<br />
+- 跑 70B 模型（量化后约 40GB）→ 内存直接爆掉，跑不起来<br />
+这就是为什么"选择多大模型"要看自己电脑配置。</p>
+</blockquote>
+<hr />
+<h2>小结</h2>
+<ol>
+<li><strong>参数 = 一个数字</strong>，代表神经元连接的强弱</li>
+<li><strong>参数量 = 数字的个数</strong>，决定大脑容量上限</li>
+<li><strong>智商 = 参数 + 数据 + 训练 + 架构</strong>，参数只是其一</li>
+<li><strong>参数要装进内存</strong> → 参数越多越吃内存、越贵</li>
+</ol>
+<hr />
+<p><strong>下一步：</strong> 进入中级模块，学 <a href="../中级/01-推理原理.html">中级/01-推理原理.html</a> ——大模型到底怎么运行。<br />
+<em>（内容由AI生成，仅供参考）</em></p>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 大模型学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body>
+</html>

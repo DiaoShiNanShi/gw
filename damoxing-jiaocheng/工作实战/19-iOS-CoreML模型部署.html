@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 19：iOS Core ML 模型部署专章 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 19：iOS Core ML 模型部署专章</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>企业级实战章节。</p></blockquote><hr>
+<h2>1. Core ML 是什么</h2>
+<p>苹果官方端侧推理框架，自动用 CPU/GPU/ANE（神经引擎）。</p>
+<hr>
+<h2>2. 转换流程</h2>
+<pre>PyTorch/ONNX → coremltools → .mlpackage → 拖进 Xcode → Swift 调用</pre>
+<hr>
+<h2>3. Swift 调用</h2>
+<pre><code class="language-swift">import CoreML
+let model = try MyClassifier(configuration: MLModelConfiguration())
+let input = MyClassifierInput(text: "hello")
+let output = try await model.prediction(input: input)</code></pre>
+<hr>
+<h2>4. LLM 注意</h2>
+<p>Core ML 更适合分类/检测小模型。大 LLM 目前 llama.cpp/MLX 更成熟；Apple Foundation Models 是 iOS 26+ 新选项。</p>
+<hr>
+<h2>5. ANE 优化</h2>
+<ul><li>模型算子要 ANE 支持</li><li>固定输入 shape 更好</li><li>Instruments 看 ANE 利用率</li></ul>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

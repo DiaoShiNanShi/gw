@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>工作实战 15：语义缓存与成本优化实战 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 工作实战模块</div>
+    <h1>工作实战 15：语义缓存与成本优化实战</h1>
+    <span class="header-tag">工作实战模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>企业级实战章节。</p></blockquote><hr>
+<h2>1. 成本构成</h2>
+<table><thead><tr><th>项</th><th>占比</th></tr></thead><tbody><tr><td>模型 API</td><td>60~80%</td></tr><tr><td>向量库</td><td>5~15%</td></tr><tr><td>服务器</td><td>10~20%</td></tr></tbody></table>
+<hr>
+<h2>2. 语义缓存</h2>
+<p>相似问题命中缓存，不调 LLM。GPTCache、Redis + embedding 相似度。</p>
+<hr>
+<h2>3. 模型路由</h2>
+<p>简单问题 → 小模型（便宜 10 倍）；复杂问题 → 大模型。</p>
+<hr>
+<h2>4. Prompt 压缩</h2>
+<p>去废话、摘要历史、只检索相关片段。</p>
+<hr>
+<h2>5. 批处理</h2>
+<p>非实时场景攒批调 API，部分厂商有 Batch 折扣。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

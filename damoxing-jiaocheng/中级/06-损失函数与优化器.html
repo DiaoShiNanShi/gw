@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>中级 06：损失函数与优化器（模型怎么「学会」） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 中级模块</div>
+    <h1>中级 06：损失函数与优化器（模型怎么「学会」）</h1>
+    <span class="header-tag">中级模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>训练 = 不断算损失、反向传播、更新参数。这章讲底层数学直觉。</p></blockquote><hr>
+<h2>1. 损失函数（Loss）</h2>
+<p><strong>预训练：</strong>交叉熵损失——预测下一个 token 和真实 token 差多少。</p><p><strong>大白话：</strong>猜错了扣分，猜对了加分，模型拼命减分。</p>
+<hr>
+<h2>2. 反向传播</h2>
+<p>从输出层往回算每个参数对 Loss 的「责任」（梯度），链式法则一层层传。</p>
+<hr>
+<h2>3. 优化器</h2>
+<table><thead><tr><th>优化器</th><th>特点</th></tr></thead><tbody><tr><td>SGD</td><td>最原始，慢</td></tr><tr><td>Adam</td><td>自适应学习率，最常用</td></tr><tr><td>AdamW</td><td>加权重衰减，大模型标配</td></tr></tbody></table>
+<hr>
+<h2>4. 学习率</h2>
+<p>太大 → Loss 炸（NaN）；太小 → 训不动。常用 warmup + cosine decay。</p>
+<hr>
+<h2>5. 你需要记住的</h2>
+<blockquote>训练 = 前向算 Loss → 反向算梯度 → 优化器更新参数 → 重复几万亿次。</blockquote>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

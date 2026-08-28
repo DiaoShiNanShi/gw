@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>高级 08：向量数据库全解析（RAG 的「硬盘」） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 高级模块</div>
+    <h1>高级 08：向量数据库全解析（RAG 的「硬盘」）</h1>
+    <span class="header-tag">高级模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>Embedding 向量存哪、怎么搜、怎么选库——RAG 工程师必考。</p></blockquote><hr>
+<h2>1. 向量库干什么</h2>
+<p>存文档的向量表示，查询时算相似度，返回最相关的 Top-K 片段。</p>
+<hr>
+<h2>2. 主流选型</h2>
+<table><thead><tr><th>产品</th><th>类型</th><th>特点</th></tr></thead><tbody><tr><td>Chroma</td><td>嵌入式</td><td>轻量，本地开发首选</td></tr><tr><td>Milvus</td><td>分布式</td><td>企业级，亿级向量</td></tr><tr><td>Pinecone</td><td>云服务</td><td>省心，按量付费</td></tr><tr><td>pgvector</td><td>PG 插件</td><td>向量和业务数据一体</td></tr><tr><td>Qdrant</td><td>开源</td><td>Rust 写，性能好</td></tr><tr><td>FAISS</td><td>库非服务</td><td>Meta，研究常用</td></tr></tbody></table>
+<hr>
+<h2>3. 索引算法</h2>
+<table><thead><tr><th>算法</th><th>特点</th></tr></thead><tbody><tr><td>Flat</td><td>暴力精确，慢</td></tr><tr><td>IVF</td><td>分桶加速</td></tr><tr><td>HNSW</td><td>图索引，快且准，最常用</td></tr></tbody></table>
+<hr>
+<h2>4. 选型建议</h2>
+<pre>个人/Mac 本地 → Chroma
+小团队 → pgvector / Qdrant
+大企业 → Milvus
+不想运维 → Pinecone</pre>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生 17：Combine 响应式编程 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 原生模块</div>
+    <h1>iOS 原生 17：Combine 响应式编程</h1>
+    <span class="header-tag">iOS 原生模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>数据流驱动 UI，和 SwiftUI 天生一对。</p></blockquote><hr>
+<h2>1. 核心类型</h2>
+<p>Publisher 发事件 → Operator 变换 → Subscriber 接收。</p>
+<hr>
+<h2>2. 和 SwiftUI 结合</h2>
+<pre><code class="language-swift">@Published var messages: [Message] = []
+// ViewModel 里 $messages 自动驱动 UI 刷新</code></pre>
+<hr>
+<h2>3. 何时用</h2>
+<p>复杂数据流、搜索防抖、多源合并。简单场景 async/await 够用。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

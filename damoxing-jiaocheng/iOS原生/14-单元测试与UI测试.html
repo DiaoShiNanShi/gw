@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生 14：单元测试与 UI 测试 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 原生模块</div>
+    <h1>iOS 原生 14：单元测试与 UI 测试</h1>
+    <span class="header-tag">iOS 原生模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>XCTest、Mock 网络层、UI 自动化。</p></blockquote><hr>
+<h2>1. 单元测试</h2>
+<pre><code class="language-swift">func testChatViewModel() async throws {
+    let mock = MockLLMService(reply: "你好")
+    let vm = ChatViewModel(service: mock)
+    await vm.send("hi")
+    XCTAssertEqual(vm.messages.last?.content, "你好")
+}</code></pre>
+<hr>
+<h2>2. UI 测试</h2>
+<p>XCUITest 自动化点按钮、输入文字。CI 里跑回归。</p>
+<hr>
+<h2>3. AI 测试难点</h2>
+<p>LLM 输出不确定 → 断言结构而非具体内容；或用固定 temperature=0 + mock。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

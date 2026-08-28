@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 原生 07：UITableView 与 UICollectionView 深入 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 原生模块</div>
+    <h1>iOS 原生 07：UITableView 与 UICollectionView 深入</h1>
+    <span class="header-tag">iOS 原生模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>聊天列表、瀑布流——列表是 App 里最高频的 UI。</p></blockquote><hr>
+<h2>1. UITableView 核心</h2>
+<p>DataSource 提供数据，Delegate 处理点击。Cell 复用 <code>dequeueReusableCell</code> 防内存爆。</p>
+<hr>
+<h2>2. 聊天列表实现</h2>
+<pre><code class="language-swift">// 差异化：用户消息右对齐蓝色，AI 消息左对齐灰色
+// 流式输出：更新最后一个 cell 的 text，reloadRows</code></pre>
+<hr>
+<h2>3. UICollectionView</h2>
+<p>网格/瀑布流布局。Compositional Layout（iOS 13+）更灵活。</p>
+<hr>
+<h2>4. Diffable Data Source</h2>
+<p>iOS 13+ 用 NSDiffableDataSource 自动 diff 动画，聊天增删消息更丝滑。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

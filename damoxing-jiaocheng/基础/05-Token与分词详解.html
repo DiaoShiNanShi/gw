@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 05：Token 与分词详解（AI 怎么「读」文字） - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础模块</div>
+    <h1>基础 05：Token 与分词详解（AI 怎么「读」文字）</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>学习目标：彻底搞懂 Token、BPE、词表、为什么中文比英文「费 Token」。</p></blockquote><hr>
+<h2>1. Token 是什么？</h2>
+<p>AI 不直接处理「字」或「单词」，而是处理 <strong>Token（文字碎片）</strong>。分词器把句子切成模型认识的碎片列表。</p><pre><code class="language-text">"我爱北京天安门" → ["我", "爱", "北京", "天安门"]  或 ["我爱", "北京", "天安门"]</code></pre><p>不同模型切法不同，所以同一段话 Token 数可能差 20%。</p>
+<hr>
+<h2>2. 三种主流分词算法</h2>
+<table><thead><tr><th>算法</th><th>原理</th><th>谁在用</th></tr></thead><tbody><tr><td>BPE</td><td>从字符开始，高频组合合并</td><td>GPT、Llama</td></tr><tr><td>WordPiece</td><td>类似 BPE，用似然选合并</td><td>BERT</td></tr><tr><td>SentencePiece</td><td>把空格也当字符，中英统一</td><td>Qwen、Llama 多语言</td></tr></tbody></table>
+<hr>
+<h2>3. 中英文 Token 差异</h2>
+<table><thead><tr><th>语言</th><th>大约</th><th>计费影响</th></tr></thead><tbody><tr><td>英文</td><td>1 token ≈ 0.75 个单词</td><td>相对省</td></tr><tr><td>中文</td><td>1 token ≈ 1~2 个汉字</td><td>同样内容中文更费</td></tr><tr><td>代码</td><td>符号多，token 碎片化</td><td>Prompt 里代码很贵</td></tr></tbody></table>
+<hr>
+<h2>4. 上下文窗口与 Token 预算</h2>
+<p>128K 窗口 ≠ 能塞 12 万字。要留出生成空间。工程经验：<strong>输入 70% + 输出 30%</strong> 分配。</p>
+<hr>
+<h2>5. 实战：怎么数 Token？</h2>
+<pre><code class="language-python"># tiktoken（OpenAI）
+import tiktoken
+enc = tiktoken.encoding_for_model('gpt-4')
+print(len(enc.encode('你好世界')))  # 约 4
+
+# 或用模型 API 返回的 usage 字段</code></pre><div class="demo-card" data-demo="token-demo"></div>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>

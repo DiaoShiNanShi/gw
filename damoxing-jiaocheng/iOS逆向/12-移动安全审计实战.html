@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 逆向 12：移动安全审计实战清单 - 大模型学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 逆向模块</div>
+    <h1>iOS 逆向 12：移动安全审计实战清单</h1>
+    <span class="header-tag">iOS 逆向模块</span>
+  </div>
+</div>
+<div class="container"><div class="content-card">
+<blockquote><p>⚠️ 仅用于合法安全研究和自有 App 审计。</p></blockquote><hr>
+<blockquote><p>给自己 App 做完整安全审计的流程。</p></blockquote><hr>
+<h2>1. 审计清单</h2>
+<pre>□ 传输安全（HTTPS + Pinning）
+□ 存储安全（Keychain、无明文 Key）
+□ 代码混淆（字符串、符号）
+□ 反调试/完整性
+□ 日志脱敏
+□ 越狱检测（可选）
+□ AI Prompt/Key 不硬编码
+□ 输入验证（防注入）</pre>
+<hr>
+<h2>2. 工具链</h2>
+<p>静态：Hopper + class-dump + MobSF<br>动态：Frida + objection + LLDB<br>网络：Charles + mitmproxy</p>
+<hr>
+<h2>3. 输出报告</h2>
+<p>漏洞等级（高/中/低）+ 复现步骤 + 修复建议 + 截图。</p>
+<hr>
+
+</div></div>
+<div class="page-footer"><p><a href="../README.html">← 返回教程首页</a></p></div>
+<script src="../_assets/site.js" defer></script>
+<script src="../_assets/playground.js" defer></script>
+</body></html>
