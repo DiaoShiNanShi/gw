@@ -1,3 +1,5 @@
+document.documentElement.classList.add('js');
+
 const header = document.querySelector('.site-header');
 const menuBtn = document.querySelector('.menu-btn');
 const navLinks = document.querySelector('.nav-links');
