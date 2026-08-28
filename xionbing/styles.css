@@ -404,19 +404,27 @@ main { position: relative; z-index: 1; }
   padding: .85rem 0;
   background: rgba(255,255,255,.02);
 }
-.marquee {
+.marquee-track {
   display: flex;
-  gap: 2rem;
   width: max-content;
-  animation: marquee 25s linear infinite;
+  animation: marquee var(--marquee-duration, 30s) linear infinite;
+  will-change: transform;
+}
+.marquee-group {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding-right: 2rem;
+  flex-shrink: 0;
   font-family: var(--mono);
   font-size: .82rem;
-  color: var(--muted);
+  color: var(--accent-2);
+  white-space: nowrap;
 }
-.marquee span:nth-child(odd) { color: var(--accent-2); opacity: .7; }
+.marquee-group .dot { color: var(--muted); opacity: .45; }
 @keyframes marquee {
   from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  to { transform: translateX(calc(-1 * var(--marquee-shift, 50%))); }
 }
 
 /* Skills */
