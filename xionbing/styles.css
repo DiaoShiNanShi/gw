@@ -425,11 +425,15 @@ footer {
 footer a { color: var(--accent-soft); }
 
 .reveal {
+  opacity: 1;
+  transform: none;
+}
+.js .reveal {
   opacity: 0;
   transform: translateY(20px);
   transition: opacity .5s ease, transform .5s ease;
 }
-.reveal.visible { opacity: 1; transform: none; }
+.js .reveal.visible { opacity: 1; transform: none; }
 
 @media (max-width: 768px) {
   .hero-grid { grid-template-columns: 1fr; text-align: center; }
