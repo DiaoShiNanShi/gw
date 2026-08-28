@@ -246,4 +246,38 @@ document.querySelectorAll('.magnetic').forEach(btn => {
   btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
 });
 
+/* ── Seamless marquee ── */
+function initMarquee() {
+  const wrap = document.querySelector('.marquee-wrap');
+  const track = document.querySelector('.marquee-track');
+  if (!wrap || !track) return;
+
+  while (track.children.length > 1) track.lastElementChild.remove();
+  const group = track.querySelector('.marquee-group');
+  if (!group) return;
+
+  if (!group.dataset.original) group.dataset.original = group.innerHTML;
+  else group.innerHTML = group.dataset.original;
+
+  const chunk = group.dataset.original;
+  while (group.offsetWidth < wrap.offsetWidth) {
+    group.insertAdjacentHTML('beforeend', chunk);
+  }
+
+  const clone = group.cloneNode(true);
+  clone.setAttribute('aria-hidden', 'true');
+  track.appendChild(clone);
+
+  const shift = group.offsetWidth;
+  track.style.setProperty('--marquee-shift', shift + 'px');
+  track.style.setProperty('--marquee-duration', shift / 55 + 's');
+}
+
+initMarquee();
+let marqueeResizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(marqueeResizeTimer);
+  marqueeResizeTimer = setTimeout(initMarquee, 200);
+});
+
 document.getElementById('year').textContent = new Date().getFullYear();
