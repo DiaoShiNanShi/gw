@@ -3,247 +3,294 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="熊兵 · iOS 开发工程师 · 10 年 iOS 开发经验，主导多款 App 从 0 到 1 上线，覆盖金融、SaaS、医疗等多行业。">
-  <meta name="theme-color" content="#0a0a0f">
+  <meta name="description" content="熊兵 · iOS 开发工程师 · 10 年经验，金融 / SaaS / 医疗 / AI 多行业实战。">
+  <meta name="theme-color" content="#06060b">
   <title>熊兵 · iOS 开发工程师</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/gw/xionbing/styles.css">
 </head>
 <body>
+  <canvas id="particles" aria-hidden="true"></canvas>
+  <div class="cursor-glow" aria-hidden="true"></div>
+
   <header class="site-header">
-    <a class="brand" href="#top">熊兵 <span>/ iOS</span></a>
+    <a class="brand" href="#top">熊兵 <span>/ iOS Dev</span></a>
     <nav class="nav-links" aria-label="主导航">
-      <a href="#skills">技能</a>
-      <a href="#experience">经历</a>
-      <a href="#projects">项目</a>
-      <a href="#contact">联系</a>
+      <a href="#skills" data-nav>技能</a>
+      <a href="#experience" data-nav>经历</a>
+      <a href="#projects" data-nav>项目</a>
+      <a href="#contact" data-nav>联系</a>
     </nav>
+    <a class="header-cta magnetic" href="#contact">联系我</a>
     <button class="menu-btn" type="button" aria-label="打开菜单">☰</button>
   </header>
 
   <main id="top">
     <section class="hero">
-      <div class="hero-grid">
-        <div class="reveal">
-          <div class="hero-badge">开放机会 · iOS 开发工程师</div>
-          <h1>熊兵</h1>
-          <p class="title">iOS 开发工程师</p>
-          <p class="meta">重庆 · 10 年 iOS 开发经验</p>
-          <p class="summary">
-            10 年 iOS 开发经验，主导过 6 款以上完整 App 从 0 到 1 的研发与上线，覆盖金融、SaaS、医疗、社区等多行业。长期负责版本迭代、提审发布、开发者账号管理，具备完整的 App 生命周期管理能力；近年深入 Flutter 混合开发与 AI 应用落地，具备多模型 API 集成、AI 智能助手、语音交互等实战经验，同时具备海外 App 上架经验。
-          </p>
-          <div class="contact-row" id="contact">
-            <a class="contact-chip" href="tel:18602342340">
-              <strong>电话</strong> 186-0234-2340
-            </a>
-            <a class="contact-chip" href="mailto:xiobg@icloud.com">
-              <strong>邮箱</strong> xiobg@icloud.com
-            </a>
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <div class="hero-badge reveal"><span class="pulse-dot"></span>开放机会 · iOS 开发工程师</div>
+          <h1 class="reveal">熊兵</h1>
+          <p class="hero-title reveal"><span id="typewriter"></span><span class="cursor-blink">|</span></p>
+          <p class="hero-meta reveal">📍 重庆 · 10 年 iOS 开发 · 6+ App 从 0 到 1</p>
+          <p class="hero-summary reveal">深耕 iOS 原生与 Flutter 混合开发，近年聚焦 AI 大模型落地与海外 App 上架。从架构设计到提审发布，全链路独立交付。</p>
+
+          <div class="hero-actions reveal">
+            <a class="btn-primary magnetic" href="#projects">查看项目</a>
+            <a class="btn-ghost magnetic" href="mailto:xiobg@icloud.com">发送邮件</a>
           </div>
-          <div class="stats-row">
-            <div class="stat"><strong>10+</strong><span>年 iOS 经验</span></div>
-            <div class="stat"><strong>6+</strong><span>App 从 0 到 1</span></div>
-            <div class="stat"><strong>4</strong><span>行业覆盖</span></div>
-            <div class="stat"><strong>全链路</strong><span>开发到上架</span></div>
+
+          <div class="industry-orbit reveal" aria-label="行业覆盖">
+            <span class="orbit-item" style="--i:0">🏦 金融</span>
+            <span class="orbit-item" style="--i:1">🏢 SaaS</span>
+            <span class="orbit-item" style="--i:2">🏥 医疗</span>
+            <span class="orbit-item" style="--i:3">🤖 AI</span>
           </div>
         </div>
-        <div class="avatar-card reveal" aria-hidden="true">熊</div>
+
+        <div class="phone-stage reveal" data-tilt>
+          <div class="phone-glow"></div>
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="status-bar"><span>9:41</span><span>● ◔ ▰</span></div>
+              <div class="app-header">
+                <div class="app-avatar">熊</div>
+                <div><strong>Developer Hub</strong><small>iOS · Swift · AI</small></div>
+              </div>
+              <div class="metric-cards">
+                <div class="mini-card"><span>经验</span><strong data-count="10">0</strong><small>年</small></div>
+                <div class="mini-card accent"><span>App</span><strong data-count="6">0</strong><small>上线</small></div>
+              </div>
+              <div class="code-block">
+                <div class="code-line"><span class="kw">class</span> <span class="type">Developer</span> {</div>
+                <div class="code-line indent"><span class="kw">let</span> lang = [<span class="str">"Swift"</span>, <span class="str">"ObjC"</span>]</div>
+                <div class="code-line indent"><span class="kw">var</span> skills: [<span class="type">Skill</span>] = .ai</div>
+                <div class="code-line indent"><span class="kw">func</span> <span class="fn">ship</span>() -> <span class="type">App</span> { .live }</div>
+                <div class="code-line">}</div>
+              </div>
+              <div class="skill-bars">
+                <div class="skill-bar"><label>iOS Native</label><div class="bar"><span data-width="95"></span></div></div>
+                <div class="skill-bar"><label>Flutter</label><div class="bar"><span data-width="80"></span></div></div>
+                <div class="skill-bar"><label>AI Integration</label><div class="bar"><span data-width="85"></span></div></div>
+              </div>
+              <div class="tab-bar"><span class="on">⌂</span><span>▣</span><span>◈</span><span>⚙</span></div>
+            </div>
+          </div>
+          <div class="float-badge badge-1"><b>App Store</b><small>多次成功过审</small></div>
+          <div class="float-badge badge-2"><b>AI Ready</b><small>RAG · SSE · TTS</small></div>
+        </div>
+      </div>
+
+      <div class="stats-strip reveal">
+        <div class="stat-item"><strong data-count="10">0</strong><span>年 iOS 经验</span></div>
+        <div class="stat-item"><strong data-count="6">0</strong><span>App 从 0 到 1</span></div>
+        <div class="stat-item"><strong data-count="4">0</strong><span>行业覆盖</span></div>
+        <div class="stat-item"><strong>100%</strong><span>独立交付能力</span></div>
       </div>
     </section>
 
-    <section id="skills">
-      <div class="wrap">
-        <p class="section-title reveal">Skills</p>
-        <h2 class="reveal">技能栈</h2>
-        <div class="skills-grid">
-          <div class="skill-group reveal">
-            <h3>// iOS 核心</h3>
-            <div class="skill-tags">
-              <span>Objective-C</span>
-              <span>Swift</span>
-              <span>SwiftUI</span>
-              <span>iOS 平台 API</span>
-              <span>内存管理</span>
-              <span>多线程</span>
-              <span>性能调优</span>
-              <span>应用组件化</span>
-            </div>
-          </div>
-          <div class="skill-group reveal">
-            <h3>// 工程与集成</h3>
-            <div class="skill-tags">
-              <span>Flutter 混合开发</span>
-              <span>CocoaPods</span>
-              <span>Carthage</span>
-              <span>Git / SVN</span>
-              <span>SQLite</span>
-              <span>单元测试</span>
-              <span>持续集成</span>
-              <span>支付宝 / 微信 / IAP</span>
-              <span>环信 / 个推 / Plaid</span>
-            </div>
-          </div>
-          <div class="skill-group reveal">
-            <h3>// AI & 海外</h3>
-            <div class="skill-tags">
-              <span>通义千问</span>
-              <span>文心一言</span>
-              <span>OpenAI</span>
-              <span>Prompt / RAG</span>
-              <span>Function Calling</span>
-              <span>SSE 流式输出</span>
-              <span>ASR / TTS</span>
-              <span>OCR</span>
-              <span>海外 App 上架合规</span>
-            </div>
-          </div>
-        </div>
+    <div class="marquee-wrap" aria-hidden="true">
+      <div class="marquee">
+        <span>Swift</span><span>·</span><span>Objective-C</span><span>·</span><span>SwiftUI</span><span>·</span>
+        <span>Flutter</span><span>·</span><span>Plaid</span><span>·</span><span>OpenAI</span><span>·</span>
+        <span>RAG</span><span>·</span><span>App Store</span><span>·</span><span>CocoaPods</span><span>·</span>
+        <span>Swift</span><span>·</span><span>Objective-C</span><span>·</span><span>SwiftUI</span><span>·</span>
+        <span>Flutter</span><span>·</span><span>Plaid</span><span>·</span><span>OpenAI</span><span>·</span>
+        <span>RAG</span><span>·</span><span>App Store</span><span>·</span><span>CocoaPods</span><span>·</span>
       </div>
-    </section>
+    </div>
 
-    <section id="experience">
+    <section id="skills" class="section">
       <div class="wrap">
-        <p class="section-title reveal">Experience</p>
-        <h2 class="reveal">工作经历</h2>
-        <div class="timeline">
-          <article class="timeline-item reveal">
-            <div class="timeline-header">
-              <h3>iOS 开发工程师</h3>
-              <span class="period">2023.02 – 至今</span>
-            </div>
-            <p class="company">石家庄锋远科技</p>
-            <p>负责核心 App 的 iOS 端需求分析、技术方案设计与独立开发，主导版本迭代、提审、发布全流程。主导引入 Flutter 混合开发，将资讯、个人中心等模块以 Flutter 实现并与原生工程集成。牵头 AI 能力落地：统一封装多模型接入层，实现 AI 智能助手（流式对话、Function Calling、RAG 知识库问答、文章摘要），接入 ASR / TTS 实现语音输入与播报。</p>
-          </article>
-          <article class="timeline-item reveal">
-            <div class="timeline-header">
-              <h3>iOS 开发工程师</h3>
-              <span class="period">2020.11 – 2023.02</span>
-            </div>
-            <p class="company">重庆商渡搜鸽科技</p>
-            <p>独立负责海外支票提现转账 App（DoveCheck）iOS 端架构设计与开发，对接海外金融 SDK（Plaid），完成 v1.0 – v3.11 持续迭代上线。</p>
-          </article>
-          <article class="timeline-item reveal">
-            <div class="timeline-header">
-              <h3>iOS 开发工程师</h3>
-              <span class="period">2018.02 – 2020.11</span>
-            </div>
-            <p class="company">重庆全房通</p>
-            <p>主导长租公寓 SaaS「新全房通」iOS 端研发，负责需求分析、任务分配、进度把控，带领 2–3 人小组协作开发。</p>
-          </article>
-          <article class="timeline-item reveal">
-            <div class="timeline-header">
-              <h3>iOS 开发工程师</h3>
-              <span class="period">2016.05 – 2018.01</span>
-            </div>
-            <p class="company">重庆跑腿鲨科技</p>
-            <p>独立负责 3 款 App（铲屎官、任务鱼、宏康医生）从零开发与上线，涵盖网络层、存储层、支付、推送等基础能力建设。</p>
-          </article>
+        <div class="section-head reveal">
+          <p class="eyebrow">Skills</p>
+          <h2>技能矩阵</h2>
+          <p class="section-desc">从原生底层到 AI 应用，完整技术栈覆盖</p>
         </div>
-      </div>
-    </section>
-
-    <section id="projects">
-      <div class="wrap">
-        <p class="section-title reveal">Projects</p>
-        <h2 class="reveal">项目经验</h2>
-        <div class="project-grid">
-          <article class="project-card reveal">
-            <div class="project-top">
-              <h3>海外贷款 App</h3>
-              <span class="tag">上架合规</span>
-            </div>
-            <p class="period">2023.02 – 至今</p>
-            <p>负责海外贷款 App 的 iOS 端需求开发与版本迭代，独立完成 App Store 上架全流程。处理支付合规、隐私政策完善与权限声明；多次应对审核被拒并成功过审，持续维护在架状态。</p>
-          </article>
-          <article class="project-card reveal">
-            <div class="project-top">
-              <h3>DoveCheck</h3>
-              <span class="tag">独立开发</span>
-            </div>
-            <p class="period">2021.01 – 2023.02 · v1.0 – v3.11.3</p>
-            <p>海外支票提现转账 App，通过 OCR 识别纸质支票并上传区块链，实现在线转账与提现。对接 Plaid 银行账户绑定，设计统一 SDK 封装层；实现拍摄→预处理→识别上传→Plaid 验证→区块链存证完整链路。</p>
-          </article>
-          <article class="project-card reveal">
-            <div class="project-top">
-              <h3>新全房通</h3>
-              <span class="tag">主导开发</span>
-            </div>
-            <p class="period">2018.06 – 2020.11 · v2.5.7</p>
-            <p>会找房旗下长租公寓管理 SaaS，覆盖房源、财务、租客管理。主导 iOS 端架构设计与团队任务分配，封装约 80% 通用页面；实现多角色动态切换、考勤审批、智能门锁 / 电表 SDK 集成及微信 / 支付宝支付。</p>
-          </article>
-          <article class="project-card reveal">
-            <div class="project-top">
-              <h3>宏康医生</h3>
-              <span class="tag">独立开发</span>
-            </div>
-            <p class="period">2017.10 – 2018.01</p>
-            <p>在线预约问诊 App。自定义日历控件实现预约挂号；集成个推推送、环信在线沟通、微信 / 支付宝支付，实现预约问诊服务闭环。</p>
-          </article>
-          <article class="project-card reveal">
-            <div class="project-top">
-              <h3>任务鱼</h3>
-              <span class="tag">独立开发</span>
-            </div>
-            <p class="period">2016.10 – 2017.10</p>
-            <p>大学生兼职平台 App。基于 AFNetworking 封装网络层，封装 SQLite 数据访问框架，集成微信 / 微博 / QQ 登录分享、个推推送与支付。</p>
-          </article>
-          <article class="project-card reveal">
-            <div class="project-top">
-              <h3>铲屎官</h3>
-              <span class="tag">独立开发</span>
-            </div>
-            <p class="period">2016.05 – 2016.10</p>
-            <p>宠物社区 App。Block 封装异步请求与统一错误处理，Runtime 适配不同屏幕字体，实现发帖、登录分享与支付。</p>
-          </article>
+        <div class="skill-tabs reveal">
+          <button class="skill-tab active" data-tab="ios">iOS 核心</button>
+          <button class="skill-tab" data-tab="eng">工程集成</button>
+          <button class="skill-tab" data-tab="ai">AI & 海外</button>
         </div>
-      </div>
-    </section>
-
-    <section id="strengths">
-      <div class="wrap">
-        <p class="section-title reveal">Strengths</p>
-        <h2 class="reveal">个人优势</h2>
-        <div class="strengths">
-          <div class="strength reveal">
-            <h3>业务纵深</h3>
-            <p>海外金融（Plaid / OCR / 区块链）、SaaS、医疗等多行业实战经验，快速理解业务并落地。</p>
+        <div class="skill-panels">
+          <div class="skill-panel active" data-panel="ios">
+            <div class="skill-cards">
+              <article class="skill-card tilt"><div class="skill-icon">📱</div><h3>原生开发</h3><p>Objective-C / Swift / SwiftUI，内存管理与多线程调优</p><div class="level"><span style="--w:95%"></span></div></article>
+              <article class="skill-card tilt"><div class="skill-icon">⚡</div><h3>性能优化</h3><p>启动速度、内存泄漏排查、列表流畅度优化</p><div class="level"><span style="--w:90%"></span></div></article>
+              <article class="skill-card tilt"><div class="skill-icon">🧩</div><h3>组件化</h3><p>模块化架构、通用页面封装、SDK 统一封装层</p><div class="level"><span style="--w:88%"></span></div></article>
+            </div>
           </div>
-          <div class="strength reveal">
-            <h3>工程化能力</h3>
-            <p>主导组件化、SDK 封装、通用页面沉淀，提升团队研发效率与代码复用率。</p>
+          <div class="skill-panel" data-panel="eng">
+            <div class="skill-cards">
+              <article class="skill-card tilt"><div class="skill-icon">🔀</div><h3>Flutter 混合</h3><p>原生 + Flutter 混编，资讯 / 个人中心等模块集成</p><div class="level"><span style="--w:82%"></span></div></article>
+              <article class="skill-card tilt"><div class="skill-icon">💳</div><h3>支付 & SDK</h3><p>微信 / 支付宝 / IAP、环信 / 个推 / Plaid 集成</p><div class="level"><span style="--w:92%"></span></div></article>
+              <article class="skill-card tilt"><div class="skill-icon">🔧</div><h3>工程化</h3><p>CocoaPods / CI、单元测试、Git 工作流</p><div class="level"><span style="--w:85%"></span></div></article>
+            </div>
           </div>
-          <div class="strength reveal">
-            <h3>全链路经验</h3>
-            <p>需求评估、工时排期、任务分配到开发、提审、发布、账号管理全闭环。</p>
-          </div>
-          <div class="strength reveal">
-            <h3>技术广度</h3>
-            <p>Flutter 混合开发与 AI 大模型应用落地到实际业务，具备海外 App 上架能力。期望承担核心开发或技术组长职责。</p>
+          <div class="skill-panel" data-panel="ai">
+            <div class="skill-cards">
+              <article class="skill-card tilt"><div class="skill-icon">🤖</div><h3>大模型接入</h3><p>通义千问 / 文心一言 / OpenAI 统一封装</p><div class="level"><span style="--w:88%"></span></div></article>
+              <article class="skill-card tilt"><div class="skill-icon">💬</div><h3>AI 助手</h3><p>SSE 流式对话、Function Calling、RAG 知识库</p><div class="level"><span style="--w:86%"></span></div></article>
+              <article class="skill-card tilt"><div class="skill-icon">🌍</div><h3>海外上架</h3><p>App Store 合规、支付审核、隐私政策全流程</p><div class="level"><span style="--w:90%"></span></div></article>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="education">
+    <section id="experience" class="section section-dark">
       <div class="wrap">
-        <p class="section-title reveal">Education</p>
-        <h2 class="reveal">教育经历</h2>
+        <div class="section-head reveal">
+          <p class="eyebrow">Experience</p>
+          <h2>工作经历</h2>
+        </div>
+        <div class="exp-cards">
+          <article class="exp-card reveal active" data-exp>
+            <button class="exp-toggle" aria-expanded="true">
+              <div class="exp-left"><span class="exp-year">2023 – 今</span><h3>石家庄锋远科技</h3><p>iOS 开发工程师</p></div>
+              <span class="exp-arrow">↓</span>
+            </button>
+            <div class="exp-body">
+              <ul>
+                <li>主导核心 App iOS 端需求分析、技术方案与独立开发</li>
+                <li>引入 Flutter 混合开发，资讯 / 个人中心模块原生集成</li>
+                <li>牵头 AI 落地：多模型接入层、流式对话、RAG、ASR/TTS</li>
+              </ul>
+            </div>
+          </article>
+          <article class="exp-card reveal" data-exp>
+            <button class="exp-toggle" aria-expanded="false">
+              <div class="exp-left"><span class="exp-year">2020 – 2023</span><h3>重庆商渡搜鸽科技</h3><p>iOS 开发工程师 · DoveCheck</p></div>
+              <span class="exp-arrow">↓</span>
+            </button>
+            <div class="exp-body">
+              <ul>
+                <li>独立负责 DoveCheck iOS 端架构设计与开发</li>
+                <li>对接 Plaid 海外金融 SDK，OCR + 区块链存证链路</li>
+                <li>完成 v1.0 – v3.11 全版本迭代与 App Store 发布</li>
+              </ul>
+            </div>
+          </article>
+          <article class="exp-card reveal" data-exp>
+            <button class="exp-toggle" aria-expanded="false">
+              <div class="exp-left"><span class="exp-year">2018 – 2020</span><h3>重庆全房通</h3><p>iOS 开发工程师 · 技术组长</p></div>
+              <span class="exp-arrow">↓</span>
+            </button>
+            <div class="exp-body">
+              <ul>
+                <li>主导「新全房通」SaaS iOS 端，带领 2–3 人小组</li>
+                <li>封装 80% 通用页面，多角色动态切换</li>
+                <li>集成智能门锁 / 电表 SDK，微信 / 支付宝支付</li>
+              </ul>
+            </div>
+          </article>
+          <article class="exp-card reveal" data-exp>
+            <button class="exp-toggle" aria-expanded="false">
+              <div class="exp-left"><span class="exp-year">2016 – 2018</span><h3>重庆跑腿鲨科技</h3><p>iOS 开发工程师</p></div>
+              <span class="exp-arrow">↓</span>
+            </button>
+            <div class="exp-body">
+              <ul>
+                <li>独立开发铲屎官、任务鱼、宏康医生 3 款 App</li>
+                <li>从零搭建网络层、存储层、支付、推送基础能力</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="section">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Projects</p>
+          <h2>项目经验</h2>
+        </div>
+        <div class="project-filters reveal">
+          <button class="filter active" data-filter="all">全部</button>
+          <button class="filter" data-filter="finance">金融</button>
+          <button class="filter" data-filter="saas">SaaS</button>
+          <button class="filter" data-filter="medical">医疗</button>
+          <button class="filter" data-filter="community">社区</button>
+        </div>
+        <div class="project-bento">
+          <article class="project-item featured reveal tilt" data-cat="finance">
+            <div class="project-icon">🏦</div>
+            <span class="project-tag">Featured</span>
+            <h3>DoveCheck</h3>
+            <p>海外支票 OCR 识别 → Plaid 验证 → 区块链存证 → 在线提现。v1.0–v3.11 独立开发。</p>
+            <div class="tech-chips"><span>Plaid</span><span>OCR</span><span>Blockchain</span></div>
+          </article>
+          <article class="project-item reveal tilt" data-cat="finance">
+            <div class="project-icon">💰</div>
+            <h3>海外贷款 App</h3>
+            <p>App Store 上架全流程，支付合规与审核应对。</p>
+            <div class="tech-chips"><span>IAP</span><span>Compliance</span></div>
+          </article>
+          <article class="project-item reveal tilt" data-cat="saas">
+            <div class="project-icon">🏢</div>
+            <h3>新全房通</h3>
+            <p>长租公寓 SaaS，80% 通用页面封装，多角色权限。</p>
+            <div class="tech-chips"><span>SaaS</span><span>IoT SDK</span></div>
+          </article>
+          <article class="project-item reveal tilt" data-cat="medical">
+            <div class="project-icon">🏥</div>
+            <h3>宏康医生</h3>
+            <p>自定义日历控件、环信沟通、预约问诊闭环。</p>
+            <div class="tech-chips"><span>IM</span><span>Calendar</span></div>
+          </article>
+          <article class="project-item reveal tilt" data-cat="community">
+            <div class="project-icon">🐾</div>
+            <h3>铲屎官</h3>
+            <p>宠物社区，Runtime 屏幕适配，社交分享与支付。</p>
+            <div class="tech-chips"><span>Runtime</span><span>Social</span></div>
+          </article>
+          <article class="project-item reveal tilt" data-cat="community">
+            <div class="project-icon">🐟</div>
+            <h3>任务鱼</h3>
+            <p>大学生兼职平台，AFNetworking + SQLite 框架封装。</p>
+            <div class="tech-chips"><span>SQLite</span><span>OAuth</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="strengths" class="section section-dark">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Strengths</p>
+          <h2>核心优势</h2>
+        </div>
+        <div class="strength-grid">
+          <article class="strength-card reveal tilt"><span class="strength-num">01</span><h3>业务纵深</h3><p>金融 / SaaS / 医疗多行业，快速理解业务并落地</p></article>
+          <article class="strength-card reveal tilt"><span class="strength-num">02</span><h3>工程化</h3><p>组件化、SDK 封装、通用页面沉淀，提升团队效率</p></article>
+          <article class="strength-card reveal tilt"><span class="strength-num">03</span><h3>全链路</h3><p>需求 → 开发 → 提审 → 发布 → 账号管理闭环</p></article>
+          <article class="strength-card reveal tilt"><span class="strength-num">04</span><h3>技术广度</h3><p>Flutter 混合 + AI 大模型 + 海外上架，持续进化</p></article>
+        </div>
         <div class="edu-card reveal">
-          <h3>重庆大学 · 计算机科学与技术 · 大专</h3>
-          <span>2013 – 2016</span>
+          <div><span class="edu-icon">🎓</span><div><h3>重庆大学</h3><p>计算机科学与技术 · 大专 · 2013 – 2016</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section" id="contact">
+      <div class="wrap cta-inner reveal">
+        <h2>一起构建下一个 App？</h2>
+        <p>期待在 iOS 研发岗位上持续深耕，承担核心开发或技术组长职责。</p>
+        <div class="cta-buttons">
+          <a class="btn-primary magnetic" href="mailto:xiobg@icloud.com">xiobg@icloud.com</a>
+          <a class="btn-ghost magnetic" href="tel:18602342340">186-0234-2340</a>
         </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <p>© <span id="year"></span> 熊兵 · iOS 开发工程师</p>
-    <p><a href="mailto:xiobg@icloud.com">xiobg@icloud.com</a> · <a href="tel:18602342340">186-0234-2340</a></p>
+    <p>© <span id="year"></span> 熊兵 · Crafted with Swift spirit</p>
   </footer>
 
   <script src="/gw/xionbing/script.js"></script>
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
