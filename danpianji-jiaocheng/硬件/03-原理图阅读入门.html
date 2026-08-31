@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="../_assets/site.css">
-<title>硬件 03：原理图阅读入门 - 单片机嵌入式教程</title>
+<title>硬件 03：原理图阅读入门 - 单片机学习教程</title>
 </head>
 <body>
 <div class="page-header">
   <div class="page-header-inner">
-    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 硬件入门</div>
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 硬件模块</div>
     <h1>硬件 03：原理图阅读入门</h1>
     <span class="header-tag">硬件入门</span>
   </div>
@@ -18,29 +18,22 @@
   <div class="content-card">
 
 <h2>1. 为什么要看原理图？</h2>
-<p>做 iOS 要看 API 文档，做硬件要看原理图。它告诉你每个引脚连了什么、电源怎么走的。</p>
-<h2>2. 常见符号</h2>
-<table>
-<tr><th>符号</th><th>含义</th></tr>
-<tr><td>—▷|—</td><td>二极管/LED（箭头方向是电流方向）</td></tr>
-<tr><td>—/\/\/\—</td><td>电阻</td></tr>
-<tr><td>—||—</td><td>电容</td></tr>
-<tr><td>VCC / 3V3</td><td>电源正极</td></tr>
-<tr><td>GND ⏚</td><td>地（零电位参考）</td></tr>
-</table>
-<h2>3. 阅读顺序</h2>
+<p>做 iOS 要看 API 文档，做硬件要看原理图——每个引脚连了什么、电源怎么走。</p>
+<h2>2. 阅读顺序</h2>
 <ol>
-<li>找 <strong>MCU 芯片</strong>（中心位置，引脚最多）</li>
-<li>看 <strong>电源部分</strong>（VCC → 稳压 → 3.3V）</li>
-<li>看 <strong>MCU 引脚连了什么</strong>（LED→PC13, 按键→PA0…）</li>
-<li>看 <strong>通信接口</strong>（I2C 传感器、SPI 屏幕）</li>
+<li>找 <strong>MCU 芯片</strong>（引脚最多）</li>
+<li>看 <strong>电源</strong>（VCC → 稳压 → 3.3V）</li>
+<li>看 <strong>引脚连接</strong>（LED→GPIO2, 按键→GPIO0…）</li>
+<li>看 <strong>通信接口</strong>（I2C 传感器、SPI 屏）</li>
 </ol>
-<div class="tip-box">💡 推荐工具：立创 EDA（免费在线画/看原理图）、LCSC 商城（买元件）</div>
+<div class="tip-box">💡 推荐：立创 EDA（免费在线）、LCSC 商城买元件</div>
+<p><strong>下一步：</strong> <a href="../入门实战/01-第一个程序点灯.html">入门实战 01-点灯</a></p>
 
+<em>（内容由 AI 生成，仅供参考）</em>
   </div>
 </div>
 <div class="page-footer">
-  <p><a href="../README.html">← 返回教程首页</a> · 单片机嵌入式教程</p>
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
 </div>
 <script src="../_assets/site.js" defer></script>
 </body>

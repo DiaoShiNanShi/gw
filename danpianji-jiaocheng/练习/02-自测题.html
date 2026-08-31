@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="../_assets/site.css">
-<title>练习 02：自测题 - 单片机嵌入式教程</title>
+<title>练习 02：自测题 - 单片机学习教程</title>
 </head>
 <body>
 <div class="page-header">
   <div class="page-header-inner">
-    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 练习</div>
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 练习模块</div>
     <h1>练习 02：自测题</h1>
     <span class="header-tag">练习</span>
   </div>
@@ -17,32 +17,23 @@
 <div class="container">
   <div class="content-card">
 
-<h2>基础自测（每题 1 分，8 分及格）</h2>
-<h3>1. 单片机和 iPhone 芯片的最大区别是什么？</h3>
-<details><summary>点击查看答案</summary><p>单片机专注控制硬件、低功耗、无复杂 OS；iPhone 的 A 芯片是高性能 AP，跑完整 iOS。</p></details>
-<h3>2. GPIO 输出和输入分别用来干什么？</h3>
-<details><summary>点击查看答案</summary><p>输出：控制 LED、继电器、电机。输入：读按键、传感器数字信号。</p></details>
-<h3>3. 中断和轮询哪个更省电？为什么？</h3>
-<details><summary>点击查看答案</summary><p>中断。CPU 可以 Sleep，事件来了才唤醒；轮询 CPU 一直空转。</p></details>
-<h3>4. I2C 需要几根线？SPI 呢？</h3>
-<details><summary>点击查看答案</summary><p>I2C：2 根（SDA+SCL）。SPI：4 根（MOSI+MISO+SCK+CS）。</p></details>
-<h3>5. ESP32 相比 STM32 最大的优势？</h3>
-<details><summary>点击查看答案</summary><p>内置 Wi-Fi + BLE，适合 IoT；STM32 工业级稳定性更好。</p></details>
-<h3>6. BLE 的 Central 和 Peripheral 分别是什么？</h3>
-<details><summary>点击查看答案</summary><p>Central=主机（iPhone），Peripheral=从机（ESP32 传感器）。</p></details>
-<h3>7. FreeRTOS 的任务类似 iOS 的什么？</h3>
-<details><summary>点击查看答案</summary><p>DispatchQueue / Thread。</p></details>
-<h3>8. 为什么嵌入式用 C 不用 Swift？</h3>
-<details><summary>点击查看答案</summary><p>MCU 资源有限（RAM 64KB–512KB），Swift 运行时太大；C 编译后直接操作硬件，零开销。</p></details>
-<h3>9. UART 调试中，TX 应该接对方的什么引脚？</h3>
-<details><summary>点击查看答案</summary><p>TX 接 RX，RX 接 TX，GND 接 GND。</p></details>
-<h3>10. 做一个"iOS 控制智能灯"项目需要哪三部分？</h3>
-<details><summary>点击查看答案</summary><p>① ESP32 固件（BLE Server + GPIO 控灯）② iOS App（CoreBluetooth 发指令）③ 可选云端（远程控制/数据统计）。</p></details>
+<h2>基础自测（10 题，8 分及格）</h2>
+<h3>1. 单片机和 iPhone 芯片的最大区别？</h3>
+<details><summary>点击查看答案</summary><p>单片机专注控制、低功耗、无复杂 OS；A 芯片是高性能 AP 跑 iOS。</p></details>
+<h3>2. GPIO 输出和输入分别干什么？</h3>
+<details><summary>点击查看答案</summary><p>输出控 LED/继电器；输入读按键和数字传感器。</p></details>
+<h3>3. 中断和轮询哪个更省电？</h3>
+<details><summary>点击查看答案</summary><p>中断。CPU 可 Sleep，事件来了才唤醒。</p></details>
+<h3>4. BLE 的 Central 和 Peripheral？</h3>
+<details><summary>点击查看答案</summary><p>Central=主机（iPhone），Peripheral=从机（ESP32）。</p></details>
+<h3>5. 智能灯项目需要哪三部分？</h3>
+<details><summary>点击查看答案</summary><p>ESP32 固件 + iOS App（CoreBluetooth）+ 可选云端。</p></details>
 
+<em>（内容由 AI 生成，仅供参考）</em>
   </div>
 </div>
 <div class="page-footer">
-  <p><a href="../README.html">← 返回教程首页</a> · 单片机嵌入式教程</p>
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
 </div>
 <script src="../_assets/site.js" defer></script>
 </body>

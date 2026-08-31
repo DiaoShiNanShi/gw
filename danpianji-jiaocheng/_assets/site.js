@@ -13,6 +13,11 @@
       { title: '07 应用场景与方向', href: '基础/07-应用场景与赚钱方向.html' },
       { title: '08 环境搭建', href: '基础/08-工具链与环境搭建.html' },
     ]},
+    { id: 'hw', title: '硬件入门', items: [
+      { title: '01 开发板与工具', href: '硬件/01-开发板与工具.html' },
+      { title: '02 万用表与焊接', href: '硬件/02-万用表与焊接入门.html' },
+      { title: '03 原理图阅读', href: '硬件/03-原理图阅读入门.html' },
+    ]},
     { id: 'start', title: '入门实战', items: [
       { title: '01 第一个程序点灯', href: '入门实战/01-第一个程序点灯.html' },
       { title: '02 按键与中断', href: '入门实战/02-按键与中断.html' },
@@ -36,6 +41,14 @@
       { title: '01 智能台灯', href: '项目实战/01-智能台灯.html' },
       { title: '02 远程开关', href: '项目实战/02-远程开关.html' },
       { title: '03 环境检测仪', href: '项目实战/03-环境检测仪.html' },
+    ]},
+    { id: 'scene', title: '应用场景', items: [
+      { title: '01 行业应用全景', href: '应用场景/01-行业应用全景.html' },
+      { title: '02 如何接单赚钱', href: '应用场景/02-如何接单赚钱.html' },
+    ]},
+    { id: 'practice', title: '练习', items: [
+      { title: '01 入门采购清单', href: '练习/01-入门采购清单.html' },
+      { title: '02 自测题', href: '练习/02-自测题.html' },
     ]},
     { id: 'interview', title: '面试题', items: [
       { title: '嵌入式面试题精选', href: '面试题/嵌入式面试题精选.html' },
@@ -63,7 +76,7 @@
   }
   function buildSidebar() {
     var p = prefix(), html = '<aside class="site-sidebar" id="siteSidebar">';
-    html += '<div class="sidebar-brand"><a href="' + p + 'README.html">单片机学习教程</a><small>24 篇 · 小白友好 · iOS 联动</small></div><nav class="sidebar-nav">';
+    html += '<div class="sidebar-brand"><a href="' + p + 'README.html">单片机学习教程</a><small>32 篇 · 小白友好 · iOS 联动</small></div><nav class="sidebar-nav">';
     NAV.forEach(function (group) {
       if (group.href) {
         html += '<ul class="nav-group-links"><li><a href="' + resolveHref(group.href) + '"' + (isActive(group.href) ? ' class="active"' : '') + '>' + group.title + '</a></li></ul>';

@@ -16,6 +16,11 @@ NAV = [
         ("07 应用场景与方向", "基础/07-应用场景与赚钱方向.html"),
         ("08 环境搭建", "基础/08-工具链与环境搭建.html"),
     ]},
+    {"id": "hw", "title": "硬件入门", "items": [
+        ("01 开发板与工具", "硬件/01-开发板与工具.html"),
+        ("02 万用表与焊接", "硬件/02-万用表与焊接入门.html"),
+        ("03 原理图阅读", "硬件/03-原理图阅读入门.html"),
+    ]},
     {"id": "start", "title": "入门实战", "items": [
         ("01 第一个程序点灯", "入门实战/01-第一个程序点灯.html"),
         ("02 按键与中断", "入门实战/02-按键与中断.html"),
@@ -39,6 +44,14 @@ NAV = [
         ("01 智能台灯", "项目实战/01-智能台灯.html"),
         ("02 远程开关", "项目实战/02-远程开关.html"),
         ("03 环境检测仪", "项目实战/03-环境检测仪.html"),
+    ]},
+    {"id": "scene", "title": "应用场景", "items": [
+        ("01 行业应用全景", "应用场景/01-行业应用全景.html"),
+        ("02 如何接单赚钱", "应用场景/02-如何接单赚钱.html"),
+    ]},
+    {"id": "practice", "title": "练习", "items": [
+        ("01 入门采购清单", "练习/01-入门采购清单.html"),
+        ("02 自测题", "练习/02-自测题.html"),
     ]},
     {"id": "interview", "title": "面试题", "items": [
         ("嵌入式面试题精选", "面试题/嵌入式面试题精选.html"),
@@ -587,6 +600,125 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
 <p>ESP32 + DHT22 + MQ-135 + BLE Notify + Swift Charts</p>
 <p>这个项目可以写进简历：「独立完成 MCU 固件 + iOS App 联调」。</p>
 """),
+    "硬件/01-开发板与工具.html": ("硬件 01：开发板与工具", "硬件入门", "硬件", """
+<h2>1. 必备工具清单</h2>
+<table>
+<tr><th>工具</th><th>用途</th><th>必须？</th></tr>
+<tr><td>ESP32 开发板</td><td>主控</td><td>✅</td></tr>
+<tr><td>USB 数据线</td><td>供电+烧录</td><td>✅</td></tr>
+<tr><td>面包板 + 杜邦线</td><td>免焊接实验</td><td>✅</td></tr>
+<tr><td>LED + 电阻 + 按键</td><td>基础实验</td><td>✅</td></tr>
+<tr><td>万用表</td><td>测电压/通断</td><td>✅</td></tr>
+</table>
+<h2>2. 软件工具</h2>
+<table>
+<tr><th>软件</th><th>用途</th></tr>
+<tr><td>Arduino IDE / PlatformIO</td><td>ESP32 快速开发</td></tr>
+<tr><td>STM32CubeIDE</td><td>STM32 官方 IDE</td></tr>
+<tr><td>Serial Studio</td><td>串口数据可视化</td></tr>
+</table>
+<h2>3. Mac 环境</h2>
+<pre><code>brew install --cask arduino-ide
+# 或 VS Code + PlatformIO 插件</code></pre>
+<p><strong>下一步：</strong> <a href="02-万用表与焊接入门.html">02-万用表与焊接</a></p>
+"""),
+    "硬件/02-万用表与焊接入门.html": ("硬件 02：万用表与焊接入门", "硬件入门", "硬件", """
+<h2>1. 万用表三件套</h2>
+<ol>
+<li><strong>测电压</strong>：确认 3.3V / 5V 供电正常</li>
+<li><strong>测通断</strong>：检查焊接是否连通（蜂鸣档）</li>
+<li><strong>测电阻</strong>：确认阻值正确</li>
+</ol>
+<h2>2. 安全红线</h2>
+<ul>
+<li>⚠️ 不要带电焊接</li>
+<li>⚠️ 不要短路 VCC 和 GND</li>
+<li>⚠️ ESP32 GPIO 只能 3.3V，5V 会烧</li>
+</ul>
+<h2>3. 焊接五步</h2>
+<p>加热焊盘 → 送锡 → 移锡 → 停 1 秒 → 移烙铁。焊点应光滑饱满。</p>
+<p><strong>下一步：</strong> <a href="03-原理图阅读入门.html">03-原理图阅读</a></p>
+"""),
+    "硬件/03-原理图阅读入门.html": ("硬件 03：原理图阅读入门", "硬件入门", "硬件", """
+<h2>1. 为什么要看原理图？</h2>
+<p>做 iOS 要看 API 文档，做硬件要看原理图——每个引脚连了什么、电源怎么走。</p>
+<h2>2. 阅读顺序</h2>
+<ol>
+<li>找 <strong>MCU 芯片</strong>（引脚最多）</li>
+<li>看 <strong>电源</strong>（VCC → 稳压 → 3.3V）</li>
+<li>看 <strong>引脚连接</strong>（LED→GPIO2, 按键→GPIO0…）</li>
+<li>看 <strong>通信接口</strong>（I2C 传感器、SPI 屏）</li>
+</ol>
+<div class="tip-box">💡 推荐：立创 EDA（免费在线）、LCSC 商城买元件</div>
+<p><strong>下一步：</strong> <a href="../入门实战/01-第一个程序点灯.html">入门实战 01-点灯</a></p>
+"""),
+    "应用场景/01-行业应用全景.html": ("应用 01：行业应用全景", "应用场景", "应用", """
+<h2>七大方向</h2>
+<ul>
+<li><strong>消费电子</strong>：智能家居、可穿戴——入门首选</li>
+<li><strong>工业控制</strong>：PLC、电机驱动——稳定高薪</li>
+<li><strong>汽车电子</strong>：ECU、BMS——薪资最高</li>
+<li><strong>医疗器械</strong>：血压计、监护仪——合规要求高</li>
+<li><strong>农业 IoT</strong>：土壤监测、自动灌溉</li>
+<li><strong>新能源</strong>：充电桩、储能 BMS——热门</li>
+<li><strong>机器人/无人机</strong>：飞控、舵机</li>
+</ul>
+<div class="tip-box">💡 对你最现实：<strong>消费电子 IoT + iOS App</strong>，投入小、能出作品集。</div>
+<p><strong>下一步：</strong> <a href="02-如何接单赚钱.html">02-如何接单赚钱</a></p>
+"""),
+    "应用场景/02-如何接单赚钱.html": ("应用 02：如何接单赚钱", "应用场景", "应用", """
+<h2>1. 接单渠道</h2>
+<table>
+<tr><th>渠道</th><th>单价</th></tr>
+<tr><td>淘宝/闲鱼小项目</td><td>¥500–5000</td></tr>
+<tr><td>猪八戒/程序员客栈</td><td>¥5000–30000</td></tr>
+<tr><td>行业人脉/老客户</td><td>¥2万–20万</td></tr>
+</table>
+<h2>2. 适合 iOS 开发者的项目</h2>
+<ol>
+<li>App + 硬件套装（ESP32 + iOS 控制）</li>
+<li>智能农业监测（温湿度 + App + 报警）</li>
+<li>BLE 门禁/考勤</li>
+<li>宠物/老人监护传感器 + 推送</li>
+</ol>
+<h2>3. 从 0 到第一单</h2>
+<ol>
+<li>做完 3 个项目实战 → 拍照录视频</li>
+<li>GitHub 开源 + 技术博客</li>
+<li>闲鱼挂「ESP32 定制开发」</li>
+<li>首单低价换案例和好评</li>
+</ol>
+"""),
+    "练习/01-入门采购清单.html": ("练习 01：入门采购清单", "练习", "练习", """
+<h2>淘宝/拼多多采购表</h2>
+<table>
+<tr><th>物品</th><th>参考价</th></tr>
+<tr><td>ESP32-DevKitC</td><td>¥25</td></tr>
+<tr><td>37合1传感器套件</td><td>¥45</td></tr>
+<tr><td>面包板+杜邦线</td><td>¥15</td></tr>
+<tr><td>万用表</td><td>¥30</td></tr>
+<tr><td>DHT22 + 舵机 + 继电器</td><td>¥30</td></tr>
+</table>
+<p><strong>总计约 ¥170</strong>，一个周末到货。</p>
+<h2>12 周学习节奏</h2>
+<pre><code>第 1–4 周：ESP32 + BLE + iOS
+第 5–8 周：STM32 + FreeRTOS
+第 9–12 周：2 个完整项目进作品集</code></pre>
+<p><strong>下一步：</strong> <a href="02-自测题.html">02-自测题</a></p>
+"""),
+    "练习/02-自测题.html": ("练习 02：自测题", "练习", "练习", """
+<h2>基础自测（10 题，8 分及格）</h2>
+<h3>1. 单片机和 iPhone 芯片的最大区别？</h3>
+<details><summary>点击查看答案</summary><p>单片机专注控制、低功耗、无复杂 OS；A 芯片是高性能 AP 跑 iOS。</p></details>
+<h3>2. GPIO 输出和输入分别干什么？</h3>
+<details><summary>点击查看答案</summary><p>输出控 LED/继电器；输入读按键和数字传感器。</p></details>
+<h3>3. 中断和轮询哪个更省电？</h3>
+<details><summary>点击查看答案</summary><p>中断。CPU 可 Sleep，事件来了才唤醒。</p></details>
+<h3>4. BLE 的 Central 和 Peripheral？</h3>
+<details><summary>点击查看答案</summary><p>Central=主机（iPhone），Peripheral=从机（ESP32）。</p></details>
+<h3>5. 智能灯项目需要哪三部分？</h3>
+<details><summary>点击查看答案</summary><p>ESP32 固件 + iOS App（CoreBluetooth）+ 可选云端。</p></details>
+"""),
     "面试题/嵌入式面试题精选.html": ("嵌入式面试题精选", "面试题", "面试题", """
 <h2>基础题</h2>
 <h3>1. 单片机和 CPU 的区别？</h3>
@@ -664,7 +796,9 @@ README_BODY = """
 第 3 步 进阶（4 篇）→ STM32 / FreeRTOS / 低功耗 / OTA
 第 4 步 iOS 联动（4 篇）→ BLE / MQTT / 全栈方案 / CoreBluetooth
 第 5 步 项目实战（3 篇）→ 台灯 / 远程开关 / 环境检测仪
-第 6 步 面试题 → 嵌入式高频题精选</code></pre>
+第 6 步 应用场景（2 篇）→ 行业全景 / 接单赚钱
+第 7 步 练习（2 篇）→ 采购清单 / 自测题
+第 8 步 面试题 → 嵌入式高频题精选</code></pre>
 <h2>二、模块速览</h2>
 <table>
 <thead><tr><th>模块</th><th>篇数</th><th>学完你能做什么</th></tr></thead>
@@ -673,7 +807,10 @@ README_BODY = """
 <tr><td>入门实战</td><td>5</td><td>独立点灯、读传感器、调舵机</td></tr>
 <tr><td>进阶</td><td>4</td><td>STM32 开发、多任务、OTA</td></tr>
 <tr><td>iOS 联动</td><td>4</td><td>用 iPhone 控制硬件（你的核心竞争力）</td></tr>
+<tr><td>硬件入门</td><td>3</td><td>工具、焊接、看原理图</td></tr>
 <tr><td>项目实战</td><td>3</td><td>3 个可写进简历的完整项目</td></tr>
+<tr><td>应用场景</td><td>2</td><td>行业方向、接单赚钱</td></tr>
+<tr><td>练习</td><td>2</td><td>采购清单、自测巩固</td></tr>
 <tr><td>面试题</td><td>1</td><td>嵌入式岗位高频题</td></tr>
 </tbody>
 </table>
@@ -705,7 +842,7 @@ def main():
 
     readme = page_html("README.html", {
         "title": "单片机 / 嵌入式学习教程",
-        "tag": "24 篇 · 小白友好 · iOS 开发者专属路径",
+        "tag": "32 篇 · 小白友好 · iOS 开发者专属路径",
         "module": "",
         "body": README_BODY,
     })
