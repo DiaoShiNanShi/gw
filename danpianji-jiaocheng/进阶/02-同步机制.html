@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>进阶 02：同步机制 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 进阶</div>
+    <h1>进阶 02：同步机制</h1>
+    <span class="header-tag">进阶</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>Queue/Semaphore/Mutex/EventGroup。</p></blockquote><hr>
+<h2>1. Queue</h2>
+<pre><code class="language-c">QueueHandle_t q = xQueueCreate(10, sizeof(SensorData));
+xQueueSend(q, &data, portMAX_DELAY);
+xQueueReceive(q, &data, portMAX_DELAY);</code></pre>
+<h2>2. Mutex</h2>
+<pre><code class="language-c">SemaphoreHandle_t m = xSemaphoreCreateMutex();
+xSemaphoreTake(m, portMAX_DELAY); /* 访问 SPI */ xSemaphoreGive(m);</code></pre>
+<h2>3. EventGroup</h2>
+<p>多位事件同步，如 Wi-Fi 连上 AND 传感器就绪。</p>
+<h2>4. 对照</h2>
+<table><thead><tr><th>RTOS</th><th>Swift</th></tr></thead><tbody><tr><td>Queue</td><td>AsyncStream/Channel</td></tr><tr><td>Mutex</td><td>NSLock</td></tr><tr><td>Semaphore</td><td>DispatchSemaphore</td></tr></tbody></table>
+<div class="tip-box">💡 共享 SPI/I2C 总线必须 Mutex。</div>
+<h2>常见问题</h2>
+<h3>ISR 用 Queue?</h3><p>xQueueSendFromISR。</p>
+<h3>优先级反转?</h3><p>Mutex 继承。</p>
+<h3>死锁?</h3><p>固定加锁顺序。</p>
+<h2>本章小结</h2><ul>
+<li>Queue 传数据</li>
+<li>Mutex 保临界区</li>
+<li>EventGroup 多条件</li>
+<li>FromISR 专用 API</li>
+</ul>
+<p><strong>下一步：</strong> <a href="03-低功耗设计.html">03-低功耗</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

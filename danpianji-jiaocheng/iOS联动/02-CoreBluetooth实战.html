@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 联动 02：CoreBluetooth 实战 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS联动</div>
+    <h1>iOS 联动 02：CoreBluetooth 实战</h1>
+    <span class="header-tag">iOS 联动</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>CBManager/CBPeripheral，读写 Notify 完整 Swift 代码。</p></blockquote><hr>
+<table><thead><tr><th>要点</th><th>说明</th></tr></thead><tbody><tr><td>实验</td><td>DevKit 验证</td></tr><tr><td>调试</td><td>串口 printf</td></tr></tbody></table>
+<h2>1. Central</h2>
+<pre><code class="language-swift">class BLEManager: NSObject, CBCentralManagerDelegate {
+  var central: CBCentralManager!
+  override init() { central = CBCentralManager(delegate: self, queue: .main) }
+  func centralManagerDidUpdateState(_ c: CBCentralManager) {
+    if c.state == .poweredOn { c.scanForPeripherals(withServices: [svcUUID]) }
+  }
+}</code></pre>
+<h2>2. 连接读写</h2>
+<pre><code class="language-swift">func peripheral(_ p: CBPeripheral, didDiscoverCharacteristicsFor s: CBService, error: Error?) {
+  for ch in s.characteristics ?? [] {
+    if ch.properties.contains(.notify) { p.setNotifyValue(true, for: ch) }
+  }
+}
+func peripheral(_ p: CBPeripheral, didUpdateValueFor ch: CBCharacteristic, error: Error?) {
+  print(ch.value as Any)
+}</code></pre>
+<h2>3. 写控制</h2>
+<pre><code class="language-swift">peripheral.writeValue(Data([0x01]), for: powerChar, type: .withResponse)</code></pre>
+<h2>4. MVVM</h2>
+<p>LampViewModel 持有 BLEManager，@Published 驱动 SwiftUI。</p>
+<div class="tip-box">💡 Retain peripheral 引用，别被 ARC 释放。</div>
+<h2>常见问题</h2>
+<h3>didDisconnect?</h3><p>自动 reconnect 策略。</p>
+<h3>withResponse?</h3><p>可靠写，慢；without 快。</p>
+<h3>MTU?</h3><p>maximumWriteValueLength。</p>
+<h2>本章小结</h2><ul>
+<li>CBCentralManager 状态机</li>
+<li>discover+notify</li>
+<li>writeValue 控制</li>
+<li>MVVM 绑定 UI</li>
+</ul>
+<p><strong>下一步：</strong> <a href="03-WiFi配网.html">03-配网</a></p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

@@ -4,43 +4,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="../_assets/site.css">
-<title>入门实战 01：第一个程序——点灯 - 单片机学习教程</title>
+<title>入门实战 01：第一个程序点灯 - 单片机学习教程</title>
 </head>
 <body>
 <div class="page-header">
   <div class="page-header-inner">
-    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 入门实战模块</div>
-    <h1>入门实战 01：第一个程序——点灯</h1>
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 入门实战</div>
+    <h1>入门实战 01：第一个程序点灯</h1>
     <span class="header-tag">入门实战</span>
   </div>
 </div>
 <div class="container">
   <div class="content-card">
-
-<h2>目标</h2><p>让 LED 每秒闪一次——嵌入式界的 Hello World。</p>
-<h2>Arduino 代码（ESP32）</h2>
-<pre><code>#define LED_PIN 2
-
-void setup() {
-  pinMode(LED_PIN, OUTPUT);
-  Serial.begin(115200);
-  Serial.println("Hello Embedded!");
-}
-
-void loop() {
-  digitalWrite(LED_PIN, HIGH);
-  delay(500);
-  digitalWrite(LED_PIN, LOW);
-  delay(500);
-}</code></pre>
-<h2>步骤</h2>
-<ol>
-<li>板子选 <strong>ESP32 Dev Module</strong></li>
-<li>按 GPIO 接线图接 LED</li>
-<li>上传 → 看 LED 闪烁 + 串口输出</li>
-</ol>
-<p><strong>下一步：</strong> <a href="02-按键与中断.html">02-按键与中断</a></p>
-
+<blockquote><p>GPIO 输出 Blink，建立烧录-运行闭环。</p></blockquote><hr>
+<h2>1. 目标</h2>
+<p>点亮 LED 并闪烁，串口打印确认程序运行。</p>
+<h2>2. 接线</h2>
+<pre><code class="language-text">ESP32 板载 LED 通常 GPIO2 或 GPIO8，查 DevKit 原理图
+外接: 3.3V─220Ω─LED─GPIO</code></pre>
+<h2>3. 代码</h2>
+<pre><code class="language-c">#define LED 2
+void setup(){ pinMode(LED,OUTPUT); Serial.begin(115200); Serial.println("start");}
+void loop(){ digitalWrite(LED,HIGH); delay(500); digitalWrite(LED,LOW); delay(500);}</code></pre>
+<h2>4. 排错</h2>
+<table><thead><tr><th>现象</th><th>检查</th></tr></thead><tbody><tr><td>不亮</td><td>LED极性/引脚号</td></tr><tr><td>不闪</td><td>程序是否跑/看串口</td></tr><tr><td>烧录失败</td><td>端口/BOOT键</td></tr></tbody></table>
+<div class="tip-box">💡 第一个里程碑：看到 LED 闪 = 闭环成立。</div>
+<h2>常见问题</h2>
+<h3>GPIO 选哪个?</h3><p>查 strapping 脚避免。</p>
+<h3>3.3V?</h3><p>ESP32 GPIO 仅 3.3V。</p>
+<h3>delay 阻塞?</h3><p>入门可用，后面用定时器。</p>
+<h2>本章小结</h2><ul>
+<li>点灯=Hello World</li>
+<li>查原理图引脚</li>
+<li>串口确认运行</li>
+<li>建立烧录闭环</li>
+</ul>
+<p><strong>下一步：</strong> <a href="02-按键与中断.html">02-按键</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
 <em>（内容由 AI 生成，仅供参考）</em>
   </div>
 </div>

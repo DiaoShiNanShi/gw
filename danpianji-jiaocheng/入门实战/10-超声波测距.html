@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>入门实战 10：超声波测距 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 入门实战</div>
+    <h1>入门实战 10：超声波测距</h1>
+    <span class="header-tag">入门实战</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>HC-SR04 Trig/Echo，pulseIn 算距离。</p></blockquote><hr>
+<table><thead><tr><th>要点</th><th>说明</th></tr></thead><tbody><tr><td>实验</td><td>DevKit 验证</td></tr><tr><td>调试</td><td>串口 printf</td></tr></tbody></table>
+<h2>1. 原理</h2>
+<p>Trig 发 10µs 脉冲，Echo 高电平时间 ∝ 距离。声速340m/s，距离=时间µs/58 cm。</p>
+<h2>2. 代码</h2>
+<pre><code class="language-c">#define TRIG 5
+#define ECHO 18
+void measure(){
+  digitalWrite(TRIG,LOW); delayMicroseconds(2);
+  digitalWrite(TRIG,HIGH); delayMicroseconds(10); digitalWrite(TRIG,LOW);
+  long us = pulseIn(ECHO, HIGH, 30000);
+  if(us==0) Serial.println("timeout");
+  else Serial.printf("dist=%.1f cm\n", us/58.0);
+}</code></pre>
+<h2>3. 局限</h2>
+<p>Soft 材料/角度吸收；近距盲区 ~2cm；实时性受 sound speed 限制。</p>
+<h2>4. 项目</h2>
+停车辅助、垃圾桶满度、智能门锁接近检测。
+<div class="tip-box">💡 Echo 5V 时 ESP32 需分压到 3.3V。</div>
+<div class="tip-box" style="border-color:#ff6b6b;background:rgba(255,107,107,.08)">⚠️ HC-SR04 Echo 5V 输出需 1k/2k 分压保护 ESP32。</div>
+<h2>常见问题</h2>
+<h3>不准?</h3><p>温度补偿/多次平均。</p>
+<h3>timeout?</h3><p>超量程或无人。</p>
+<h3>vs ToF?</h3><p>ToF 更准更贵。</p>
+<h2>本章小结</h2><ul>
+<li>Trig/Echo时序</li>
+<li>pulseIn测脉宽</li>
+<li>距离=us/58</li>
+<li>注意5V Echo</li>
+</ul>
+<p><strong>下一步：</strong> <a href="../STM32/01-入门.html">STM32 01</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

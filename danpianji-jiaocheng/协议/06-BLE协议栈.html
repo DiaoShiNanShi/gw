@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>协议 06：BLE 协议栈 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 协议</div>
+    <h1>协议 06：BLE 协议栈</h1>
+    <span class="header-tag">协议模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>GAP/GATT、广播连接、Service/Characteristic、MTU。</p></blockquote><hr>
+<h2>1. 角色</h2>
+<table><thead><tr><th>角色</th><th>设备</th><th>iOS API</th></tr></thead><tbody><tr><td>Central</td><td>手机</td><td>CBCentralManager</td></tr><tr><td>Peripheral</td><td>ESP32</td><td>CBPeripheralManager(少见)</td></tr></tbody></table>
+<h2>2. GATT 层次</h2>
+<pre><code class="language-text">Profile → Service(0x180F Battery) → Characteristic(0x2A19 Level) → Descriptor</code></pre>
+<h2>3. 连接流程</h2>
+<ol><li>Peripheral 广播</li><li>Central 扫描</li><li>connect</li><li>discoverServices</li><li>read/write/notify</li></ol>
+<h2>4. ESP32 NimBLE</h2>
+<pre><code class="language-c">NimBLEDevice::init("MyLamp");
+NimBLEService *svc = server->createService(SERVICE_UUID);
+NimBLECharacteristic *ch = svc->createCharacteristic(CHAR_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY);</code></pre>
+<div class="tip-box">💡 iOS 开发者先掌握 GATT 层即可开发 90% 产品。</div>
+<h2>常见问题</h2>
+<h3>配对绑定?</h3><p>配对加密，绑定存LTK。</p>
+<h3>Notify?</h3><p>设备主动推送，类似 WebSocket。</p>
+<h3>MTU?</h3><p>协商更大包减开销。</p>
+<h2>本章小结</h2><ul>
+<li>Central/Peripheral</li>
+<li>GATT结构清晰</li>
+<li>Notify推数据</li>
+<li>iOS先学GATT</li>
+</ul>
+<p><strong>下一步：</strong> <a href="07-WiFi与TCP.html">07-WiFi</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

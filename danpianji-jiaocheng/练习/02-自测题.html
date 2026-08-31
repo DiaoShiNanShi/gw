@@ -4,31 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="../_assets/site.css">
-<title>练习 02：自测题 - 单片机学习教程</title>
+<title>练习 02：自测题（15 题） - 单片机学习教程</title>
 </head>
 <body>
 <div class="page-header">
   <div class="page-header-inner">
-    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 练习模块</div>
-    <h1>练习 02：自测题</h1>
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 练习</div>
+    <h1>练习 02：自测题（15 题）</h1>
     <span class="header-tag">练习</span>
   </div>
 </div>
 <div class="container">
   <div class="content-card">
-
-<h2>基础自测（10 题，8 分及格）</h2>
-<h3>1. 单片机和 iPhone 芯片的最大区别？</h3>
-<details><summary>点击查看答案</summary><p>单片机专注控制、低功耗、无复杂 OS；A 芯片是高性能 AP 跑 iOS。</p></details>
-<h3>2. GPIO 输出和输入分别干什么？</h3>
-<details><summary>点击查看答案</summary><p>输出控 LED/继电器；输入读按键和数字传感器。</p></details>
-<h3>3. 中断和轮询哪个更省电？</h3>
-<details><summary>点击查看答案</summary><p>中断。CPU 可 Sleep，事件来了才唤醒。</p></details>
-<h3>4. BLE 的 Central 和 Peripheral？</h3>
-<details><summary>点击查看答案</summary><p>Central=主机（iPhone），Peripheral=从机（ESP32）。</p></details>
-<h3>5. 智能灯项目需要哪三部分？</h3>
-<details><summary>点击查看答案</summary><p>ESP32 固件 + iOS App（CoreBluetooth）+ 可选云端。</p></details>
-
+<blockquote><p>学习目标：15 道自测题覆盖基础到 iOS 联动，先自答再展开，8 分及格。</p></blockquote><hr>
+<pre><code class="language-c">// 本章配套：在 DevKit 上验证所学概念
+void setup() { Serial.begin(115200); }
+void loop() { /* 实验代码 */ }</code></pre>
+<h2>1. 说明</h2>
+<p>涵盖 MCU 概念、GPIO、协议、BLE、FreeRTOS、iOS。建议闭卷。</p>
+<h2>2. 题目</h2>
+<h3>1. MCU 和 CPU 的区别？</h3><details><summary>点击查看答案</summary><p>MCU 集成 CPU+Flash+RAM+外设；CPU 只是运算核心。</p></details><h3>2. GPIO 推挽和开漏区别？</h3><details><summary>点击查看答案</summary><p>推挽可输出高低；开漏只能拉低或高阻，需上拉。</p></details><h3>3. I2C 为什么用上拉？</h3><details><summary>点击查看答案</summary><p>开漏输出只能拉低，释放时靠上拉拉高。</p></details><h3>4. BLE Central 和 Peripheral？</h3><details><summary>点击查看答案</summary><p>Central 发起连接(通常是手机)；Peripheral 广播被连(设备)。</p></details><h3>5. volatile 作用？</h3><details><summary>点击查看答案</summary><p>防止编译器优化掉对寄存器的重复读取。</p></details><h3>6. FreeRTOS 任务和线程？</h3><details><summary>点击查看答案</summary><p>类似，有独立栈和优先级，由调度器抢占。</p></details><h3>7. UART 115200 含义？</h3><details><summary>点击查看答案</summary><p>每秒 115200 比特，常见 8N1 配置。</p></details><h3>8. ESP32 Deep Sleep 功耗？</h3><details><summary>点击查看答案</summary><p>约 10µA 级，RAM 丢失，RTC 内存可保留。</p></details><h3>9. 看门狗作用？</h3><details><summary>点击查看答案</summary><p>程序跑飞超时未喂狗则复位，提高可靠性。</p></details><h3>10. Modbus 功能码 03？</h3><details><summary>点击查看答案</summary><p>读保持寄存器。</p></details><h3>11. ADC 12bit 分辨率？</h3><details><summary>点击查看答案</summary><p>0-4095 对应 0-Vref。</p></details><h3>12. MQTT QoS 1 含义？</h3><details><summary>点击查看答案</summary><p>至少送达一次，可能重复。</p></details><h3>13. STM32 HAL_Delay 不准？</h3><details><summary>点击查看答案</summary><p>先查 SystemCoreClock 和时钟树配置。</p></details><h3>14. iOS CoreBluetooth 扫不到设备？</h3><details><summary>点击查看答案</summary><p>查 UUID、权限、广播、真机。</p></details><h3>15. 指针和数组关系？</h3><details><summary>点击查看答案</summary><p>数组名是指向首元素的常量指针。</p></details>
+<h2>3. 评分</h2>
+<table><thead><tr><th>得分</th><th>等级</th></tr></thead><tbody><tr><td>12-15</td><td>优秀，进实战</td></tr><tr><td>8-11</td><td>及格，补薄弱章</td></tr><tr><td><8</td><td>重读基础模块</td></tr></tbody></table>
+<div class="tip-box">💡 错题回到对应章节动手实验。</div>
+<h2>常见问题</h2>
+<h3>只做题?</h3><p>必须配合 DevKit。</p>
+<h3>15题够?</h3><p>入门检测足够。</p>
+<h3>iOS 题?</h3><p>12-15 涉及联动。</p>
+<h2>本章小结</h2><ul>
+<li>15题含details答案</li>
+<li>8分及格</li>
+<li>覆盖全模块</li>
+<li>错题回章节</li>
+</ul>
+<p><strong>下一步：</strong> <a href="03-12周学习计划.html">03-计划</a></p>
 <em>（内容由 AI 生成，仅供参考）</em>
   </div>
 </div>

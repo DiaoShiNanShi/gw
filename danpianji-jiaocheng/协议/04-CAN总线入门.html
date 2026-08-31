@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>协议 04：CAN 总线入门 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 协议</div>
+    <h1>协议 04：CAN 总线入门</h1>
+    <span class="header-tag">协议模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>CAN 帧、仲裁、终端电阻、汽车工控。</p></blockquote><hr>
+<h2>1. 特点</h2>
+<p>差分总线 CAN_H/CAN_L，多主，抗干扰，传输距离远。汽车/工控标准。</p>
+<h2>2. 标准帧</h2>
+<table><thead><tr><th>场</th><th>说明</th></tr></thead><tbody><tr><td>ID</td><td>11位优先级仲裁</td></tr><tr><td>DLC</td><td>0-8字节</td></tr><tr><td>Data</td><td> payload</td></tr><tr><td>CRC</td><td>校验</td></tr></tbody></table>
+<h2>3. 硬件</h2>
+<pre><code class="language-text">MCU CAN_TX/RX → TJA1050 收发器 → CAN_H/CAN_L
+总线两端各120Ω终端电阻</code></pre>
+<h2>4. STM32</h2>
+<p>bxCAN/FDCAN 外设 + 外部收发器。ID 越小优先级越高。</p>
+<div class="tip-box">💡 终端电阻缺一会反射导致通信失败。</div>
+<h2>常见问题</h2>
+<h3>和UART?</h3><p>CAN多主差分远距。</p>
+<h3>120Ω?</h3><p>总线两端各一个。</p>
+<h3>CAN FD?</h3><p>更高速率更多数据。</p>
+<h2>本章小结</h2><ul>
+<li>CAN汽车工控标准</li>
+<li>差分抗干扰</li>
+<li>终端120Ω</li>
+<li>ID仲裁优先级</li>
+</ul>
+<p><strong>下一步：</strong> <a href="05-Modbus协议.html">05-Modbus</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

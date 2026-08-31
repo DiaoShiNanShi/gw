@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>ESP32 01：入门与 STM32 对比 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; ESP32</div>
+    <h1>ESP32 01：入门与 STM32 对比</h1>
+    <span class="header-tag">ESP32 专题</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>双核 Wi-Fi/BT，Arduino vs IDF，与 STM32 分工。</p></blockquote><hr>
+<pre><code class="language-c">// 本章配套：在 DevKit 上验证所学概念
+void setup() { Serial.begin(115200); }
+void loop() { /* 实验代码 */ }</code></pre>
+<h2>1. 架构</h2>
+<table><thead><tr><th>组件</th><th>说明</th></tr></thead><tbody><tr><td>PRO CPU</td><td>协议栈/Wi-Fi</td></tr><tr><td>APP CPU</td><td>用户代码</td></tr><tr><td>NVS</td><td>配置存储</td></tr><tr><td>RTC</td><td>Deep Sleep</td></tr></tbody></table>
+<h2>2. vs STM32</h2>
+<table><thead><tr><th></th><th>ESP32</th><th>STM32</th></tr></thead><tbody><tr><td>联网</td><td>内置Wi-Fi/BLE</td><td>需外接模块</td></tr><tr><td>实时</td><td>较弱</td><td>强</td></tr><tr><td>生态</td><td>Arduino/IDF</td><td>CubeMX/HAL</td></tr><tr><td>场景</td><td>IoT 原型</td><td>工业控制</td></tr></tbody></table>
+<h2>3. 框架</h2>
+<p>原型 Arduino 快；量产 ESP-IDF（FreeRTOS 原生、低功耗全）。</p>
+<h2>4. 分工</h2>
+<p>典型产品：STM32 控电机传感器 + ESP32 负责联网 —— 或单 ESP32 全包。</p>
+<div class="tip-box">💡 IoT+iOS 优先 ESP32；工业实时选 STM32。</div>
+<h2>常见问题</h2>
+<h3>Arduino vs IDF?</h3><p>快 vs 全。</p>
+<h3>双核?</h3><p>Wi-Fi 占一核，用户另一核。</p>
+<h3>GPIO 少?</h3><p>扩展 I2C GPIO 芯片。</p>
+<h2>本章小结</h2><ul>
+<li>ESP32 联网强</li>
+<li>双核 Wi-Fi/BT</li>
+<li>Arduino 原型 IDF 量产</li>
+<li>与 STM32 可分工</li>
+</ul>
+<p><strong>下一步：</strong> <a href="02-WiFi-STA与AP.html">02-WiFi</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

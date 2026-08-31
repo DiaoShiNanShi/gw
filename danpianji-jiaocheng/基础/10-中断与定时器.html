@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 10：中断与定时器 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础</div>
+    <h1>基础 10：中断与定时器</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>轮询 vs 中断，ISR 规范，硬件定时器精确定时。</p></blockquote><hr>
+<h2>1. 轮询 vs 中断</h2>
+<table><thead><tr><th>方式</th><th>CPU</th><th>类比</th></tr></thead><tbody><tr><td>轮询</td><td>持续占用</td><td>while 检查</td></tr><tr><td>中断</td><td>事件驱动</td><td>Button action</td></tr></tbody></table>
+<h2>2. ISR 规范</h2>
+<pre><code class="language-c">volatile bool flag = false;
+void IRAM_ATTR isr() { flag = true; } // 短小，不 delay
+void loop() { if(flag){ flag=false; handle(); } }</code></pre>
+<h2>3. 硬件定时器</h2>
+<p>精确定时/PWM/RTOS tick。STM32 TIM、ESP32 hw_timer。</p>
+<h2>4. 按键防抖</h2>
+<p>中断置标志，主循环 delay 10ms 再读 GPIO 确认。</p>
+<div class="tip-box">💡 ISR 里禁止 HAL_Delay/printf，类似主线程不做耗时网络。</div>
+<h2>常见问题</h2>
+<h3>优先级?</h3><p>高优先级可抢占低。</p>
+<h3>ISR printf?</h3><p>不推荐，只置标志。</p>
+<h3>定时器 vs delay?</h3><p>定时器不阻塞 CPU。</p>
+<h2>本章小结</h2><ul>
+<li>中断=事件驱动</li>
+<li>ISR 要短要快</li>
+<li>硬件定时器精确</li>
+<li>按键需防抖</li>
+</ul>
+<p><strong>下一步：</strong> <a href="11-存储器与Flash.html">11-Flash</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

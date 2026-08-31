@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>协议 01：UART 详解 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 协议</div>
+    <h1>协议 01：UART 详解</h1>
+    <span class="header-tag">协议模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>UART 帧格式、波特率、接线、ESP32/STM32 收发。</p></blockquote><hr>
+<h2>1. 基础</h2>
+<table><thead><tr><th>参数</th><th>典型值</th></tr></thead><tbody><tr><td>波特率</td><td>115200</td></tr><tr><td>数据位</td><td>8</td></tr><tr><td>停止位</td><td>1</td></tr><tr><td>校验</td><td>None</td></tr></tbody></table>
+<h2>2. 接线</h2>
+<pre><code class="language-text">MCU TX → 模块 RX
+MCU RX → 模块 TX
+GND 必须共地</code></pre>
+<h2>3. ESP32 代码</h2>
+<pre><code class="language-c">Serial.begin(115200);
+Serial.printf("Chip: %s\n", ESP.getChipModel());
+while(Serial.available()) {
+  char c = Serial.read();
+  Serial.write(c); // echo
+}</code></pre>
+<h2>4. 应用</h2>
+<p>调试 NSLog 级、GPS NMEA、蓝牙 AT 指令、Modbus RTU 物理层。</p>
+<div class="tip-box">💡 TX/RX 交叉，必须共 GND。</div>
+<h2>常见问题</h2>
+<h3>乱码?</h3><p>波特率不一致。</p>
+<h3>USB-TTL?</h3><p>无 USB 的板子需要。</p>
+<h3>printf 重定向?</h3><p>_write 或 HAL_UART_Transmit。</p>
+<h2>本章小结</h2><ul>
+<li>UART两线全双工</li>
+<li>115200最常用</li>
+<li>TXRX交叉共地</li>
+<li>嵌入式NSLog</li>
+</ul>
+<p><strong>下一步：</strong> <a href="02-I2C详解.html">02-I2C</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

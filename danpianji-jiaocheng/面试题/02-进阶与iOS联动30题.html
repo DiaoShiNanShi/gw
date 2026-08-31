@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>面试题 02：进阶与 iOS 联动 30 题 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 面试题</div>
+    <h1>面试题 02：进阶与 iOS 联动 30 题</h1>
+    <span class="header-tag">面试题</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>学习目标：30 道进阶+ iOS 联动面试题含答案，RTOS/OTA/BLE/MQTT/全栈。</p></blockquote><hr>
+<table><thead><tr><th>要点</th><th>说明</th></tr></thead><tbody><tr><td>实验</td><td>DevKit 验证</td></tr><tr><td>调试</td><td>串口 printf</td></tr></tbody></table>
+<h2>1. 说明</h2>
+<p>中高级与智能硬件全栈岗。每题准备：原理+项目例子+踩坑。</p>
+<h2>2. 题目与答案</h2>
+<h3>1. FreeRTOS 优先级反转及解决？</h3><details><summary>参考答案</summary><p>低优先级持 Mutex 时高优先级等待；用优先级继承 Mutex。</p></details><h3>2. xQueueSendFromISR 注意？</h3><details><summary>参考答案</summary><p>仅 ISR 内用，可能触发 yield。</p></details><h3>3. ESP32 双核如何分工？</h3><details><summary>参考答案</summary><p>PRO 常跑 Wi-Fi/BT 协议栈，APP 跑用户代码。</p></details><h3>4. NimBLE vs Bluedroid？</h3><details><summary>参考答案</summary><p>NimBLE 省 RAM，IDF 5 默认推荐。</p></details><h3>5. TLS 证书校验 OTA？</h3><details><summary>参考答案</summary><p>HTTPS OTA 验证 server 证书或 embed 公钥。</p></details><h3>6. Tickless 配置项？</h3><details><summary>参考答案</summary><p>configUSE_TICKLESS_IDLE 及 portSUPPRESS_TICKS。</p></details><h3>7. JTAG 和 SWD？</h3><details><summary>参考答案</summary><p>SWD 是 ARM 2线调试接口，JTAG 4/5 线更通用。</p></details><h3>8. Mem manage heap_4？</h3><details><summary>参考答案</summary><p>FreeRTOS 带合并的 heap 算法。</p></details><h3>9. ADC DMA 双缓冲？</h3><details><summary>参考答案</summary><p>半完成/全完成回调交替处理，无丢失。</p></details><h3>10. Modbus CRC 计算？</h3><details><summary>参考答案</summary><p>RTU 帧尾 16 位 CRC，低字节在前。</p></details><h3>11. CAN 扩展帧？</h3><details><summary>参考答案</summary><p>29 位 ID vs 标准 11 位。</p></details><h3>12. BLE 配对 vs 绑定？</h3><details><summary>参考答案</summary><p>配对建立加密；绑定保存密钥下次直连。</p></details><h3>13. MTU 交换流程？</h3><details><summary>参考答案</summary><p>连接后 requestMtu，双方协商更大 payload。</p></details><h3>14. iOS 后台 BLE 限制？</h3><details><summary>参考答案</summary><p>需 bluetooth-central；扫描受限；Notify 可唤醒。</p></details><h3>15. State Restoration 场景？</h3><details><summary>参考答案</summary><p>App 被杀后系统恢复 CB 状态与连接。</p></details><h3>16. NEHotspotConfiguration？</h3><details><summary>参考答案</summary><p>iOS 帮设备连指定 Wi-Fi（能力有限）。</p></details><h3>17. MQTT retained message？</h3><details><summary>参考答案</summary><p>Broker 保留最后一条，新订阅者立即收到。</p></details><h3>18. WebSocket MQTT？</h3><details><summary>参考答案</summary><p>8884/ws 穿透某些防火墙。</p></details><h3>19. Matter 与 BLE？</h3><details><summary>参考答案</summary><p>Matter Commissioning 常用 BLE 传凭据。</p></details><h3>20. TinyML 框架？</h3><details><summary>参考答案</summary><p>TensorFlow Lite Micro、Edge Impulse。</p></details><h3>21. Rust embedded 优势？</h3><details><summary>参考答案</summary><p>内存安全、无 NULL、现代工具链。</p></details><h3>22. Functional Safety ISO 26262？</h3><details><summary>参考答案</summary><p>汽车功能安全标准。</p></details><h3>23. CE/FCC 认证？</h3><details><summary>参考答案</summary><p>欧盟/美国无线电与 EMC 合规。</p></details><h3>24. LCSC vs Digikey？</h3><details><summary>参考答案</summary><p>LCSC 国内快便宜；Digikey 全但贵。</p></details><h3>25. PCBA 代工？</h3><details><summary>参考答案</summary><p>嘉立创 PCBA 小批量贴片。</p></details><h3>26. Scope vs Logic Analyzer？</h3><details><summary>参考答案</summary><p>示波器看 analog 波形；逻辑分析仪 decode 数字协议。</p></details><h3>27. RTT 调试？</h3><details><summary>参考答案</summary><p>SEGGER Real-Time Transfer 无串口 log。</p></details><h3>28. Unit test Unity？</h3><details><summary>参考答案</summary><p>C 单元测试框架，测纯算法。</p></details><h3>29. Git submodule 固件？</h3><details><summary>参考答案</summary><p>第三方库版本锁定。</p></details><h3>30. CI for firmware？</h3><details><summary>参考答案</summary><p>PlatformIO CI 编译+静态分析+硬件在环(可选)。</p></details>
+<h2>3. 回答模板</h2>
+<pre><code class="language-text">是什么 → 为什么 → 项目中怎么用 → 踩过什么坑</code></pre>
+<div class="tip-box">💡 项目经验比背题更能打动面试官。</div>
+<h2>常见问题</h2>
+<h3>iOS 岗考 MCU?</h3><p>智能硬件/IoT 岗会考。</p>
+<h3>RTOS 深度?</h3><p>IPC/优先级常考。</p>
+<h3>系统设计?</h3><p>可能画架构图。</p>
+<h2>本章小结</h2><ul>
+<li>30题进阶+iOS</li>
+<li>含details答案</li>
+<li>原理+项目+踩坑</li>
+<li>全栈差异化</li>
+</ul>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

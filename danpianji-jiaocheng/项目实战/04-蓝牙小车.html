@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>项目实战 04：蓝牙小车 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 项目实战</div>
+    <h1>项目实战 04：蓝牙小车</h1>
+    <span class="header-tag">项目实战</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>L298N 电机+BLE 方向控制，JoyStick UI。</p></blockquote><hr>
+<table><thead><tr><th>要点</th><th>说明</th></tr></thead><tbody><tr><td>实验</td><td>DevKit 验证</td></tr><tr><td>调试</td><td>串口 printf</td></tr></tbody></table>
+<h2>1. 硬件</h2>
+<pre><code class="language-text">ESP32/STM32 + L298N + 2DC电机 + 电池</code></pre>
+<h2>2. 协议</h2>
+<pre><code class="language-text">Char 0x01: [left_pwm, right_pwm] int8 -100~100</code></pre>
+<h2>3. App</h2>
+<p>SwiftUI Joystick → BLE write 20Hz；dead zone 防 drift。</p>
+<h2>4. 安全</h2>
+<p>超时 500ms 无指令自动停车。</p>
+<div class="tip-box">💡 电机干扰大，电源电容+去耦；BLE 天线远离电机。</div>
+<h2>常见问题</h2>
+<h3>PID?</h3><p>循迹进阶。</p>
+<h3>Wi-Fi 版?</h3><p>MQTT 远控但延迟大。</p>
+<h3>电池?</h3><p>2S LiPo+保护。</p>
+<h2>本章小结</h2><ul>
+<li>BLE 低延迟控车</li>
+<li>Joystick UI</li>
+<li>超时停车</li>
+<li>电源去耦</li>
+</ul>
+<p><strong>下一步：</strong> <a href="05-农业IoT.html">05-农业</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

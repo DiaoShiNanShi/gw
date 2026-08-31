@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 联动 04：MQTT App 端 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS联动</div>
+    <h1>iOS 联动 04：MQTT App 端</h1>
+    <span class="header-tag">iOS 联动</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>CocoaMQTT 订阅主题，远程控灯，JSON  payload。</p></blockquote><hr>
+<table><thead><tr><th>要点</th><th>说明</th></tr></thead><tbody><tr><td>实验</td><td>DevKit 验证</td></tr><tr><td>调试</td><td>串口 printf</td></tr></tbody></table>
+<h2>1. 连接</h2>
+<pre><code class="language-swift">import CocoaMQTT
+let mqtt = CocoaMQTT(clientID: "ios-\(UUID().uuidString)", host: "broker.emqx.io", port: 1883)
+mqtt.connect()</code></pre>
+<h2>2. 订阅发布</h2>
+<pre><code class="language-swift">mqtt.subscribe("home/lamp/+/status")
+mqtt.publish(CocoaMQTTMessage(topic: "home/lamp/1/cmd", string: "ON"))</code></pre>
+<h2>3. 架构</h2>
+<pre><code class="language-text">ESP32 pub sensor → Broker → iOS sub 显示
+iOS pub cmd → Broker → ESP32 sub 执行</code></pre>
+<h2>4. TLS</h2>
+<p>8883 端口 + 证书 pinning 生产必备。</p>
+<div class="tip-box">💡 clientID 唯一，clean session 看场景。</div>
+<h2>常见问题</h2>
+<h3>QoS?</h3><p>1 常用。</p>
+<h3> retained?</h3><p>上线收最后状态。</p>
+<h3>WebSocket MQTT?</h3><p>8884/ws 穿防火墙。</p>
+<h2>本章小结</h2><ul>
+<li>CocoaMQTT 连接</li>
+<li>pub/sub 主题</li>
+<li>JSON 协议约定</li>
+<li>TLS 生产必须</li>
+</ul>
+<p><strong>下一步：</strong> <a href="05-全栈架构.html">05-全栈</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

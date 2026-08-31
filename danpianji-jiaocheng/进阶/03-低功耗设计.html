@@ -9,23 +9,37 @@
 <body>
 <div class="page-header">
   <div class="page-header-inner">
-    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 进阶模块</div>
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 进阶</div>
     <h1>进阶 03：低功耗设计</h1>
     <span class="header-tag">进阶</span>
   </div>
 </div>
 <div class="container">
   <div class="content-card">
-
-<h2>场景</h2>
-<p>门锁电池要撑 1 年、手环要撑 1 周——MCU 大部分时间在睡觉。</p>
-<ul>
-<li>睡眠模式：μA 级电流</li>
-<li>定时唤醒读传感器</li>
-<li>BLE 广播间隔拉长</li>
+<blockquote><p>Sleep/Stop/Standby，外设关钟，Tickless。</p></blockquote><hr>
+<pre><code class="language-c">// 本章配套：在 DevKit 上验证所学概念
+void setup() { Serial.begin(115200); }
+void loop() { /* 实验代码 */ }</code></pre>
+<h2>1. 层次</h2>
+<table><thead><tr><th>层级</th><th>MCU</th><th>ESP32</th></tr></thead><tbody><tr><td>跑满</td><td>mA</td><td>~100mA</td></tr><tr><td>Sleep</td><td>µA~mA</td><td>Deep Sleep µA</td></tr><tr><td>关电</td><td>0</td><td>0</td></tr></tbody></table>
+<h2>2. STM32 Stop</h2>
+<p>停 PLL，GPIO 保持，中断唤醒，µA 级。</p>
+<h2>3. Tickless</h2>
+<p>FreeRTOS configUSE_TICKLESS_IDLE，空闲进低功耗。</p>
+<h2>4. 测量</h2>
+<p>万用表串 ammeter 测 uA；Power Profiler Kit 更准。</p>
+<div class="tip-box">💡 Wi-Fi 是功耗大户，上报完睡 Deep Sleep。</div>
+<h2>常见问题</h2>
+<h3>GPIO 唤醒?</h3><p>EXTI/RTC。</p>
+<h3>RAM 丢?</h3><p>Stop 保留 Standby 丢。</p>
+<h3>BLE 连接?</h3><p>Connection interval 调大。</p>
+<h2>本章小结</h2><ul>
+<li>分层降功耗</li>
+<li>关无用外设时钟</li>
+<li>Tickless Idle</li>
+<li>测 uA 验证</li>
 </ul>
-<p>面试常问：如何测量功耗？答：万用表串在 VCC 上，看 sleep/active 电流。</p>
-
+<p><strong>下一步：</strong> <a href="04-OTA固件升级.html">04-OTA</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
 <em>（内容由 AI 生成，仅供参考）</em>
   </div>
 </div>

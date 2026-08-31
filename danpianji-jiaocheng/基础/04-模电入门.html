@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 04：模电入门 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础</div>
+    <h1>基础 04：模电入门</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>理解 V=IR、电容去耦、二极管续流、LED/按键电路。</p></blockquote><hr>
+<h2>1. 欧姆定律</h2>
+<p><strong>V=IR</strong>。LED 限流：R=(3.3-2)/0.01≈130Ω，用 220Ω。</p><pre><code class="language-text">3.3V─[220Ω]─LED+─LED-─GND</code></pre>
+<h2>2. 电容去耦</h2>
+<table><thead><tr><th>用途</th><th>值</th><th>位置</th></tr></thead><tbody><tr><td>去耦</td><td>100nF</td><td>VCC 脚旁</td></tr><tr><td>bulk</td><td>10µF</td><td>LDO 旁</td></tr></tbody></table>
+<h2>3. 二极管/MOS</h2>
+<p>二极管防反接/续流；MOS 作电子开关。继电器线圈必须并联续流二极管。</p>
+<h2>4. 按键电路</h2>
+<pre><code class="language-c">GPIO_InitStruct.Pull = GPIO_PULLUP; // 按下读低</code></pre>
+<div class="tip-box">💡 看懂 DevKit 原理图 LED/按键/LDO 即可。</div>
+<h2>常见问题</h2>
+<h3>LED 不亮?</h3><p>查极性/电阻/模式。</p>
+<h3>抖动?</h3><p>软件消抖。</p>
+<h3>GPIO 电流?</h3><p>约12-40mA，大负载用驱动。</p>
+<h2>本章小结</h2><ul>
+<li>V=IR 算限流</li>
+<li>去耦电容稳定供电</li>
+<li>二极管续流防反接</li>
+<li>按键用上拉输入</li>
+</ul>
+<p><strong>下一步：</strong> <a href="05-开发板怎么选.html">05-开发板选型</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

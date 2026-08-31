@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 01：单片机概念 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础</div>
+    <h1>基础 01：单片机概念</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>建立 MCU 心智模型，区分 CPU/AP/SoC/MCU，认识主流芯片。</p></blockquote><hr>
+<h2>1. 单片机是什么</h2>
+<p><strong>MCU</strong> 集成 CPU、Flash、RAM、定时器、GPIO、通信外设，执行固件 7×24 控制硬件。Industry 常说「嵌入式」——MCU 是最核心执行单元。</p><table><thead><tr><th>术语</th><th>说明</th><th>例子</th></tr></thead><tbody><tr><td>CPU</td><td>处理器核</td><td>Cortex-M4</td></tr><tr><td>AP</td><td>跑 iOS</td><td>A18</td></tr><tr><td>MCU</td><td>控制专用</td><td>ESP32</td></tr></tbody></table>
+<h2>2. 主流芯片 2026</h2>
+<table><thead><tr><th>系列</th><th>特色</th><th>场景</th></tr></thead><tbody><tr><td>ESP32</td><td>Wi-Fi+BLE</td><td>IoT+App</td></tr><tr><td>STM32</td><td>外设全</td><td>工业求职</td></tr><tr><td>nRF52</td><td>低功耗BLE</td><td>可穿戴</td></tr></tbody></table>
+<h2>3. 程序结构</h2>
+<pre><code class="language-c">while(1){ read_sensors(); update_outputs(); }</code></pre><p>没有 UIApplication，就是初始化 + 死循环/事件。</p>
+<h2>4. iOS 开发者价值</h2>
+<p>Swift+BLE 经验 + 200 元开发板 = 完整智能硬件交付。App 控不了 GPIO，MCU 可以。</p>
+<div class="tip-box">💡 选型：联网 ESP32，求职 STM32，省电 nRF。</div>
+<h2>常见问题</h2>
+<h3>MCU vs CPU?</h3><p>MCU 集成存储外设；CPU 只是核。</p>
+<h3>入门选啥?</h3><p>ESP32 Wi-Fi/BLE 与 iOS 绝配。</p>
+<h3>要 OS 吗?</h3><p>可裸机或 FreeRTOS。</p>
+<h2>本章小结</h2><ul>
+<li>MCU=CPU+存储+外设</li>
+<li>比 AP 比实时成本功耗</li>
+<li>入门 ESP32 求职 STM32</li>
+<li>程序=初始化+循环</li>
+</ul>
+<p><strong>下一步：</strong> <a href="02-从iOS开发者视角看嵌入式.html">02-iOS 视角</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

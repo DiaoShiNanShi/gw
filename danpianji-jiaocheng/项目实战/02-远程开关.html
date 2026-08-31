@@ -9,20 +9,37 @@
 <body>
 <div class="page-header">
   <div class="page-header-inner">
-    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 项目实战模块</div>
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 项目实战</div>
     <h1>项目实战 02：远程开关</h1>
     <span class="header-tag">项目实战</span>
   </div>
 </div>
 <div class="container">
   <div class="content-card">
-
-<h2>功能</h2>
-<p>手机在任何地方控制家里插座通断。</p>
-<h2>技术栈</h2>
-<p>ESP32 + 继电器模块 + MQTT + iOS App</p>
-<div class="tip-box">⚠️ <strong>安全警告</strong>：涉及 220V 强电务必用现成合规模块，不要自己焊高压部分！</div>
-
+<blockquote><p>继电器+MQTT+App，云端控制家电（合规模块）。</p></blockquote><hr>
+<table><thead><tr><th>要点</th><th>说明</th></tr></thead><tbody><tr><td>实验</td><td>DevKit 验证</td></tr><tr><td>调试</td><td>串口 printf</td></tr></tbody></table>
+<h2>1. 功能</h2>
+<p>App/MQTT 发 ON/OFF → ESP32 GPIO → 继电器 → 负载。</p>
+<h2>2. 状态回传</h2>
+<pre><code class="language-text">publish home/switch/1/status ON
+subscribe home/switch/1/cmd</code></pre>
+<h2>3. 安全</h2>
+<p>220V 用现成合规模块；原型用 5V 风扇/demo 灯。</p>
+<h2>4. OTA</h2>
+<p>加入 HTTP OTA 字段升级能力。</p>
+<div class="tip-box">💡 强电务必合规，副业不接无 CE/3C 风险的量产强电。</div>
+<div class="tip-box" style="border-color:#ff6b6b;background:rgba(255,107,107,.08)">⚠️ 220V 必须合规范模块。</div>
+<h2>常见问题</h2>
+<h3>反馈?</h3><p>读继电器辅助触点/电流传感器。</p>
+<h3>掉电记忆?</h3><p>NVS 存最后状态。</p>
+<h3>本地按钮?</h3><p>GPIO 中断双控。</p>
+<h2>本章小结</h2><ul>
+<li>MQTT 远程控</li>
+<li>状态回传</li>
+<li>强电合规</li>
+<li>NVS 记忆</li>
+</ul>
+<p><strong>下一步：</strong> <a href="03-环境监测.html">03-环境</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
 <em>（内容由 AI 生成，仅供参考）</em>
   </div>
 </div>

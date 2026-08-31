@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 联动 05：全栈架构 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS联动</div>
+    <h1>iOS 联动 05：全栈架构</h1>
+    <span class="header-tag">iOS 联动</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>MCU+App+云+OTA 架构图，模块边界，协议设计。</p></blockquote><hr>
+<h2>1. 四层</h2>
+<pre><code class="language-text">Device(Firmware) → Connectivity(BLE/MQTT) → Cloud(Broker/API) → App(SwiftUI)</code></pre>
+<h2>2. 协议</h2>
+<table><thead><tr><th>通道</th><th>协议</th><th>数据</th></tr></thead><tbody><tr><td>近场</td><td>BLE GATT</td><td>实时控灯</td></tr><tr><td>远程</td><td>MQTT</td><td>状态/sync</td></tr><tr><td>配网</td><td>HTTP/BLE</td><td>凭据</td></tr><tr><td>升级</td><td>HTTPS OTA</td><td>固件.bin</td></tr></tbody></table>
+<h2>3. 模块</h2>
+<p>固件：BSP/HAL/App/Middleware；App：BLE/MQTT/Repository/UI。</p>
+<h2>4. 版本</h2>
+<p>语义化 semver；App 检查设备 fw 版本提示升级。</p>
+<div class="tip-box">💡 协议文档化，固件 App 各一份 JSON schema。</div>
+<h2>常见问题</h2>
+<h3>自建云?</h3><p>MQTT+REST 够 MVP。</p>
+<h3>HomeKit?</h3><p>MFi 门槛。</p>
+<h3>多设备?</h3><p>device_id 主题隔离。</p>
+<h2>本章小结</h2><ul>
+<li>四层架构清晰</li>
+<li>协议文档化</li>
+<li>模块边界</li>
+<li>版本协同 OTA</li>
+</ul>
+<p><strong>下一步：</strong> <a href="06-后台蓝牙.html">06-后台</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

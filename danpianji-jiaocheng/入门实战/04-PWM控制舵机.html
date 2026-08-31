@@ -9,23 +9,39 @@
 <body>
 <div class="page-header">
   <div class="page-header-inner">
-    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 入门实战模块</div>
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 入门实战</div>
     <h1>入门实战 04：PWM 控制舵机</h1>
     <span class="header-tag">入门实战</span>
   </div>
 </div>
 <div class="container">
   <div class="content-card">
-
-<h2>PWM 是什么？</h2>
-<p><strong>PWM = 快速开关，用占空比模拟「模拟电压」</strong>。舵机根据脉宽（1ms～2ms）转到不同角度。</p>
-<pre><code>#include &lt;ESP32Servo.h&gt;
-Servo myservo;
-myservo.attach(13);
-myservo.write(90);  // 转到 90 度</code></pre>
-<p>应用：云台、机器人关节、窗帘控制。</p>
-<p><strong>下一步：</strong> <a href="05-温湿度传感器.html">05-温湿度</a></p>
-
+<blockquote><p>50Hz PWM，脉宽 1-2ms 控制角度。</p></blockquote><hr>
+<table><thead><tr><th>要点</th><th>说明</th></tr></thead><tbody><tr><td>实验</td><td>DevKit 验证</td></tr><tr><td>调试</td><td>串口 printf</td></tr></tbody></table>
+<h2>1. 原理</h2>
+<p>舵机靠 50Hz 方波脉宽定角度：1ms≈0°，1.5ms≈90°，2ms≈180°。</p>
+<h2>2. 接线</h2>
+<pre><code class="language-text">舵机: 红VCC(5V) 棕GND 橙信号→GPIO
+注意: 大舵机需外接5V供电</code></pre>
+<h2>3. 代码</h2>
+<pre><code class="language-c">#include <ESP32Servo.h>
+Servo sv; sv.attach(18); sv.write(90); // 90度
+// LEDC 底层: 50Hz, duty 1.5ms</code></pre>
+<h2>4. 应用</h2>
+<p>云台、机械臂、智能台灯角度、阀门。</p>
+<div class="tip-box">💡 舵机供电不要从 3.3V GPIO 取 5V。</div>
+<div class="tip-box" style="border-color:#ff6b6b;background:rgba(255,107,107,.08)">⚠️ 大电流舵机必须外接 5V 电源共地。</div>
+<h2>常见问题</h2>
+<h3>抖动?</h3><p>供电不足加电容。</p>
+<h3>角度不准?</h3><p>calibrate min/max pulse。</p>
+<h3>多个舵机?</h3><p>LEDC 多通道。</p>
+<h2>本章小结</h2><ul>
+<li>50Hz脉宽控角</li>
+<li>1-2ms映射0-180</li>
+<li>注意5V供电</li>
+<li>LEDC/PWM外设</li>
+</ul>
+<p><strong>下一步：</strong> <a href="05-温湿度传感器.html">05-温湿度</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
 <em>（内容由 AI 生成，仅供参考）</em>
   </div>
 </div>

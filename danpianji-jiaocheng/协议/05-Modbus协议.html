@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>协议 05：Modbus 协议 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 协议</div>
+    <h1>协议 05：Modbus 协议</h1>
+    <span class="header-tag">协议模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>Modbus RTU/TCP、功能码、工业传感器。</p></blockquote><hr>
+<h2>1. 类型</h2>
+<table><thead><tr><th>类型</th><th>物理层</th></tr></thead><tbody><tr><td>RTU</td><td>RS485/UART</td></tr><tr><td>TCP</td><td>以太网</td></tr><tr><td>ASCII</td><td>少见</td></tr></tbody></table>
+<h2>2. 功能码</h2>
+<table><thead><tr><th>码</th><th>含义</th></tr></thead><tbody><tr><td>03</td><td>读保持寄存器</td></tr><tr><td>06</td><td>写单寄存器</td></tr><tr><td>16</td><td>写多寄存器</td></tr></tbody></table>
+<h2>3. RTU 帧</h2>
+<pre><code class="language-text">[地址1B][功能码1B][起始2B][数量2B][CRC2B]
+例: 01 03 00 00 00 01 CRC</code></pre>
+<h2>4. 工具</h2>
+<p>Modbus Poll/Slave 调试；libmodbus 开源库；工控 PLC 标配。</p>
+<div class="tip-box">💡 CRC 小端，寄存器地址查设备手册。</div>
+<h2>常见问题</h2>
+<h3>RTU vs TCP?</h3><p>RTU串口485，TCP网口。</p>
+<h3>免费库?</h3><p>libmodbus。</p>
+<h3>和MQTT?</h3><p>Modbus工控现场，MQTT上云。</p>
+<h2>本章小结</h2><ul>
+<li>Modbus工业标准</li>
+<li>RTU用RS485</li>
+<li>功能码读写寄存器</li>
+<li>工控传感器常见</li>
+</ul>
+<p><strong>下一步：</strong> <a href="06-BLE协议栈.html">06-BLE</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

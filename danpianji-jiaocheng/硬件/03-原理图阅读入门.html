@@ -9,26 +9,34 @@
 <body>
 <div class="page-header">
   <div class="page-header-inner">
-    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 硬件模块</div>
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 硬件</div>
     <h1>硬件 03：原理图阅读入门</h1>
     <span class="header-tag">硬件入门</span>
   </div>
 </div>
 <div class="container">
   <div class="content-card">
-
-<h2>1. 为什么要看原理图？</h2>
-<p>做 iOS 要看 API 文档，做硬件要看原理图——每个引脚连了什么、电源怎么走。</p>
-<h2>2. 阅读顺序</h2>
-<ol>
-<li>找 <strong>MCU 芯片</strong>（引脚最多）</li>
-<li>看 <strong>电源</strong>（VCC → 稳压 → 3.3V）</li>
-<li>看 <strong>引脚连接</strong>（LED→GPIO2, 按键→GPIO0…）</li>
-<li>看 <strong>通信接口</strong>（I2C 传感器、SPI 屏）</li>
-</ol>
-<div class="tip-box">💡 推荐：立创 EDA（免费在线）、LCSC 商城买元件</div>
-<p><strong>下一步：</strong> <a href="../入门实战/01-第一个程序点灯.html">入门实战 01-点灯</a></p>
-
+<blockquote><p>读原理图定位引脚，符号识别，四步阅读法。</p></blockquote><hr>
+<h2>1. 为何重要</h2>
+<p>原理图 = 硬件 API 文档。不知道 GPIO2 接什么，代码写对也白搭。</p>
+<h2>2. 符号</h2>
+<table><thead><tr><th>符号</th><th>含义</th></tr></thead><tbody><tr><td>R</td><td>电阻</td></tr><tr><td>C</td><td>电容</td></tr><tr><td>D/LED</td><td>二极管/LED</td></tr><tr><td>U</td><td>芯片</td></tr><tr><td>VCC/GND</td><td>电源地</td></tr></tbody></table>
+<h2>3. 四步阅读</h2>
+<pre><code class="language-text">1.找MCU芯片 2.看电源树(LDO/去耦) 3.跟GPIO到外围 4.看通信(UART/I2C)</code></pre>
+<h2>4. 获取途径</h2>
+<p>厂商 GitHub/Wiki、立创EDA 开源、DevKit PDF 随板附赠。</p>
+<div class="tip-box">💡 PDF 对照实物板最快建立空间感。</div>
+<h2>常见问题</h2>
+<h3>哪下载?</h3><p>乐鑫/ST 官网 GitHub。</p>
+<h3>GPIO2=LED?</h3><p>以原理图为准。</p>
+<h3>立创EDA?</h3><p>免费在线画/看。</p>
+<h2>本章小结</h2><ul>
+<li>原理图是硬件API</li>
+<li>先MCU后电源</li>
+<li>GPIO查图不猜</li>
+<li>立创EDA开源多</li>
+</ul>
+<p><strong>下一步：</strong> <a href="04-PCB入门.html">04-PCB</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
 <em>（内容由 AI 生成，仅供参考）</em>
   </div>
 </div>

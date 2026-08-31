@@ -9,30 +9,35 @@
 <body>
 <div class="page-header">
   <div class="page-header-inner">
-    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 硬件模块</div>
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 硬件</div>
     <h1>硬件 02：万用表与焊接入门</h1>
     <span class="header-tag">硬件入门</span>
   </div>
 </div>
 <div class="container">
   <div class="content-card">
-
-<h2>1. 万用表三件套</h2>
-<ol>
-<li><strong>测电压</strong>：确认 3.3V / 5V 供电正常</li>
-<li><strong>测通断</strong>：检查焊接是否连通（蜂鸣档）</li>
-<li><strong>测电阻</strong>：确认阻值正确</li>
-</ol>
+<blockquote><p>万用表三板斧，焊接安全，排查短路。</p></blockquote><hr>
+<h2>1. 万用表三档</h2>
+<table><thead><tr><th>档位</th><th>用途</th><th>ESP32 期望</th></tr></thead><tbody><tr><td>DC V</td><td>测电压</td><td>3.3V/5V</td></tr><tr><td>通断</td><td>测连线</td><td>蜂鸣</td></tr><tr><td>Ω</td><td>测电阻</td><td>220Ω LED</td></tr></tbody></table>
 <h2>2. 安全红线</h2>
-<ul>
-<li>⚠️ 不要带电焊接</li>
-<li>⚠️ 不要短路 VCC 和 GND</li>
-<li>⚠️ ESP32 GPIO 只能 3.3V，5V 会烧</li>
-</ul>
+<ul><li>短路 VCC-GND 烧芯片</li><li>5V 进 3.3V GPIO 永久损坏</li><li>锂电池必须保护板</li><li>220V 继电器用合规模块</li></ul>
 <h2>3. 焊接五步</h2>
-<p>加热焊盘 → 送锡 → 移锡 → 停 1 秒 → 移烙铁。焊点应光滑饱满。</p>
-<p><strong>下一步：</strong> <a href="03-原理图阅读入门.html">03-原理图阅读</a></p>
-
+<pre><code class="language-text">1.烙铁350°C 2.加热焊盘 3.送锡 4.停2秒 5.移烙铁</code></pre>
+<h2>4. 虚焊排查</h2>
+<p>通断档测焊点；LED 不亮先测 GPIO 电压。</p>
+<div class="tip-box">💡 先练废板再焊项目。</div>
+<div class="tip-box" style="border-color:#ff6b6b;background:rgba(255,107,107,.08)">⚠️ 锂电池必须保护板，勿短路。</div>
+<h2>常见问题</h2>
+<h3>表笔接法?</h3><p>黑GND红测点。</p>
+<h3>虚焊?</h3><p>通断档+晃动看阻值。</p>
+<h3>焊锡?</h3><p>0.8mm 含铅易上手。</p>
+<h2>本章小结</h2><ul>
+<li>万用表三板斧</li>
+<li>ESP32仅3.3V</li>
+<li>安全红线牢记</li>
+<li>焊接需练习</li>
+</ul>
+<p><strong>下一步：</strong> <a href="03-原理图阅读入门.html">03-原理图</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
 <em>（内容由 AI 生成，仅供参考）</em>
   </div>
 </div>

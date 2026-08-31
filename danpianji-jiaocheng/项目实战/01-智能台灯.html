@@ -9,30 +9,34 @@
 <body>
 <div class="page-header">
   <div class="page-header-inner">
-    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 项目实战模块</div>
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 项目实战</div>
     <h1>项目实战 01：智能台灯</h1>
     <span class="header-tag">项目实战</span>
   </div>
 </div>
 <div class="container">
   <div class="content-card">
-
-<h2>功能</h2>
-<ul>
-<li>按键调亮度</li>
-<li>App BLE 调亮度 + 定时关闭</li>
-<li>记忆上次亮度（Flash 存储）</li>
+<blockquote><p>PWM 调光+BLE+App+可选 MQTT，完整 MVP。</p></blockquote><hr>
+<h2>1. 功能</h2>
+<table><thead><tr><th>功能</th><th>实现</th></tr></thead><tbody><tr><td>调光</td><td>LEDC PWM</td></tr><tr><td>开关</td><td>BLE Write</td></tr><tr><td>场景</td><td>App 预设</td></tr><tr><td>远程</td><td>MQTT optional</td></tr></tbody></table>
+<h2>2. 硬件</h2>
+<pre><code class="language-text">ESP32 + MOSFET/PWM 驱动 LED 灯带 + 5V 电源</code></pre>
+<h2>3. 里程碑</h2>
+<ol><li>PWM 调光验证</li><li>BLE GATT</li><li>SwiftUI App</li><li>演示视频</li></ol>
+<h2>4. 简历</h2>
+<p>「独立实现 ESP32 固件 + iOS CoreBluetooth 智能灯控，支持 0-100% 无级调光」</p>
+<div class="tip-box">💡 GitHub + 1 分钟 demo 视频。</div>
+<h2>常见问题</h2>
+<h3>周期?</h3><p>3-5天 MVP。</p>
+<h3>成本?</h3><p><80元。</p>
+<h3>安全?</h3><p>低压 LED 无 220V。</p>
+<h2>本章小结</h2><ul>
+<li>PWM+BLE+App</li>
+<li>MVP 里程碑</li>
+<li>作品集素材</li>
+<li>低压安全</li>
 </ul>
-<h2>技术栈</h2>
-<p>ESP32 + PWM + BLE + SwiftUI 滑块</p>
-<h2>里程碑</h2>
-<ol>
-<li>第 1 天：PWM 调光</li>
-<li>第 2 天：BLE 服务</li>
-<li>第 3 天：iOS App 联调</li>
-<li>第 4 天：封装小盒子（可选 3D 打印外壳）</li>
-</ol>
-
+<p><strong>下一步：</strong> <a href="02-远程开关.html">02-开关</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
 <em>（内容由 AI 生成，仅供参考）</em>
   </div>
 </div>

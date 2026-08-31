@@ -9,20 +9,39 @@
 <body>
 <div class="page-header">
   <div class="page-header-inner">
-    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 入门实战模块</div>
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 入门实战</div>
     <h1>入门实战 03：串口调试</h1>
     <span class="header-tag">入门实战</span>
   </div>
 </div>
 <div class="container">
   <div class="content-card">
-
-<h2>串口 = 嵌入式的 NSLog</h2>
-<pre><code>Serial.begin(115200);
-Serial.printf("温度: %.1f°C\n", temp);</code></pre>
-<p>没有 Xcode 断点时，<code>printf</code> 是最好的朋友。复杂问题用逻辑分析仪看波形。</p>
-<p><strong>下一步：</strong> <a href="04-PWM控制舵机.html">04-PWM</a></p>
-
+<blockquote><p>115200 printf 调试，格式化输出传感器值。</p></blockquote><hr>
+<table><thead><tr><th>要点</th><th>说明</th></tr></thead><tbody><tr><td>实验</td><td>DevKit 验证</td></tr><tr><td>调试</td><td>串口 printf</td></tr></tbody></table>
+<h2>1. 初始化</h2>
+<pre><code class="language-c">Serial.begin(115200);
+while(!Serial) delay(10); // USB CDC 等待</code></pre>
+<h2>2. 格式化</h2>
+<pre><code class="language-c">Serial.printf("[%.1fs] temp=%.1f humi=%.1f\n", millis()/1000.0, t, h);</code></pre>
+<h2>3. 命令行</h2>
+<pre><code class="language-c">if(Serial.available()){
+  String cmd=Serial.readStringUntil('\n');
+  if(cmd=="on") digitalWrite(LED,HIGH);
+}</code></pre>
+<h2>4. iOS 类比</h2>
+<p>Serial.printf = NSLog；串口监视器 = Xcode Console。</p>
+<div class="tip-box">💡 串口是嵌入式最重要的调试手段。</div>
+<h2>常见问题</h2>
+<h3>乱码?</h3><p>波特率115200一致。</p>
+<h3>printf 浮点?</h3><p>Arduino 需启用。</p>
+<h3>太多 log?</h3><p>分级宏 DEBUG_LOG。</p>
+<h2>本章小结</h2><ul>
+<li>115200标准</li>
+<li>printf格式化</li>
+<li>可做成CLI</li>
+<li>=嵌入式NSLog</li>
+</ul>
+<p><strong>下一步：</strong> <a href="04-PWM控制舵机.html">04-PWM</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
 <em>（内容由 AI 生成，仅供参考）</em>
   </div>
 </div>

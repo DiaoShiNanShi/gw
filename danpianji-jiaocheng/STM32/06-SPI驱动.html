@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>STM32 06：SPI 驱动 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; STM32</div>
+    <h1>STM32 06：SPI 驱动</h1>
+    <span class="header-tag">STM32 专题</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>HAL_SPI_TransmitReceive，W25Q Flash 读 ID。</p></blockquote><hr>
+<table><thead><tr><th>要点</th><th>说明</th></tr></thead><tbody><tr><td>实验</td><td>DevKit 验证</td></tr><tr><td>调试</td><td>串口 printf</td></tr></tbody></table>
+<h2>1. 全双工</h2>
+<pre><code class="language-c">uint8_t tx[2]={0x9F,0xFF}, rx[2]={0};
+HAL_SPI_TransmitReceive(&hspi1, tx, rx, 2, 100);
+// rx[1] 可能是 Flash 制造商 ID</code></pre>
+<h2>2. CS 控制</h2>
+<pre><code class="language-c">HAL_GPIO_WritePin(GPIOA, CS_Pin, GPIO_PIN_RESET);
+HAL_SPI_Transmit(&hspi1, cmd, len, 100);
+HAL_GPIO_WritePin(GPIOA, CS_Pin, GPIO_PIN_SET);</code></pre>
+<h2>3. 模式</h2>
+<p>CubeMX 选 Mode0-3 对应 CPOL/CPHA，与 Flash 手册一致。</p>
+<h2>4. 速率</h2>
+<p>分频器调 SCK；PCB 长线降速加匹配。</p>
+<div class="tip-box">💡 SPI 模式不对读到 0xFF/0x00。</div>
+<h2>常见问题</h2>
+<h3>只发不收?</h3><p>Transmit 或 TX 填 0xFF。</p>
+<h3>DMA SPI?</h3><p>大数据块用。</p>
+<h3>3线?</h3><p>半双工 MISO/MOSI 共用。</p>
+<h2>本章小结</h2><ul>
+<li>TransmitReceive 全双工</li>
+<li>软件控 CS</li>
+<li>模式查 slave 手册</li>
+<li>降速排查波形</li>
+</ul>
+<p><strong>下一步：</strong> <a href="07-I2C驱动.html">07-I2C</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

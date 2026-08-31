@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>STM32 02：CubeMX 入门 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; STM32</div>
+    <h1>STM32 02：CubeMX 入门</h1>
+    <span class="header-tag">STM32 专题</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>图形化配时钟/GPIO/UART，生成工程。</p></blockquote><hr>
+<h2>1. 流程</h2>
+<ol><li>选芯片/NUCLEO</li><li>Pinout 点引脚</li><li>Clock 配 PLL</li><li>Project→Generate</li></ol>
+<h2>2. 引脚配置</h2>
+<table><thead><tr><th>模式</th><th>用途</th></tr></thead><tbody><tr><td>GPIO_Output</td><td>LED</td></tr><tr><td>GPIO_EXTI</td><td>按键</td></tr><tr><td>USART1</td><td>串口</td></tr><tr><td>I2C1</td><td>传感器</td></tr></tbody></table>
+<h2>3. 生成目录</h2>
+<pre><code class="language-text">Core/Src/main.c — 用户代码区 USER CODE BEGIN/END
+Drivers/ — HAL 库
+.ioc — 可重新打开 CubeMX</code></pre>
+<h2>4. 规则</h2>
+<p>只在 USER CODE 区写逻辑，避免 regenerate 覆盖。</p>
+<div class="tip-box">💡 改 .ioc 重新 Generate，别手改 generated 文件。</div>
+<h2>常见问题</h2>
+<h3>覆盖代码?</h3><p>写 USER CODE 区内。</p>
+<h3>时钟红叉?</h3><p>PLL 倍频超规格。</p>
+<h3>HAL vs LL?</h3><p>HAL 易用 LL 高效。</p>
+<h2>本章小结</h2><ul>
+<li>CubeMX 配引脚时钟</li>
+<li>Generate 生成 HAL</li>
+<li>USER CODE 区写逻辑</li>
+<li>.ioc 可版本管理</li>
+</ul>
+<p><strong>下一步：</strong> <a href="03-时钟树配置.html">03-时钟</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

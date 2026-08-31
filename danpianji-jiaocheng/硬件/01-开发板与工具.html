@@ -9,35 +9,35 @@
 <body>
 <div class="page-header">
   <div class="page-header-inner">
-    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 硬件模块</div>
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 硬件</div>
     <h1>硬件 01：开发板与工具</h1>
     <span class="header-tag">硬件入门</span>
   </div>
 </div>
 <div class="container">
   <div class="content-card">
-
-<h2>1. 必备工具清单</h2>
-<table>
-<tr><th>工具</th><th>用途</th><th>必须？</th></tr>
-<tr><td>ESP32 开发板</td><td>主控</td><td>✅</td></tr>
-<tr><td>USB 数据线</td><td>供电+烧录</td><td>✅</td></tr>
-<tr><td>面包板 + 杜邦线</td><td>免焊接实验</td><td>✅</td></tr>
-<tr><td>LED + 电阻 + 按键</td><td>基础实验</td><td>✅</td></tr>
-<tr><td>万用表</td><td>测电压/通断</td><td>✅</td></tr>
-</table>
-<h2>2. 软件工具</h2>
-<table>
-<tr><th>软件</th><th>用途</th></tr>
-<tr><td>Arduino IDE / PlatformIO</td><td>ESP32 快速开发</td></tr>
-<tr><td>STM32CubeIDE</td><td>STM32 官方 IDE</td></tr>
-<tr><td>Serial Studio</td><td>串口数据可视化</td></tr>
-</table>
-<h2>3. Mac 环境</h2>
-<pre><code>brew install --cask arduino-ide
-# 或 VS Code + PlatformIO 插件</code></pre>
-<p><strong>下一步：</strong> <a href="02-万用表与焊接入门.html">02-万用表与焊接</a></p>
-
+<blockquote><p>认识开发板组成，配齐工具，完成 Blink。</p></blockquote><hr>
+<h2>1. 开发板是什么</h2>
+<p>MCU + 最小外围（晶振、LDO、USB-UART、LED/按键）+ 排针。降低入门门槛。</p>
+<h2>2. 类型对比</h2>
+<table><thead><tr><th>类型</th><th>代表</th><th>特点</th></tr></thead><tbody><tr><td>Wi-Fi/BLE</td><td>ESP32-DevKitC</td><td>IoT 首选</td></tr><tr><td>工业</td><td>STM32 Nucleo</td><td>外设全+ST-Link</td></tr><tr><td>BLE</td><td>nRF52840 DK</td><td>低功耗</td></tr><tr><td>极简</td><td>Arduino Uno</td><td>16MHz 8bit</td></tr></tbody></table>
+<h2>3. 工具清单</h2>
+<table><thead><tr><th>工具</th><th>必须</th><th>用途</th></tr></thead><tbody><tr><td>ESP32 开发板</td><td>✅</td><td>主平台</td></tr><tr><td>面包板+线</td><td>✅</td><td>免焊实验</td></tr><tr><td>万用表</td><td>✅</td><td>测电压通断</td></tr><tr><td>烙铁</td><td>可选</td><td>焊接</td></tr><tr><td>逻辑分析仪</td><td>可选</td><td>协议解码</td></tr></tbody></table>
+<h2>4. 第一次 Blink</h2>
+<pre><code class="language-c">void setup(){ pinMode(2,OUTPUT); Serial.begin(115200);}
+void loop(){ digitalWrite(2,!digitalRead(2)); delay(500); Serial.println("blink");}</code></pre>
+<div class="tip-box">💡 ESP32-DevKitC 约30元，IoT+iOS 一块板够用。</div>
+<h2>常见问题</h2>
+<h3>开发板=芯片?</h3><p>板=芯片+外围+USB。</p>
+<h3>Mac?</h3><p>完全支持。</p>
+<h3>兼容板?</h3><p>可以，查驱动。</p>
+<h2>本章小结</h2><ul>
+<li>开发板降门槛</li>
+<li>ESP32 IoT首选</li>
+<li>万用表必备</li>
+<li>Blink 第一步</li>
+</ul>
+<p><strong>下一步：</strong> <a href="02-万用表与焊接入门.html">02-万用表</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
 <em>（内容由 AI 生成，仅供参考）</em>
   </div>
 </div>

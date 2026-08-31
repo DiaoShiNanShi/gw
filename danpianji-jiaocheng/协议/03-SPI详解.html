@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>协议 03：SPI 详解 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 协议</div>
+    <h1>协议 03：SPI 详解</h1>
+    <span class="header-tag">协议模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>SPI 四线、模式 CPOL/CPHA、CS 片选、Flash 驱动。</p></blockquote><hr>
+<h2>1. 信号</h2>
+<table><thead><tr><th>线</th><th>方向</th><th>作用</th></tr></thead><tbody><tr><td>MOSI</td><td>主→从</td><td>主发数据</td></tr><tr><td>MISO</td><td>从→主</td><td>从发数据</td></tr><tr><td>SCK</td><td>主→从</td><td>时钟</td></tr><tr><td>CS</td><td>主→从</td><td>片选</td></tr></tbody></table>
+<h2>2. 四种模式</h2>
+<table><thead><tr><th>模式</th><th>CPOL</th><th>CPHA</th></tr></thead><tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>2</td><td>1</td><td>0</td></tr><tr><td>3</td><td>1</td><td>1</td></tr></tbody></table>
+<h2>3. 代码</h2>
+<pre><code class="language-c">SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
+digitalWrite(CS, LOW);
+SPI.transfer(0x03); // read cmd
+byte b = SPI.transfer(0xFF);
+digitalWrite(CS, HIGH);</code></pre>
+<h2>4. vs I2C</h2>
+<table><thead><tr><th></th><th>I2C</th><th>SPI</th></tr></thead><tbody><tr><td>线数</td><td>2</td><td>4+</td></tr><tr><td>速度</td><td>慢</td><td>快</td></tr><tr><td>寻址</td><td>地址字节</td><td>CS引脚</td></tr></tbody></table>
+<div class="tip-box">💡 模式必须对照 slave datasheet。</div>
+<h2>常见问题</h2>
+<h3>比I2C快?</h3><p>是，无地址开销。</p>
+<h3>CS 作用?</h3><p>多设备独立片选。</p>
+<h3>3线SPI?</h3><p>无MISO只写。</p>
+<h2>本章小结</h2><ul>
+<li>SPI四线全双工</li>
+<li>CPOL/CPHA看手册</li>
+<li>CS选设备</li>
+<li>Flash/屏常用</li>
+</ul>
+<p><strong>下一步：</strong> <a href="04-CAN总线入门.html">04-CAN</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

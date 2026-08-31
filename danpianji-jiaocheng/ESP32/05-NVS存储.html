@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>ESP32 05：NVS 存储 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; ESP32</div>
+    <h1>ESP32 05：NVS 存储</h1>
+    <span class="header-tag">ESP32 专题</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>键值对、Wear leveling、加密分区。</p></blockquote><hr>
+<table><thead><tr><th>要点</th><th>说明</th></tr></thead><tbody><tr><td>实验</td><td>DevKit 验证</td></tr><tr><td>调试</td><td>串口 printf</td></tr></tbody></table>
+<h2>1. IDF NVS</h2>
+<pre><code class="language-c">nvs_handle_t h; nvs_open("storage", NVS_READWRITE, &h);
+nvs_set_i32(h, "boot", ++count); nvs_commit(h); nvs_close(h);</code></pre>
+<h2>2. Arduino Preferences</h2>
+<p>封装 NVS，API 类似 UserDefaults。</p>
+<h2>3. 分区</h2>
+<pre><code class="language-text">nvs分区在 partition table; 可 nvs_flash_erase 恢复出厂</code></pre>
+<h2>4. 加密</h2>
+<p>NVS 加密需 flash 加密 + nvs_flash_secure_init。</p>
+<div class="tip-box">💡 键名长度有限，namespace 规划好。</div>
+<h2>常见问题</h2>
+<h3>满?</h3><p>nvs_flash_erase 或换分区。</p>
+<h3>字符串?</h3><p>nvs_set_str/get_str。</p>
+<h3>Blob?</h3><p>nvs_set_blob 存结构体。</p>
+<h2>本章小结</h2><ul>
+<li>NVS=键值存储</li>
+<li>Wear leveling</li>
+<li>Preferences 封装</li>
+<li>分区表规划</li>
+</ul>
+<p><strong>下一步：</strong> <a href="06-HTTP与WebServer.html">06-HTTP</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

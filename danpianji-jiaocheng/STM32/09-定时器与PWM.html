@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>STM32 09：定时器与 PWM - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; STM32</div>
+    <h1>STM32 09：定时器与 PWM</h1>
+    <span class="header-tag">STM32 专题</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>TIM PWM 模式，频率占空比，舵机/电机。</p></blockquote><hr>
+<table><thead><tr><th>要点</th><th>说明</th></tr></thead><tbody><tr><td>实验</td><td>DevKit 验证</td></tr><tr><td>调试</td><td>串口 printf</td></tr></tbody></table>
+<h2>1. PWM 公式</h2>
+<pre><code class="language-text">freq = TIM_CLK / ((PSC+1)*(ARR+1))
+duty = (CCR+1)/(ARR+1)</code></pre>
+<h2>2. 启动</h2>
+<pre><code class="language-c">HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 750); // 75% duty</code></pre>
+<h2>3. 舵机 50Hz</h2>
+<p>ARR 定 20ms 周期，CCR 1-2ms 脉宽。</p>
+<h2>4. 输入捕获</h2>
+<p>测外部脉冲宽度，超声波/编码器。</p>
+<div class="tip-box">💡 高级定时器 TIM1/8 可驱动电机互补 PWM+死区。</div>
+<h2>常见问题</h2>
+<h3>PSC ARR?</h3><p>预分频与自动重装。</p>
+<h3>互补输出?</h3><p>H桥电机。</p>
+<h3>编码器模式?</h3><p>TIM 硬件解码。</p>
+<h2>本章小结</h2><ul>
+<li>PSC/ARR 定频率</li>
+<li>CCR 定占空比</li>
+<li>50Hz 舵机标准</li>
+<li>输入捕获测脉宽</li>
+</ul>
+<p><strong>下一步：</strong> <a href="10-看门狗.html">10-看门狗</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>ESP32 02：WiFi STA 与 AP - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; ESP32</div>
+    <h1>ESP32 02：WiFi STA 与 AP</h1>
+    <span class="header-tag">ESP32 专题</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>连路由、开热点、SmartConfig 配网思路。</p></blockquote><hr>
+<table><thead><tr><th>要点</th><th>说明</th></tr></thead><tbody><tr><td>实验</td><td>DevKit 验证</td></tr><tr><td>调试</td><td>串口 printf</td></tr></tbody></table>
+<h2>1. STA</h2>
+<pre><code class="language-c">WiFi.mode(WIFI_STA);
+WiFi.begin(ssid, pass);
+while(WiFi.status()!=WL_CONNECTED) delay(500);</code></pre>
+<h2>2. AP 配网</h2>
+<pre><code class="language-c">WiFi.softAP("ESP32-Setup", "12345678");
+// WebServer 收 ssid/pass 后切 STA</code></pre>
+<h2>3. SmartConfig</h2>
+<p>ESP-Touch / AirKiss 手机发 UDP 编码 SSID —— 类似声波配网。</p>
+<h2>4. 重连</h2>
+<pre><code class="language-c">if(WiFi.status()!=WL_CONNECTED){ WiFi.disconnect(); WiFi.begin(ssid,pass);}</code></pre>
+<div class="tip-box">💡 配网 UX 决定产品第一印象，iOS 开发者优势区。</div>
+<h2>常见问题</h2>
+<h3>Captive Portal?</h3><p>连 AP 弹网页配网。</p>
+<h3>WiFiMulti?</h3><p>保存多组凭据。</p>
+<h3>mDNS?</h3><p>esp32.local 发现。</p>
+<h2>本章小结</h2><ul>
+<li>STA 连路由</li>
+<li>AP 热点配网</li>
+<li>SmartConfig 免输入</li>
+<li>断线自动重连</li>
+</ul>
+<p><strong>下一步：</strong> <a href="03-BLE-GATT.html">03-BLE</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

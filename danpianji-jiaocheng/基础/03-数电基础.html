@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 03：数电基础 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础</div>
+    <h1>基础 03：数电基础</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>掌握高低电平、逻辑门、电平标准，建立 GPIO 数字直觉。</p></blockquote><hr>
+<pre><code class="language-c">// 本章配套：在 DevKit 上验证所学概念
+void setup() { Serial.begin(115200); }
+void loop() { /* 实验代码 */ }</code></pre>
+<h2>1. 数字 vs 模拟</h2>
+<p>MCU 世界是离散 0/1。模拟信号需 ADC 采样。</p><table><thead><tr><th>概念</th><th>说明</th></tr></thead><tbody><tr><td>高/低电平</td><td>3.3V/0V</td></tr><tr><td>上升沿</td><td>0→1 跳变</td></tr><tr><td>时钟</td><td>同步节拍</td></tr></tbody></table>
+<h2>2. 逻辑门</h2>
+<table><thead><tr><th>门</th><th>功能</th></tr></thead><tbody><tr><td>与 AND</td><td>全1才1</td></tr><tr><td>或 OR</td><td>有1则1</td></tr><tr><td>非 NOT</td><td>取反</td></tr></tbody></table>
+<h2>3. 电平标准</h2>
+<table><thead><tr><th>标准</th><th>高电平</th><th>芯片</th></tr></thead><tbody><tr><td>3.3V CMOS</td><td>≥2.0V</td><td>ESP32/STM32</td></tr><tr><td>5V TTL</td><td>≥2.4V</td><td>Arduino Uno</td></tr><tr><td>开漏</td><td>靠上拉</td><td>I2C</td></tr></tbody></table>
+<h2>4. 时序</h2>
+<p>SPI/I2C 要求建立/保持时间，违例导致偶发 bug，需逻辑分析仪验证。</p>
+<div class="tip-box">💡 先建立 0/1+时序直觉。</div>
+<div class="tip-box" style="border-color:#ff6b6b;background:rgba(255,107,107,.08)">⚠️ 切勿向 3.3V GPIO 输入 5V。</div>
+<h2>常见问题</h2>
+<h3>数电和代码?</h3><p>GPIO 写 0/1 就是数字输出。</p>
+<h3>开漏?</h3><p>只能拉低或高阻，需上拉。</p>
+<h3>上拉多大?</h3><p>4.7k 常用。</p>
+<h2>本章小结</h2><ul>
+<li>数字=离散电平</li>
+<li>3.3V/5V 不可混接</li>
+<li>逻辑门是组合基础</li>
+<li>时序对协议调试重要</li>
+</ul>
+<p><strong>下一步：</strong> <a href="04-模电入门.html">04-模电入门</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

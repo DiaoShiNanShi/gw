@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>面试题 01：嵌入式基础 50 题 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 面试题</div>
+    <h1>面试题 01：嵌入式基础 50 题</h1>
+    <span class="header-tag">面试题</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>学习目标：50 道嵌入式基础面试题含参考答案，覆盖 MCU/GPIO/协议/C/RTOS。</p></blockquote><hr>
+<pre><code class="language-c">// 本章配套：在 DevKit 上验证所学概念
+void setup() { Serial.begin(115200); }
+void loop() { /* 实验代码 */ }</code></pre>
+<h2>1. 使用说明</h2>
+<p>先自答再展开。校招/社招基础岗常从中抽 5-10 题。</p>
+<h2>2. 题目与答案</h2>
+<h3>1. 什么是 MCU？</h3><details><summary>参考答案</summary><p>集成 CPU、存储、外设的单芯片控制器，面向嵌入式控制。</p></details><h3>2. Flash 和 RAM 区别？</h3><details><summary>参考答案</summary><p>Flash 掉电保持存程序；RAM 掉电丢失存变量。</p></details><h3>3. 解释 GPIO 推挽输出。</h3><details><summary>参考答案</summary><p>内部 PMOS+NMOS 可主动输出高或低。</p></details><h3>4. 什么是中断？</h3><details><summary>参考答案</summary><p>硬件事件打断 CPU 执行 ISR，再返回。</p></details><h3>5. UART 需要几根线？</h3><details><summary>参考答案</summary><p>至少 TX/RX/GND 三根。</p></details><h3>6. I2C 总线两根线叫什么？</h3><details><summary>参考答案</summary><p>SDA 数据线、SCL 时钟线。</p></details><h3>7. SPI 片选 CS 作用？</h3><details><summary>参考答案</summary><p>多从设备时选择当前通信对象。</p></details><h3>8. 什么是波特率？</h3><details><summary>参考答案</summary><p>串口每秒传输的符号数，常用 115200。</p></details><h3>9. 指针是什么？</h3><details><summary>参考答案</summary><p>存放内存地址的变量。</p></details><h3>10. volatile 关键字？</h3><details><summary>参考答案</summary><p>告诉编译器不要优化对该变量的访问。</p></details><h3>11. 堆和栈区别？</h3><details><summary>参考答案</summary><p>栈自动管理局部变量；堆 malloc 手动 free。</p></details><h3>12. 什么是 PWM？</h3><details><summary>参考答案</summary><p>脉宽调制，用占空比模拟模拟量或控舵机。</p></details><h3>13. ADC 作用？</h3><details><summary>参考答案</summary><p>模拟电压转数字量。</p></details><h3>14. 看门狗 IWDG 作用？</h3><details><summary>参考答案</summary><p>超时复位防程序跑飞。</p></details><h3>15. CAN 总线特点？</h3><details><summary>参考答案</summary><p>差分、多主、抗干扰，汽车常用。</p></details><h3>16. Modbus RTU 物理层？</h3><details><summary>参考答案</summary><p>通常 RS485。</p></details><h3>17. BLE GATT 三层？</h3><details><summary>参考答案</summary><p>Service → Characteristic → Descriptor。</p></details><h3>18. Notify 和 Read 区别？</h3><details><summary>参考答案</summary><p>Notify 设备主动推；Read 主机主动读。</p></details><h3>19. FreeRTOS Task 创建函数？</h3><details><summary>参考答案</summary><p>xTaskCreate。</p></details><h3>20. Mutex 解决什么问题？</h3><details><summary>参考答案</summary><p>多任务访问共享资源互斥，防竞态。</p></details><h3>21. Queue 用途？</h3><details><summary>参考答案</summary><p>任务间安全传递数据。</p></details><h3>22. ESP32 Deep Sleep 唤醒方式？</h3><details><summary>参考答案</summary><p>定时器、GPIO、RTC 等。</p></details><h3>23. NVS 是什么？</h3><details><summary>参考答案</summary><p>ESP32 非易失键值存储。</p></details><h3>24. OTA 双分区目的？</h3><details><summary>参考答案</summary><p>升级失败可回滚旧固件。</p></details><h3>25. STM32 HAL 和 LL？</h3><details><summary>参考答案</summary><p>HAL 抽象易用；LL 接近寄存器高效。</p></details><h3>26. CubeMX 作用？</h3><details><summary>参考答案</summary><p>图形化配引脚时钟并生成初始化代码。</p></details><h3>27. SWD 几根线？</h3><details><summary>参考答案</summary><p>SWDIO/SWCLK/GND/3.3V。</p></details><h3>28. Brownout 复位？</h3><details><summary>参考答案</summary><p>供电电压过低时 MCU 复位保护。</p></details><h3>29. 上拉电阻作用？</h3><details><summary>参考答案</summary><p>为开漏/输入提供默认高电平。</p></details><h3>30. 逻辑分析仪用途？</h3><details><summary>参考答案</summary><p>抓取数字时序，解码 I2C/SPI/UART。</p></details><h3>31. MQTT pub/sub？</h3><details><summary>参考答案</summary><p>发布订阅模式，解耦设备与 App。</p></details><h3>32. QoS 0/1/2 区别？</h3><details><summary>参考答案</summary><p>0 最多一次；1 至少一次；2 恰好一次。</p></details><h3>33. WiFi STA 模式？</h3><details><summary>参考答案</summary><p>Station 连接现有路由器。</p></details><h3>34. 3.3V 和 5V GPIO 能混接吗？</h3><details><summary>参考答案</summary><p>不能，5V 进 3.3V GPIO 会损坏。</p></details><h3>35. struct 和 class？</h3><details><summary>参考答案</summary><p>C 的 struct 无方法默认；C++ struct 可含方法。</p></details><h3>36. 位操作置位公式？</h3><details><summary>参考答案</summary><p>reg |= (1 << n)。</p></details><h3>37. Mem_Read I2C？</h3><details><summary>参考答案</summary><p>HAL_I2C_Mem_Read 带寄存器地址读。</p></details><h3>38. DMA 好处？</h3><details><summary>参考答案</summary><p>外设与内存直传，减 CPU 占用。</p></details><h3>39. Tickless Idle？</h3><details><summary>参考答案</summary><p>空闲时停 SysTick 进低功耗。</p></details><h3>40. Bootloader 作用？</h3><details><summary>参考答案</summary><p>上电加载/升级 App 固件。</p></details><h3>41. MISRA C？</h3><details><summary>参考答案</summary><p>汽车等安全关键领域的 C 编码规范子集。</p></details><h3>42. CoreBluetooth Central？</h3><details><summary>参考答案</summary><p>iPhone 扫描连接外设的角色。</p></details><h3>43. NSBluetoothAlwaysUsageDescription？</h3><details><summary>参考答案</summary><p>iOS 蓝牙权限说明，必填。</p></details><h3>44. SmartConfig 是什么？</h3><details><summary>参考答案</summary><p>手机通过 Wi-Fi 编码广播 SSID 给 ESP。</p></details><h3>45. CocoaMQTT 用途？</h3><details><summary>参考答案</summary><p>iOS MQTT 客户端库。</p></details><h3>46. HomeKit 门槛？</h3><details><summary>参考答案</summary><p>MFi 认证，门槛高于自建 BLE。</p></details><h3>47. Edge AI on MCU？</h3><details><summary>参考答案</summary><p>TinyML 在 MCU 跑推理，如唤醒词。</p></details><h3>48. Matter 协议？</h3><details><summary>参考答案</summary><p>智能家居互操作标准，基于 IP。</p></details><h3>49. Resume 嵌入式项目怎么写？</h3><details><summary>参考答案</summary><p>量化：独立完成固件+App，写了什么协议，解决什么 bug。</p></details><h3>50. 如何排查 HardFault？</h3><details><summary>参考答案</summary><p>看 LR/PC，查 CFSR/HFSR，用 GDB 反汇编。</p></details>
+<h2>3. 高频考点</h2>
+<table><thead><tr><th>考点</th><th>频率</th></tr></thead><tbody><tr><td>中断与优先级</td><td>极高</td></tr><tr><td>I2C/SPI/UART</td><td>高</td></tr><tr><td>指针/volatile</td><td>高</td></tr><tr><td>FreeRTOS IPC</td><td>中高</td></tr></tbody></table>
+<div class="tip-box">💡 理解+项目例子>死记硬背。</div>
+<h2>常见问题</h2>
+<h3>50题全背?</h3><p>不必，理解为主。</p>
+<h3>不会怎么办?</h3><p>诚实+学习意愿+相关经验。</p>
+<h3>手写代码?</h3><p>可能让写 GPIO/队列伪代码。</p>
+<h2>本章小结</h2><ul>
+<li>50题含details答案</li>
+<li>覆盖基础高频</li>
+<li>结合项目举例</li>
+<li>诚实应对</li>
+</ul>
+<p><strong>下一步：</strong> <a href="02-进阶与iOS联动30题.html">02-进阶30题</a></p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

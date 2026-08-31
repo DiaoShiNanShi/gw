@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>STM32 01：入门 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; STM32</div>
+    <h1>STM32 01：入门</h1>
+    <span class="header-tag">STM32 专题</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>STM32 家族 F/G/H/L/U，为何工业标准，开发板选择。</p></blockquote><hr>
+<h2>1. 家族</h2>
+<table><thead><tr><th>系列</th><th>定位</th></tr></thead><tbody><tr><td>F1/F4</td><td>通用主流</td></tr><tr><td>H7</td><td>高性能</td></tr><tr><td>L0/L4</td><td>超低功耗</td></tr><tr><td>U5</td><td>安全+低功耗</td></tr></tbody></table>
+<h2>2. 为何学</h2>
+<p>求职嵌入式最常见；外设丰富；CubeMX 生态；从 F103 到 H7 路线清晰。</p>
+<h2>3. 开发板</h2>
+<table><thead><tr><th>板</th><th>特点</th></tr></thead><tbody><tr><td>Blue Pill F103</td><td>12元便宜</td></tr><tr><td>Nucleo</td><td>带ST-Link</td></tr><tr><td>Discovery</td><td>带屏传感器</td></tr></tbody></table>
+<h2>4. 首个工程</h2>
+<pre><code class="language-c">int main(void){
+  HAL_Init(); SystemClock_Config(); MX_GPIO_Init();
+  while(1){ HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13); HAL_Delay(500);}
+}</code></pre>
+<div class="tip-box">💡 求职嵌入式 STM32 是必修课。</div>
+<h2>常见问题</h2>
+<h3>F103 过时?</h3><p>入门够用，工业仍大量在用。</p>
+<h3>Mac?</h3><p>CubeIDE 有 macOS 版。</p>
+<h3>vs ESP32?</h3><p>STM32 控，ESP32 连。</p>
+<h2>本章小结</h2><ul>
+<li>ST工业标准</li>
+<li>F103入门H7高性能</li>
+<li>Nucleo带ST-Link</li>
+<li>HAL+CubeMX</li>
+</ul>
+<p><strong>下一步：</strong> <a href="02-CubeMX入门.html">02-CubeMX</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

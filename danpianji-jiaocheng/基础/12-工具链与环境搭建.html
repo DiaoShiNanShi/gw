@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 12：工具链与环境搭建 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础</div>
+    <h1>基础 12：工具链与环境搭建</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>Mac 安装 ESP32/STM32 工具链，跑通烧录串口闭环。</p></blockquote><hr>
+<h2>1. ESP32 Arduino</h2>
+<pre><code class="language-bash">brew install --cask arduino-ide
+# 添加 ESP32 板管理 URL
+# 工具→端口→选 /dev/cu.usbserial-*
+# 上传 Blink sketch</code></pre>
+<h2>2. PlatformIO</h2>
+<pre><code class="language-ini">[env:esp32dev]
+platform = espressif32
+board = esp32dev
+framework = arduino
+monitor_speed = 115200</code></pre>
+<h2>3. STM32</h2>
+<ol><li>安装 STM32CubeIDE</li><li>ST-Link 驱动</li><li>CubeMX 生成工程</li></ol>
+<h2>4. 验收四步</h2>
+<table><thead><tr><th>步骤</th><th>标准</th></tr></thead><tbody><tr><td>编译</td><td>0 error</td></tr><tr><td>烧录</td><td>100%</td></tr><tr><td>串口</td><td>Hello World</td></tr><tr><td>LED</td><td>闪烁</td></tr></tbody></table>
+<div class="tip-box">💡 第一天目标：环境→编译→串口→LED 四步闭环。</div>
+<h2>常见问题</h2>
+<h3>PlatformIO vs Arduino?</h3><p>工程大用 PIO，入门 Arduino IDE。</p>
+<h3>找不到串口?</h3><p>装 CP210x/CH340 驱动。</p>
+<h3>烧录超时?</h3><p>按住 BOOT 再上传。</p>
+<h2>本章小结</h2><ul>
+<li>ESP32 Arduino/PIO</li>
+<li>STM32 CubeIDE</li>
+<li>串口=NSLog</li>
+<li>四步验收通过</li>
+</ul>
+<p><strong>下一步：</strong> <a href="../硬件/01-开发板与工具.html">硬件 01</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>硬件 05：电源设计 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 硬件</div>
+    <h1>硬件 05：电源设计</h1>
+    <span class="header-tag">硬件入门</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>LDO/DC-DC，ESP32 供电，去耦与 Brownout。</p></blockquote><hr>
+<h2>1. 电源树</h2>
+<pre><code class="language-text">USB 5V → LDO(AMS1117-3.3) → 3.3V → ESP32
+         → 100nF+10µF 去耦</code></pre>
+<h2>2. LDO vs DC-DC</h2>
+<table><thead><tr><th>类型</th><th>优点</th><th>缺点</th></tr></thead><tbody><tr><td>LDO</td><td>简单低纹波</td><td>效率低发热</td></tr><tr><td>DC-DC</td><td>高效</td><td>纹波/EMI复杂</td></tr></tbody></table>
+<h2>3. ESP32 峰值</h2>
+<p>Wi-Fi 发射瞬间可达 500mA+，USB 500mA 够用但 LDO 需散热，建议 1117-1A 以上。</p>
+<h2>4. Brownout</h2>
+<p>电压过低芯片复位。电池项目注意放电曲线+低压检测。</p>
+<div class="tip-box">💡 供电不稳表现为 Wi-Fi 断连、ADC 跳变、随机复位。</div>
+<div class="tip-box" style="border-color:#ff6b6b;background:rgba(255,107,107,.08)">⚠️ 锂电池必须保护板。</div>
+<h2>常见问题</h2>
+<h3>Brownout?</h3><p>低压自动复位保护。</p>
+<h3>电池方案?</h3><p>LiPo+保护板+LDO。</p>
+<h3>纹波影响?</h3><p>干扰 Wi-Fi/ADC。</p>
+<h2>本章小结</h2><ul>
+<li>供电是基础</li>
+<li>Wi-Fi峰值500mA</li>
+<li>去耦电容必须</li>
+<li>电池加保护板</li>
+</ul>
+<p><strong>下一步：</strong> <a href="06-元件选型.html">06-选型</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

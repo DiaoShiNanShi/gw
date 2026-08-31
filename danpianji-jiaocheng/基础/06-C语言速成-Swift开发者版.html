@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 06：C 语言速成（Swift 开发者版） - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础</div>
+    <h1>基础 06：C 语言速成（Swift 开发者版）</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>掌握 C 与 Swift 差异、函数、结构体、头文件模块化。</p></blockquote><hr>
+<h2>1. 语法对照</h2>
+<table><thead><tr><th>Swift</th><th>C</th></tr></thead><tbody><tr><td>var x=10</td><td>int x=10;</td></tr><tr><td>func add(a:Int,b:Int)</td><td>int add(int a,int b)</td></tr><tr><td>struct Point</td><td>typedef struct { float x,y; } Point;</td></tr><tr><td>ARC</td><td>栈/静态分配，慎用 malloc</td></tr></tbody></table>
+<h2>2. 头文件模块化</h2>
+<pre><code class="language-c">// led.h
+void led_init(void);
+void led_toggle(void);
+
+// led.c
+#include "led.h"
+void led_toggle(void){ HAL_GPIO_TogglePin(...); }</code></pre>
+<h2>3. 预处理与宏</h2>
+<pre><code class="language-c">#define LED_PIN GPIO_PIN_13
+#define LED_ON()  HAL_GPIO_WritePin(GPIOC, LED_PIN, GPIO_PIN_SET)</code></pre>
+<h2>4. 与 Swift 互操作</h2>
+<p>将来用 Swift 写 App 层，C 写 MCU 固件；两者通过 BLE/MQTT 通信，非直接链接。</p>
+<div class="tip-box">💡 C 无 ARC，局部变量在栈上，函数结束自动释放。</div>
+<h2>常见问题</h2>
+<h3>要 malloc 吗?</h3><p>多用栈/静态，RTOS 任务栈预分配。</p>
+<h3>.h .c 分工?</h3><p>声明与实现分离，类似 Swift 多文件。</p>
+<h3>bool 类型?</h3><p>stdbool.h 的 bool/true/false。</p>
+<h2>本章小结</h2><ul>
+<li>C 无 ARC 需手动管理</li>
+<li>头文件模块化</li>
+<li>宏简化寄存器操作</li>
+<li>为指针章节打基础</li>
+</ul>
+<p><strong>下一步：</strong> <a href="07-指针与内存.html">07-指针与内存</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

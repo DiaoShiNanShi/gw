@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>STM32 08：ADC 与 DMA - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; STM32</div>
+    <h1>STM32 08：ADC 与 DMA</h1>
+    <span class="header-tag">STM32 专题</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>多通道扫描+DMA 环缓冲，音频/波形采集。</p></blockquote><hr>
+<h2>1. 配置</h2>
+<p>ADC1 多通道 scan + DMA circular mode → 缓冲区自动更新。</p>
+<h2>2. 启动</h2>
+<pre><code class="language-c">HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buf, ADC_BUF_LEN);
+// 半满/全满回调处理数据</code></pre>
+<h2>3. 电压换算</h2>
+<pre><code class="language-c">float v = adc_buf[i] * 3.3f / 4095.0f;</code></pre>
+<h2>4. vs 轮询</h2>
+<table><thead><tr><th>方式</th><th>CPU</th><th>场景</th></tr></thead><tbody><tr><td>Poll</td><td>阻塞</td><td>单次读</td></tr><tr><td>DMA</td><td>几乎零占用</td><td>连续采样</td></tr></tbody></table>
+<div class="tip-box">💡 DMA 缓冲用 volatile 或 cache invalidate (H7)。</div>
+<h2>常见问题</h2>
+<h3>采样率?</h3><p>ADC clock+采样周期。</p>
+<h3>参考电压?</h3><p>VDDA 或 VREFINT 校准。</p>
+<h3>双ADC?</h3><p>同步采样。</p>
+<h2>本章小结</h2><ul>
+<li>Scan+DMA 连续采集</li>
+<li>Circular 环缓冲</li>
+<li>半满回调处理</li>
+<li>省 CPU 做滤波</li>
+</ul>
+<p><strong>下一步：</strong> <a href="09-定时器与PWM.html">09-PWM</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

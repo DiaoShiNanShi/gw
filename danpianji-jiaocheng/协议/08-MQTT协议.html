@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>协议 08：MQTT 协议 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 协议</div>
+    <h1>协议 08：MQTT 协议</h1>
+    <span class="header-tag">协议模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>pub/sub、QoS、主题设计、ESP32+iOS 三方。</p></blockquote><hr>
+<h2>1. 模型</h2>
+<pre><code class="language-text">ESP32 --publish--> Broker <--subscribe-- iOS App
+                <--publish---        ---subscribe--> ESP32</code></pre>
+<h2>2. QoS</h2>
+<table><thead><tr><th>级别</th><th>语义</th></tr></thead><tbody><tr><td>0</td><td>最多一次</td></tr><tr><td>1</td><td>至少一次</td></tr><tr><td>2</td><td>恰好一次</td></tr></tbody></table>
+<h2>3. 主题设计</h2>
+<pre><code class="language-text">home/{device_id}/sensor/temp
+home/{device_id}/cmd/power
+home/{device_id}/status/online</code></pre>
+<h2>4. 库</h2>
+<table><thead><tr><th>端</th><th>库</th></tr></thead><tbody><tr><td>ESP32</td><td>PubSubClient/async_mqtt</td></tr><tr><td>iOS</td><td>CocoaMQTT/Native MQTT5</td></tr><tr><td>Broker</td><td>EMQX/Mosquitto</td></tr></tbody></table>
+<div class="tip-box">💡 生产环境 MQTT 必须 TLS。</div>
+<h2>常见问题</h2>
+<h3>自建Broker?</h3><p>开发用EMQX Docker。</p>
+<h3>vs HTTP?</h3><p>MQTT轻量长连接pub/sub。</p>
+<h3> retained?</h3><p>Broker保留最后一条。</p>
+<h2>本章小结</h2><ul>
+<li>pub/sub解耦</li>
+<li>QoS1常用</li>
+<li>主题分层设计</li>
+<li>MCU+Broker+App</li>
+</ul>
+<p><strong>下一步：</strong> <a href="../入门实战/01-第一个程序点灯.html">入门实战</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

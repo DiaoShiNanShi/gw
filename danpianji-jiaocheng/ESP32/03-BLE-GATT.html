@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>ESP32 03：BLE GATT - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; ESP32</div>
+    <h1>ESP32 03：BLE GATT</h1>
+    <span class="header-tag">ESP32 专题</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+<blockquote><p>NimBLE/Bluedroid，Service/Characteristic，Notify iOS。</p></blockquote><hr>
+<table><thead><tr><th>要点</th><th>说明</th></tr></thead><tbody><tr><td>实验</td><td>DevKit 验证</td></tr><tr><td>调试</td><td>串口 printf</td></tr></tbody></table>
+<h2>1. 初始化</h2>
+<pre><code class="language-c">BLEDevice::init("SmartLamp");
+BLEServer *s = BLEDevice::createServer();
+BLEService *svc = s->createService(LAMP_SERVICE_UUID);</code></pre>
+<h2>2. Characteristic</h2>
+<pre><code class="language-c">BLECharacteristic *c = svc->createCharacteristic(POWER_UUID,
+  BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_NOTIFY);
+c->setCallbacks(new LampCallbacks()); svc->start();</code></pre>
+<h2>3. 广播</h2>
+<pre><code class="language-c">BLEAdvertising *adv = BLEDevice::getAdvertising();
+adv->addServiceUUID(LAMP_SERVICE_UUID); adv->start();</code></pre>
+<h2>4. iOS 对接</h2>
+<p>固定 UUID 写入 App；Notify 推状态；Write 控开关。</p>
+<div class="tip-box">💡 NimBLE 比 Bluedroid 省 RAM，IDF 5 推荐。</div>
+<h2>常见问题</h2>
+<h3>连不上?</h3><p>广播/UUID/权限。</p>
+<h3>MTU?</h3><p>517 减开销。</p>
+<h3>多连接?</h3><p>参数 max connections。</p>
+<h2>本章小结</h2><ul>
+<li>GATT Service/Char</li>
+<li>Notify 推状态</li>
+<li>Write 收命令</li>
+<li>UUID 与 iOS 一致</li>
+</ul>
+<p><strong>下一步：</strong> <a href="04-Deep-Sleep.html">04-Sleep</a></p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p><p>作为 iOS 开发者学习嵌入式，建议每章配合 DevKit 实验并记录串口日志。硬件问题先万用表测电压通断，软件问题先 printf 定位。能交付 MCU 固件 + SwiftUI App 是你的核心壁垒。</p>
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>
