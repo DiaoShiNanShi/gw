@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>入门实战 01：第一个程序——点灯 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 入门实战模块</div>
+    <h1>入门实战 01：第一个程序——点灯</h1>
+    <span class="header-tag">入门实战</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>目标</h2><p>让 LED 每秒闪一次——嵌入式界的 Hello World。</p>
+<h2>Arduino 代码（ESP32）</h2>
+<pre><code>#define LED_PIN 2
+
+void setup() {
+  pinMode(LED_PIN, OUTPUT);
+  Serial.begin(115200);
+  Serial.println("Hello Embedded!");
+}
+
+void loop() {
+  digitalWrite(LED_PIN, HIGH);
+  delay(500);
+  digitalWrite(LED_PIN, LOW);
+  delay(500);
+}</code></pre>
+<h2>步骤</h2>
+<ol>
+<li>板子选 <strong>ESP32 Dev Module</strong></li>
+<li>按 GPIO 接线图接 LED</li>
+<li>上传 → 看 LED 闪烁 + 串口输出</li>
+</ol>
+<p><strong>下一步：</strong> <a href="02-按键与中断.html">02-按键与中断</a></p>
+
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

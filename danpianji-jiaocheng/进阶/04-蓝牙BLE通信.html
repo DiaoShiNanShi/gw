@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>进阶 04：蓝牙 BLE 通信 - 单片机嵌入式教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 进阶</div>
+    <h1>进阶 04：蓝牙 BLE 通信</h1>
+    <span class="header-tag">进阶</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>1. BLE 是什么？</h2>
+<p><strong>BLE = Bluetooth Low Energy</strong>，低功耗蓝牙。Apple 从 iPhone 4S 起全面支持，你的 CoreBluetooth 经验直接能用！</p>
+<h2>2. BLE 核心概念（和 CoreBluetooth 一一对应）</h2>
+<table>
+<tr><th>BLE 概念</th><th>CoreBluetooth</th></tr>
+<tr><td>Peripheral 外设</td><td><code>CBPeripheral</code></td></tr>
+<tr><td>Central 中心</td><td><code>CBCentralManager</code></td></tr>
+<tr><td>Service 服务</td><td><code>CBService</code></td></tr>
+<tr><td>Characteristic 特征</td><td><code>CBCharacteristic</code></td></tr>
+<tr><td>Notify 通知</td><td><code>didUpdateValueFor</code></td></tr>
+<tr><td>Write 写入</td><td><code>writeValue</code></td></tr>
+</table>
+<h2>3. ESP32 BLE 从机示例</h2>
+<pre><code>#include &lt;BLEDevice.h&gt;
+BLECharacteristic *pChar;
+
+void setup() {
+    BLEDevice::init("MyLight");
+    BLEServer *server = BLEDevice::createServer();
+    BLEService *svc = server->createService("FFE0");
+    pChar = svc->createCharacteristic("FFE1",
+        BLECharacteristic::PROPERTY_READ |
+        BLECharacteristic::PROPERTY_WRITE);
+    svc->start();
+    BLEDevice::startAdvertising();
+}</code></pre>
+<p>iOS 端用 CoreBluetooth 扫描 "MyLight" → 连接 → 写 FFE1 特征值 → 灯亮。完整代码见 <a href="../iOS联动/01-BLE与CoreBluetooth.html">iOS 联动章节</a>。</p>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机嵌入式教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

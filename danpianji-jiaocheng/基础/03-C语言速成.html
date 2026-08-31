@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 03：C 语言速成（iOS 开发者版） - 单片机嵌入式教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础</div>
+    <h1>基础 03：C 语言速成（iOS 开发者版）</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote><p>学习目标：有 Swift/ObjC 基础的你，2 小时掌握嵌入式 C 的核心语法。</p></blockquote>
+<h2>1. 为什么嵌入式用 C 不用 Swift？</h2>
+<ul>
+<li>Swift 运行时太大（几 MB），MCU 只有 64KB–512KB RAM</li>
+<li>C 编译后直接操作寄存器，零开销</li>
+<li>所有芯片厂商 SDK 都是 C/C++</li>
+</ul>
+<h2>2. Swift → C 语法对照</h2>
+<table>
+<tr><th>Swift</th><th>C</th></tr>
+<tr><td><code>var count = 0</code></td><td><code>int count = 0;</code></td></tr>
+<tr><td><code>let pi = 3.14</code></td><td><code>const float pi = 3.14f;</code></td></tr>
+<tr><td><code>func add(a: Int, b: Int) -> Int</code></td><td><code>int add(int a, int b)</code></td></tr>
+<tr><td><code>if count > 0 { }</code></td><td><code>if (count > 0) { }</code></td></tr>
+<tr><td><code>for i in 0..&lt;10</code></td><td><code>for (int i = 0; i &lt; 10; i++)</code></td></tr>
+<tr><td><code>struct Point { var x, y: Int }</code></td><td><code>typedef struct { int x, y; } Point;</code></td></tr>
+<tr><td><code>enum State { case on, off }</code></td><td><code>typedef enum { STATE_ON, STATE_OFF } State;</code></td></tr>
+<tr><td><code>[Int]</code> 数组</td><td><code>int arr[10];</code> 固定长度</td></tr>
+<tr><td><code>String</code></td><td><code>char str[] = "hello";</code></td></tr>
+<tr><td><code>nil</code></td><td><code>NULL</code></td></tr>
+<tr><td><code>guard let</code></td><td><code>if (ptr == NULL) return;</code></td></tr>
+</table>
+<h2>3. 嵌入式必知：指针（Swift 里隐藏了，C 里躲不掉）</h2>
+<pre><code>// 指针 = 内存地址，类似 Swift 的 UnsafePointer
+int temperature = 25;
+int *ptr = &temperature;  // ptr 存的是 temperature 的地址
+*ptr = 30;                // 通过指针修改值 → temperature 变成 30
+
+// 数组名就是指针
+int data[5] = {1, 2, 3, 4, 5};
+int *p = data;            // p 指向第一个元素
+printf("%d", *(p + 2));   // 输出 3（类似 data[2]）</code></pre>
+<div class="tip-box">💡 记忆口诀：看到 <code>*</code> 是"取值"，看到 <code>&amp;</code> 是"取地址"。</div>
+<h2>4. 位操作（嵌入式天天用）</h2>
+<pre><code>// 设置 GPIO 第 5 位为高电平
+GPIOA->ODR |= (1 &lt;&lt; 5);    // 置 1
+GPIOA->ODR &amp;= ~(1 &lt;&lt; 5);   // 置 0
+GPIOA->ODR ^= (1 &lt;&lt; 5);    // 翻转
+
+// 读取第 3 位
+if (GPIOA->IDR &amp; (1 &lt;&lt; 3)) { /* 高电平 */ }</code></pre>
+<h2>5. 头文件与模块化（类似 Swift import）</h2>
+<pre><code>// led.h — 声明
+#ifndef LED_H
+#define LED_H
+void led_init(void);
+void led_on(void);
+void led_off(void);
+#endif
+
+// led.c — 实现
+#include "led.h"
+void led_init(void) { /* 配置 GPIO */ }
+void led_on(void)    { HAL_GPIO_WritePin(LED_PORT, LED_PIN, GPIO_PIN_SET); }</code></pre>
+<h2>6. 常见坑（iOS 开发者特别容易踩）</h2>
+<ol>
+<li><strong>忘记分号</strong>：C 每行末尾必须 <code>;</code></li>
+<li><strong>数组越界</strong>：没有 Swift 的 bounds check，越界 = 程序崩溃或硬件乱动</li>
+<li><strong>栈溢出</strong>：MCU 栈只有 1–4KB，大数组放全局或堆</li>
+<li><strong>未初始化变量</strong>：不像 Swift 强制初始化，C 里可能是随机值</li>
+</ol>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机嵌入式教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

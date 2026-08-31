@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>入门实战 02：按键与中断 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 入门实战模块</div>
+    <h1>入门实战 02：按键与中断</h1>
+    <span class="header-tag">入门实战</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>轮询 vs 中断</h2>
+<ul>
+<li><strong>轮询</strong>：<code>while(1)</code> 里不断读按键——费 CPU</li>
+<li><strong>中断</strong>：按键按下 → 硬件自动跳转到处理函数——像 iOS 的 <code>target-action</code></li>
+</ul>
+<pre><code>void IRAM_ATTR onButton() {
+  // 中断服务函数：尽量短！
+  flag_pressed = true;
+}
+
+void setup() {
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), onButton, FALLING);
+}</code></pre>
+<p><strong>下一步：</strong> <a href="03-串口调试.html">03-串口调试</a></p>
+
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

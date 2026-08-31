@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>硬件 02：万用表与焊接入门 - 单片机嵌入式教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 硬件入门</div>
+    <h1>硬件 02：万用表与焊接入门</h1>
+    <span class="header-tag">硬件入门</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>1. 万用表三件套</h2>
+<ol>
+<li><strong>测电压</strong>：确认 3.3V / 5V 供电是否正常（别把 5V 接到 3.3V 芯片上！）</li>
+<li><strong>测通断</strong>：检查焊接/连线是否连通（蜂鸣档）</li>
+<li><strong>测电阻</strong>：确认电阻值是否正确</li>
+</ol>
+<h2>2. 安全红线</h2>
+<ul>
+<li>⚠️ 不要带电焊接</li>
+<li>⚠️ 不要短路 VCC 和 GND（会冒烟）</li>
+<li>⚠️ ESP32 GPIO 只能承受 3.3V，5V 会烧</li>
+<li>⚠️ 人体静电可能击穿芯片，摸板前先放电</li>
+</ul>
+<h2>3. 焊接入门（5 步）</h2>
+<ol>
+<li>电烙铁加热到 320°C</li>
+<li>焊盘和引脚同时加热 2 秒</li>
+<li>送锡丝（量：刚好覆盖焊盘）</li>
+<li>移锡 → 停 1 秒 → 移烙铁</li>
+<li>检查：焊点应光滑饱满，像"圆锥形"</li>
+</ol>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机嵌入式教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 02：控制硬件全链路 - 单片机嵌入式教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 联动</div>
+    <h1>iOS 02：控制硬件全链路</h1>
+    <span class="header-tag">iOS 联动</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>1. 完整产品架构</h2>
+<pre><code>┌─────────────┐    BLE/MQTT    ┌──────────────┐
+│  iOS App    │ ←──────────→  │  ESP32/STM32  │
+│  (SwiftUI)  │               │  (C/FreeRTOS) │
+└──────┬──────┘               └──────┬───────┘
+       │                             │
+       ↕ HTTPS                  传感器/执行器
+┌─────────────┐               (DHT22/LED/电机)
+│  云端 API   │
+│  (可选)     │
+└─────────────┘</code></pre>
+<h2>2. 通信方案选择</h2>
+<table>
+<tr><th>场景</th><th>方案</th><th>理由</th></tr>
+<tr><td>近距离控制（灯/锁）</td><td>BLE</td><td>低延迟、省电、iOS 原生支持</td></tr>
+<tr><td>远程控制（不在家）</td><td>Wi-Fi + MQTT</td><td>穿透局域网</td></tr>
+<tr><td>大数据传输（固件升级）</td><td>Wi-Fi + HTTP</td><td>带宽大</td></tr>
+<tr><td>户外远距</td><td>4G/NB-IoT 模块</td><td>无 Wi-Fi 场景</td></tr>
+</table>
+<h2>3. 你的差异化优势</h2>
+<p>纯嵌入式工程师不懂 UI/UX，纯 iOS 工程师不懂硬件。你能做<strong>完整的 IoT 产品</strong>：</p>
+<ul>
+<li>硬件端：ESP32 采集 + 控制</li>
+<li>App 端：SwiftUI 精美界面</li>
+<li>云端：可选 AI 分析（你的大模型经验）</li>
+</ul>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机嵌入式教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

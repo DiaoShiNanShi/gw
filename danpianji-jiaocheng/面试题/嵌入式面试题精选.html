@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>嵌入式面试题精选 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 面试题模块</div>
+    <h1>嵌入式面试题精选</h1>
+    <span class="header-tag">面试题</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>基础题</h2>
+<h3>1. 单片机和 CPU 的区别？</h3>
+<p>单片机把 CPU、RAM、Flash、外设集成在一颗芯片里，面向控制；CPU 只是处理器，需要外接内存等。</p>
+<h3>2. 什么是中断？</h3>
+<p>硬件事件触发 CPU 暂停当前任务，跳转执行中断服务函数，完成后返回。优先级高于轮询。</p>
+<h3>3. I2C 和 SPI 区别？</h3>
+<p>I2C 两线、多设备、速度较慢；SPI 四线+、速度快、适合 Flash/屏。</p>
+<h2>进阶题</h2>
+<h3>4. FreeRTOS 任务间通信方式？</h3>
+<p>队列、信号量、互斥量、事件组。互斥量保护共享资源防竞态。</p>
+<h3>5. 如何降低 MCU 功耗？</h3>
+<p>睡眠模式、降频、关外设时钟、减少唤醒次数、BLE 拉长广播间隔。</p>
+<h2>iOS 联动题</h2>
+<h3>6. BLE 配对和绑定区别？</h3>
+<p>配对建立加密连接；绑定把密钥存起来下次自动连。</p>
+<h3>7. 固件 OTA 失败怎么兜底？</h3>
+<p>双分区 + 启动前校验 CRC + 失败回滚旧分区。</p>
+
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

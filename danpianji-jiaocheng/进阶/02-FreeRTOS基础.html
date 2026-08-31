@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>进阶 02：FreeRTOS 基础 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 进阶模块</div>
+    <h1>进阶 02：FreeRTOS 基础</h1>
+    <span class="header-tag">进阶</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>为什么需要 RTOS？</h2>
+<p>一个 <code>while(1)</code> 搞不定时：既要读传感器，又要发 Wi-Fi，还要闪 LED——用<strong>多任务</strong>。</p>
+<pre><code>// 类似 DispatchQueue：两个任务并行
+xTaskCreate(task_sensor, "sensor", 2048, NULL, 1, NULL);
+xTaskCreate(task_wifi,   "wifi",   4096, NULL, 1, NULL);
+vTaskStartScheduler();</code></pre>
+<p>对应 iOS：<code>DispatchQueue.global().async</code> + 信号量/队列。</p>
+<p><strong>下一步：</strong> <a href="03-低功耗设计.html">03-低功耗</a></p>
+
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

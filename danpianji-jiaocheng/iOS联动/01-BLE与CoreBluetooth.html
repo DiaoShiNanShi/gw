@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 01：BLE 与 CoreBluetooth - 单片机嵌入式教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS 联动</div>
+    <h1>iOS 01：BLE 与 CoreBluetooth</h1>
+    <span class="header-tag">iOS 联动</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>1. 你的主场：CoreBluetooth</h2>
+<p>作为 iOS 开发者，BLE 是你连接硬件的最自然方式。不需要 Wi-Fi，不需要配对，低功耗。</p>
+<h2>2. iOS 端完整示例</h2>
+<pre><code>import CoreBluetooth
+
+class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
+    var central: CBCentralManager!
+    var peripheral: CBPeripheral?
+    let serviceUUID = CBUUID(string: "FFE0")
+    let charUUID    = CBUUID(string: "FFE1")
+
+    func start() {
+        central = CBCentralManager(delegate: self, queue: nil)
+    }
+
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        if central.state == .poweredOn {
+            central.scanForPeripherals(withServices: [serviceUUID])
+        }
+    }
+
+    func centralManager(_ central: CBCentralManager,
+                        didDiscover p: CBPeripheral, ...) {
+        self.peripheral = p
+        central.connect(p)
+    }
+
+    func peripheral(_ peripheral: CBPeripheral,
+                    didDiscoverCharacteristicsFor service: CBService, ...) {
+        if let char = service.characteristics?.first(where: {
+            $0.uuid == charUUID
+        }) {
+            peripheral.setNotifyValue(true, for: char)
+        }
+    }
+
+    func sendCommand(_ byte: UInt8) {
+        guard let char = /* find char */ else { return }
+        peripheral?.writeValue(Data([byte]), for: char, type: .withResponse)
+    }
+}</code></pre>
+<h2>3. 注意事项</h2>
+<ul>
+<li><code>Info.plist</code> 加 <code>NSBluetoothAlwaysUsageDescription</code></li>
+<li>后台 BLE 需要 <code>bluetooth-central</code> Background Mode</li>
+<li>真机调试，模拟器不支持 BLE</li>
+</ul>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机嵌入式教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

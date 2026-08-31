@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>iOS 联动 01：BLE 与 iOS 通信 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; iOS联动模块</div>
+    <h1>iOS 联动 01：BLE 与 iOS 通信</h1>
+    <span class="header-tag">iOS 联动</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>架构</h2>
+<pre><code>ESP32 (Peripheral)  ←BLE→  iPhone (Central / CoreBluetooth)</code></pre>
+<h2>BLE 核心概念</h2>
+<table>
+<thead><tr><th>BLE 术语</th><th>类比</th></tr></thead>
+<tbody>
+<tr><td>Service</td><td>一组功能的集合（如「温湿度服务」）</td></tr>
+<tr><td>Characteristic</td><td>具体数据（温度值、开关状态）</td></tr>
+<tr><td>UUID</td><td>唯一标识符</td></tr>
+<tr><td>Notify</td><td>设备主动推数据给手机（像 WebSocket）</td></tr>
+</tbody>
+</table>
+<h2>ESP32 端（Arduino）</h2>
+<pre><code>#include &lt;BLEDevice.h&gt;
+BLECharacteristic *pChar;
+
+void setup() {
+  BLEDevice::init("MyLamp");
+  BLEServer *server = BLEDevice::createServer();
+  BLEService *svc = server-&gt;createService("1234");
+  pChar = svc-&gt;createCharacteristic("5678",
+    BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
+  svc-&gt;start();
+  BLEDevice::getAdvertising()-&gt;start();
+}</code></pre>
+<p><strong>下一步：</strong> <a href="04-CoreBluetooth实战代码.html">04-CoreBluetooth 实战</a></p>
+
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

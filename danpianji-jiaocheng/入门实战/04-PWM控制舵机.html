@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>入门实战 04：PWM 控制舵机 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 入门实战模块</div>
+    <h1>入门实战 04：PWM 控制舵机</h1>
+    <span class="header-tag">入门实战</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>PWM 是什么？</h2>
+<p><strong>PWM = 快速开关，用占空比模拟「模拟电压」</strong>。舵机根据脉宽（1ms～2ms）转到不同角度。</p>
+<pre><code>#include &lt;ESP32Servo.h&gt;
+Servo myservo;
+myservo.attach(13);
+myservo.write(90);  // 转到 90 度</code></pre>
+<p>应用：云台、机器人关节、窗帘控制。</p>
+<p><strong>下一步：</strong> <a href="05-温湿度传感器.html">05-温湿度</a></p>
+
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

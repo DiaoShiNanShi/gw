@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 01：单片机是什么 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础模块</div>
+    <h1>基础 01：单片机是什么</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote><p>学习目标：10 分钟搞懂单片机是啥、能干啥，不再被一堆缩写吓到。</p></blockquote>
+<h2>1. 一句话说清单片机</h2>
+<p><strong>单片机（MCU）= 一块集成了 CPU、内存、定时器、GPIO 的「迷你电脑芯片」。</strong>它没有 macOS，没有 UI 界面，但能通过引脚控制 LED、读传感器、发 Wi-Fi/BLE 信号。</p>
+<p>大白话：<strong>你 iPhone 里的 A 系列芯片是「超级大脑」；单片机是「小脑」</strong>——专门干一件小事：控灯、测温、开门锁、转电机。</p>
+<h2>2. 核心比喻：单片机 = 永远在线的 while 循环</h2>
+<p>写 iOS App 时，系统是事件驱动的（点按钮 → 回调）。单片机程序通常是：</p>
+<pre><code>int main() {
+    初始化硬件();
+    while (1) {          // 永远跑，不会退出
+        读传感器();
+        控制输出();
+        延时(10ms);
+    }
+}</code></pre>
+<p>没有 <code>UIApplication</code>，没有 <code>viewDidLoad</code>，就是<strong>一个死循环 + 硬件寄存器</strong>。</p>
+<h2>3. 单片机 vs iPhone（帮你建立对照）</h2>
+<table>
+<thead><tr><th>对比</th><th>iPhone / iOS</th><th>单片机 / 嵌入式</th></tr></thead>
+<tbody>
+<tr><td>算力</td><td>极强，多核 GHz</td><td>弱，几十～几百 MHz</td></tr>
+<tr><td>内存</td><td>GB 级</td><td>KB～MB 级</td></tr>
+<tr><td>操作系统</td><td>iOS</td><td>裸机 / FreeRTOS</td></tr>
+<tr><td>语言</td><td>Swift / ObjC</td><td>C / C++</td></tr>
+<tr><td>调试</td><td>Xcode + 模拟器</td><td>串口 + 示波器 + J-Link</td></tr>
+<tr><td>功耗</td><td>瓦级</td><td>毫瓦～微瓦（可电池跑几年）</td></tr>
+<tr><td>成本</td><td>几千元</td><td>芯片 2～50 元</td></tr>
+</tbody>
+</table>
+<h2>4. 常见芯片家族（2026 年入门推荐）</h2>
+<table>
+<thead><tr><th>芯片</th><th>特点</th><th>适合谁</th></tr></thead>
+<tbody>
+<tr><td><strong>ESP32</strong></td><td>自带 Wi-Fi + BLE，资料超多</td><td>小白首选、IoT、对接 iOS</td></tr>
+<tr><td><strong>Arduino (ATmega)</strong></td><td>最简单，生态成熟</td><td>纯入门体验</td></tr>
+<tr><td><strong>STM32</strong></td><td>工业标准，外设丰富</td><td>求职嵌入式岗位</td></tr>
+<tr><td><strong>nRF52</strong></td><td>低功耗 BLE 王者</td><td>可穿戴、Beacon</td></tr>
+</tbody>
+</table>
+<h2>5. 单片机在生活中的样子</h2>
+<ul>
+<li>空调遥控器里的芯片 → 发红外信号</li>
+<li>小米台灯 → ESP32 控亮度 + App 联动</li>
+<li>充电桩 → STM32 控继电器 + 计量</li>
+<li>Apple Watch 里也有 MCU 协处理器（常低功耗跑传感器）</li>
+</ul>
+<h2>小结</h2>
+<ol>
+<li>单片机 = <strong>便宜、省电、专干一件事</strong>的小电脑</li>
+<li>程序结构 = <strong>初始化 + 死循环</strong></li>
+<li>入门推荐 <strong>ESP32</strong>（能联网，和你 iOS 背景绝配）</li>
+</ol>
+<p><strong>下一步：</strong> <a href="02-从iOS开发者视角看嵌入式.html">02-从 iOS 开发者视角看嵌入式</a></p>
+
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

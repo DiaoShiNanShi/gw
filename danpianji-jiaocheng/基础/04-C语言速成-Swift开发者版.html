@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 04：C 语言速成（Swift 开发者版 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础模块</div>
+    <h1>基础 04：C 语言速成（Swift 开发者版</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote><p>嵌入式 90% 用 C。有 Swift 基础，学 C 只要抓住差异点。</p></blockquote>
+<h2>1. 语法对照</h2>
+<table>
+<thead><tr><th>Swift</th><th>C</th></tr></thead>
+<tbody>
+<tr><td><code>var x = 10</code></td><td><code>int x = 10;</code></td></tr>
+<tr><td><code>let pi = 3.14</code></td><td><code>const float pi = 3.14f;</code></td></tr>
+<tr><td><code>func add(a: Int, b: Int) -> Int</code></td><td><code>int add(int a, int b)</code></td></tr>
+<tr><td><code>if / for / while</code></td><td>几乎一样，但每行末尾要 <code>;</code></td></tr>
+<tr><td>ARC 自动内存</td><td><strong>手动管理</strong>，<code>malloc</code>/<code>free</code></td></tr>
+<tr><td>可选类型 <code>Int?</code></td><td>没有，用特殊值或指针 NULL</td></tr>
+</tbody>
+</table>
+<h2>2. 嵌入式必学：指针与位操作</h2>
+<pre><code>// 读寄存器：把地址 0x4001080C 当作 int 指针，写入 1 点亮 LED
+*(volatile unsigned int *)0x4001080C = 0x01;
+
+// 位操作：置位第 5 位
+GPIOA-&gt;ODR |= (1 &lt;&lt; 5);   // 点亮
+GPIOA-&gt;ODR &amp;= ~(1 &lt;&lt; 5);  // 熄灭</code></pre>
+<p>Swift 里你很少碰指针，嵌入式里<strong>每天都在碰</strong>。</p>
+<h2>3. 头文件与编译</h2>
+<pre><code>// main.c
+#include "driver.h"   // 类似 Swift 的 import
+
+int main(void) {
+    gpio_init();
+    while (1) { }
+}</code></pre>
+<h2>4. 练手题（5 分钟）</h2>
+<ol>
+<li>写一个函数判断数字是否为偶数</li>
+<li>用 for 循环计算 1～100 的和</li>
+<li>定义一个结构体 <code>SensorData { float temp; float humi; }</code></li>
+</ol>
+<p><strong>下一步：</strong> <a href="05-GPIO与点灯原理.html">05-GPIO与点灯</a></p>
+
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

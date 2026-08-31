@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 02：从 iOS 到嵌入式 - 单片机嵌入式教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础</div>
+    <h1>基础 02：从 iOS 到嵌入式</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote><p>学习目标：用你已经懂的 iOS 概念，快速映射到嵌入式，降低学习曲线。</p></blockquote>
+<h2>1. 概念对照表（iOS 开发者速查）</h2>
+<table>
+<tr><th>iOS 概念</th><th>嵌入式对应</th><th>说明</th></tr>
+<tr><td><code>UIViewController</code></td><td>主循环 <code>while(1)</code> / 状态机</td><td>程序的核心调度逻辑</td></tr>
+<tr><td><code>UIButton</code> 点击</td><td>GPIO 中断 / 按键扫描</td><td>外部事件触发</td></tr>
+<tr><td><code>URLSession</code></td><td>UART / Wi-Fi / MQTT</td><td>设备间通信</td></tr>
+<tr><td><code>CoreBluetooth</code></td><td>BLE 协议栈（NimBLE）</td><td>低功耗蓝牙，直接对应！</td></tr>
+<tr><td><code>UserDefaults</code></td><td>Flash EEPROM</td><td>掉电不丢的配置存储</td></tr>
+<tr><td><code>DispatchQueue</code></td><td>FreeRTOS 任务 / 中断</td><td>并发与优先级</td></tr>
+<tr><td><code>Timer</code></td><td>硬件定时器 TIM</td><td>精确到微秒级</td></tr>
+<tr><td><code>Instruments</code></td><td>示波器 + 逻辑分析仪</td><td>看"波形"而不是"调用栈"</td></tr>
+<tr><td><code>App Delegate</code></td><td><code>main()</code> 函数</td><td>程序入口</td></tr>
+<tr><td><code>Storyboard</code></td><td>没有！全写代码</td><td>嵌入式几乎没有可视化 UI 编辑器</td></tr>
+</table>
+<h2>2. 代码风格对比</h2>
+<h3>iOS：读一个按钮状态</h3>
+<pre><code>// Swift — 按钮回调
+button.addAction(UIAction { _ in
+    ledImageView.isHighlighted.toggle()
+}, for: .touchUpInside)</code></pre>
+<h3>嵌入式：读一个按钮状态</h3>
+<pre><code>// C — 轮询 GPIO
+while (1) {
+    if (HAL_GPIO_ReadPin(BTN_PORT, BTN_PIN) == GPIO_PIN_RESET) {
+        HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
+        HAL_Delay(200);  // 防抖
+    }
+}</code></pre>
+<p>看出来了吗？<strong>逻辑一样，只是没有 UIKit 帮你封装，你要直接操作硬件寄存器（或通过 HAL 库）。</strong></p>
+<h2>3. 开发流程对比</h2>
+<table>
+<tr><th>步骤</th><th>iOS</th><th>嵌入式</th></tr>
+<tr><td>1. 写代码</td><td>Xcode</td><td>VS Code / STM32CubeIDE / Arduino IDE</td></tr>
+<tr><td>2. 编译</td><td>⌘B</td><td>make / idf.py build</td></tr>
+<tr><td>3. 部署</td><td>⌘R 装到手机</td><td>USB 烧录（ST-Link / CP2102）</td></tr>
+<tr><td>4. 调试</td><td>断点 + LLDB</td><td>串口 printf + 示波器</td></tr>
+<tr><td>5. 发布</td><td>App Store 审核</td><td>批量烧录到产品里</td></tr>
+</table>
+<h2>4. 你的 iOS 经验能直接用在哪？</h2>
+<ol>
+<li><strong>BLE 通信</strong>：CoreBluetooth 的 Central/Peripheral 概念和嵌入式 BLE 一模一样</li>
+<li><strong>网络协议</strong>：HTTP/WebSocket/MQTT 在 ESP32 上也有对应库</li>
+<li><strong>架构设计</strong>：MVVM、状态机、模块化在嵌入式项目同样适用</li>
+<li><strong>产品思维</strong>：硬件只是后端，App 才是用户看到的——你比纯硬件工程师更懂用户</li>
+</ol>
+<div class="tip-box">💡 推荐路线：<strong>ESP32 + BLE → iOS App 控制</strong>，第一周内就能做出"用手机开关灯"的完整 Demo，成就感拉满。</div>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机嵌入式教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

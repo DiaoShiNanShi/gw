@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 02：从 iOS 开发者视角看嵌入式 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础模块</div>
+    <h1>基础 02：从 iOS 开发者视角看嵌入式</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote><p>你有 iOS 基础，学嵌入式不是从零开始——很多概念有「一一对应」。</p></blockquote>
+<h2>1. 概念对照表（背这张表就省一半时间）</h2>
+<table>
+<thead><tr><th>iOS / Swift</th><th>嵌入式 / C</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><code>UIView</code></td><td>GPIO 引脚</td><td>对外接口，一个管脚高/低电平</td></tr>
+<tr><td><code>Button target-action</code></td><td>外部中断</td><td>事件触发回调</td></tr>
+<tr><td><code>Timer</code></td><td>硬件定时器</td><td>周期性任务</td></tr>
+<tr><td><code>URLSession</code></td><td>UART / SPI / I2C</td><td>和别的芯片「说话」的协议</td></tr>
+<tr><td><code>CoreBluetooth</code></td><td>BLE 协议栈</td><td>手机 ↔ 设备无线通信</td></tr>
+<tr><td><code>UserDefaults</code></td><td>Flash / EEPROM</td><td>掉电保存小数据</td></tr>
+<tr><td><code>DispatchQueue</code></td><td>FreeRTOS 任务</td><td>多任务调度</td></tr>
+<tr><td><code>Instruments</code></td><td>逻辑分析仪 / 示波器</td><td>性能与信号调试</td></tr>
+<tr><td><code>App Store 审核</code></td><td>CE / 3C / 车规认证</td><td>产品合规</td></tr>
+</tbody>
+</table>
+<h2>2. 你的优势</h2>
+<ul>
+<li><strong>产品思维</strong>：嵌入式很多人只会写驱动，不懂用户体验——你会做 App</li>
+<li><strong>蓝牙/Wi-Fi 联调</strong>：CoreBluetooth、Network 框架经验直接复用</li>
+<li><strong>架构能力</strong>：MVVM、模块化在固件里同样适用</li>
+<li><strong>全栈交付</strong>：MCU + App + 云端 = 完整智能硬件产品</li>
+</ul>
+<h2>3. 你需要补的短板</h2>
+<ul>
+<li><strong>C 语言</strong>：指针、位操作、内存管理（没有 ARC）</li>
+<li><strong>电路基础</strong>：能看懂简单原理图（VCC、GND、上拉电阻）</li>
+<li><strong>示波器/万用表</strong>：硬件调试必备</li>
+<li><strong>耐心</strong>：接线松了、电源接反了——硬件 bug 比软件难查</li>
+</ul>
+<div class="tip-box">💡 <strong>建议</strong>：不要先啃 500 页 STM32 手册。买一块 ESP32 开发板（约 30 元），先点亮 LED，再连 iPhone 蓝牙——有成就感才能坚持。</div>
+<h2>4. 推荐学习路径（有 iOS 背景版）</h2>
+<pre><code>第 1 周：C 语言速成 + 点灯（Arduino/ESP32）
+第 2 周：按键/串口/传感器
+第 3 周：BLE 通信 + iOS CoreBluetooth 联调
+第 4 周：做一个「手机控灯」完整项目
+第 2 月：STM32 + FreeRTOS（求职向）
+第 3 月：选一个行业项目（台灯/检测仪/工控）</code></pre>
+<p><strong>下一步：</strong> <a href="03-开发板怎么选.html">03-开发板怎么选</a></p>
+
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

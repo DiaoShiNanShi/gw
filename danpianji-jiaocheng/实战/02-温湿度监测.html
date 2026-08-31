@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>实战 02：温湿度监测站 - 单片机嵌入式教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 实战项目</div>
+    <h1>实战 02：温湿度监测站</h1>
+    <span class="header-tag">实战项目</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>项目目标</h2>
+<p>ESP32 读取 DHT22 温湿度 → MQTT 上报云端 → iOS App 实时显示 + 历史曲线。</p>
+<h2>硬件</h2>
+<ul><li>ESP32 ×1</li><li>DHT22 或 SHT30 传感器 ×1</li></ul>
+<h2>数据流</h2>
+<pre><code>DHT22 → ESP32 → MQTT("home/temp") → 云端
+                                      ↓
+                              iOS App 订阅显示</code></pre>
+<h2>扩展功能</h2>
+<ul>
+<li>温度超过 30°C → 推送通知（APNs）</li>
+<li>数据存 InfluxDB → 历史曲线</li>
+<li>多房间多传感器</li>
+</ul>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机嵌入式教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

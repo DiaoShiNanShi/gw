@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>进阶 01：FreeRTOS 入门 - 单片机嵌入式教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 进阶</div>
+    <h1>进阶 01：FreeRTOS 入门</h1>
+    <span class="header-tag">进阶</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>1. 为什么需要 RTOS？</h2>
+<p>当项目变复杂（同时读传感器 + 控电机 + 发 Wi-Fi），一个 <code>while(1)</code> 不够用。FreeRTOS 让你创建多个"任务"并行运行。</p>
+<p>类比 iOS：<strong>FreeRTOS 任务 ≈ DispatchQueue / Thread</strong></p>
+<h2>2. 核心概念</h2>
+<table>
+<tr><th>FreeRTOS</th><th>iOS 对应</th></tr>
+<tr><td>Task 任务</td><td>DispatchQueue / Thread</td></tr>
+<tr><td>Queue 队列</td><td>DispatchQueue (serial)</td></tr>
+<tr><td>Semaphore 信号量</td><td>DispatchSemaphore</td></tr>
+<tr><td>Mutex 互斥锁</td><td>NSLock / os_unfair_lock</td></tr>
+<tr><td>Timer 软件定时器</td><td>Timer / DispatchSourceTimer</td></tr>
+</table>
+<h2>3. 创建两个任务</h2>
+<pre><code>void sensor_task(void *pv) {
+    while (1) {
+        float t = read_temp();
+        xQueueSend(data_queue, &t, 0);
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+void wifi_task(void *pv) {
+    float t;
+    while (1) {
+        if (xQueueReceive(data_queue, &t, portMAX_DELAY))
+            mqtt_publish("temp", t);
+    }
+}
+// 启动
+xTaskCreate(sensor_task, "sensor", 2048, NULL, 1, NULL);
+xTaskCreate(wifi_task, "wifi", 4096, NULL, 1, NULL);
+vTaskStartScheduler();</code></pre>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机嵌入式教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

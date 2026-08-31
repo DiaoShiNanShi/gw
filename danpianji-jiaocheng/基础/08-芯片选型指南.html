@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 08：芯片选型指南 - 单片机嵌入式教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础</div>
+    <h1>基础 08：芯片选型指南</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote><p>学习目标：知道什么项目用什么芯片，不花冤枉钱。</p></blockquote>
+<h2>1. 主流平台对比</h2>
+<table>
+<tr><th>平台</th><th>特点</th><th>适合</th><th>价格</th><th>难度</th></tr>
+<tr><td><strong>Arduino UNO</strong></td><td>8 位 AVR，资料最多</td><td>纯入门体验</td><td>¥30</td><td>⭐</td></tr>
+<tr><td><strong>ESP32</strong></td><td>双核 + Wi-Fi + BLE</td><td>IoT、智能家居</td><td>¥25</td><td>⭐⭐</td></tr>
+<tr><td><strong>ESP8266</strong></td><td>Wi-Fi only，超便宜</td><td>简单联网项目</td><td>¥10</td><td>⭐⭐</td></tr>
+<tr><td><strong>STM32F103</strong></td><td>ARM Cortex-M3，工业级</td><td>工控、电机控制</td><td>¥15</td><td>⭐⭐⭐</td></tr>
+<tr><td><strong>STM32H7</strong></td><td>480MHz，带 FPU</td><td>高性能、音频</td><td>¥80</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td><strong>Raspberry Pi Pico</strong></td><td>RP2040 双核</td><td>教育、MicroPython</td><td>¥30</td><td>⭐⭐</td></tr>
+<tr><td><strong>nRF52840</strong></td><td>BLE 5.0 低功耗之王</td><td>可穿戴、Beacon</td><td>¥60</td><td>⭐⭐⭐</td></tr>
+</table>
+<h2>2. iOS 开发者推荐路线</h2>
+<div class="tip-box">
+<strong>第一步：ESP32（Arduino 框架）</strong> → 快速出成果，Wi-Fi + BLE 都有<br>
+<strong>第二步：ESP32（ESP-IDF）</strong> → 专业 FreeRTOS 开发<br>
+<strong>第三步：STM32</strong> → 工业级，求职必备<br>
+<strong>全程：iOS App 做控制端</strong> → 你的核心竞争力
+</div>
+<h2>3. 选型决策树</h2>
+<pre><code>需要联网吗？
+├─ 是 → 需要 BLE 吗？
+│       ├─ 是 → ESP32 ✅（最推荐）
+│       └─ 否 → ESP8266（省钱）
+└─ 否 → 需要高性能吗？
+        ├─ 是 → STM32H7 / RP2040
+        └─ 否 → STM32F103 / Arduino</code></pre>
+<h2>4. 开发板购买建议（2026）</h2>
+<table>
+<tr><th>板子</th><th>推荐型号</th><th>参考价</th></tr>
+<tr><td>ESP32</td><td>ESP32-DevKitC-32E</td><td>¥25</td></tr>
+<tr><td>STM32</td><td>STM32F103C8T6 最小系统板</td><td>¥12</td></tr>
+<tr><td>传感器套件</td><td>37-in-1 传感器套件</td><td>¥45</td></tr>
+<tr><td>USB-TTL</td><td>CP2102 模块</td><td>¥8</td></tr>
+<tr><td>杜邦线+面包板</td><td>套装</td><td>¥15</td></tr>
+</table>
+<p><strong>入门总预算：约 ¥100–150</strong></p>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机嵌入式教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

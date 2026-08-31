@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 06：串口 UART 通信 - 单片机嵌入式教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础</div>
+    <h1>基础 06：串口 UART 通信</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<blockquote><p>学习目标：掌握嵌入式调试的"生命线"——串口通信。</p></blockquote>
+<h2>1. UART 是什么？</h2>
+<p><strong>UART = 两根线（TX/RX）传数据，最简单最古老的通信方式。</strong></p>
+<p>类比 iOS：UART 就像两个设备之间的"对讲机"，没有 Wi-Fi 那么复杂，但可靠直接。</p>
+<h2>2. 接线（记住 TX 接 RX，RX 接 TX）</h2>
+<pre><code>ESP32          USB-TTL 模块         Mac/PC
+ GPIO17 (TX) ──→ RX
+ GPIO16 (RX) ←── TX
+ GND         ──→ GND</code></pre>
+<h2>3. 第一个串口程序</h2>
+<pre><code>void setup() {
+    Serial.begin(115200);  // 波特率 115200
+    Serial.println("Hello from ESP32!");
+}
+
+void loop() {
+    float temp = readTemperature();
+    Serial.printf("温度: %.1f°C\n", temp);
+    delay(1000);
+}</code></pre>
+<h2>4. Mac 上看串口输出</h2>
+<ol>
+<li>安装 CP2102/CH340 驱动</li>
+<li>Arduino IDE → 工具 → 串口监视器</li>
+<li>或用命令行：<code>screen /dev/cu.usbserial-xxx 115200</code></li>
+</ol>
+<h2>5. 串口在开发中的角色</h2>
+<table>
+<tr><th>用途</th><th>说明</th></tr>
+<tr><td><strong>调试打印</strong></td><td><code>printf</code> 是嵌入式唯一的" NSLog"</td></tr>
+<tr><td><strong>接收命令</strong></td><td>PC 发指令控制设备</td></tr>
+<tr><td><strong>模块通信</strong></td><td>和 GPS、蓝牙、4G 模块对话</td></tr>
+<tr><td><strong>固件升级</strong></td><td>UART Bootloader 烧录</td></tr>
+</table>
+<div class="tip-box">💡 波特率常用值：9600（老设备）、115200（最常用）、921600（高速调试）</div>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机嵌入式教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

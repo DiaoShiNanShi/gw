@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>基础 06：常见通信协议入门 - 单片机学习教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 基础模块</div>
+    <h1>基础 06：常见通信协议入门</h1>
+    <span class="header-tag">基础模块</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>1. 协议速查表</h2>
+<table>
+<thead><tr><th>协议</th><th>线数</th><th>距离</th><th>典型场景</th></tr></thead>
+<tbody>
+<tr><td><strong>UART</strong>（串口）</td><td>2（TX/RX）</td><td>短</td><td>调试打印、GPS 模块</td></tr>
+<tr><td><strong>I2C</strong></td><td>2（SDA/SCL）</td><td>短</td><td>温湿度、OLED 屏</td></tr>
+<tr><td><strong>SPI</strong></td><td>4+</td><td>短</td><td>Flash、高速传感器</td></tr>
+<tr><td><strong>BLE</strong></td><td>无线</td><td>10m 内</td><td>手环、iOS 联动 ⭐</td></tr>
+<tr><td><strong>Wi-Fi</strong></td><td>无线</td><td>远</td><td>智能家居、MQTT</td></tr>
+<tr><td><strong>MQTT</strong></td><td>基于 TCP</td><td>互联网</td><td>设备 ↔ 云端 ↔ App</td></tr>
+</tbody>
+</table>
+<h2>2. 和 iOS 的关系</h2>
+<ul>
+<li><strong>BLE</strong> → <code>CoreBluetooth</code>（你最该先学的）</li>
+<li><strong>Wi-Fi + MQTT</strong> → App 通过云端控制设备</li>
+<li><strong>HTTP</strong> → ESP32 开 Web Server，App 直接请求</li>
+</ul>
+<h2>3. 大白话记忆</h2>
+<ul>
+<li>UART = 两个人面对面说话（调试必备）</li>
+<li>I2C = 一条总线挂多个设备（像 USB Hub）</li>
+<li>BLE = 蓝牙，和 iPhone 配对</li>
+</ul>
+<p><strong>下一步：</strong> <a href="07-应用场景与赚钱方向.html">07-应用场景与赚钱方向</a></p>
+
+<em>（内容由 AI 生成，仅供参考）</em>
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机 / 嵌入式学习教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>

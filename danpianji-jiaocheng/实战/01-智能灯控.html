@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../_assets/site.css">
+<title>实战 01：智能灯控（ESP32 + iOS） - 单片机嵌入式教程</title>
+</head>
+<body>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="crumb"><a href="../README.html">教程首页</a> &nbsp;/&nbsp; 实战项目</div>
+    <h1>实战 01：智能灯控（ESP32 + iOS）</h1>
+    <span class="header-tag">实战项目</span>
+  </div>
+</div>
+<div class="container">
+  <div class="content-card">
+
+<h2>项目目标</h2>
+<p>用 iPhone 通过 BLE 或 Wi-Fi 控制 ESP32 上的 LED 灯，实现开关和亮度调节。</p>
+<h2>硬件清单</h2>
+<ul><li>ESP32 开发板 ×1</li><li>LED ×1 + 220Ω 电阻</li><li>可选：MOSFET + 12V 灯带（做真灯）</li></ul>
+<h2>架构</h2>
+<pre><code>iOS App (CoreBluetooth)
+    ↕ BLE
+ESP32 (BLE Server)
+    → GPIO PWM → LED 亮度</code></pre>
+<h2>ESP32 端关键代码</h2>
+<pre><code>class LedCallbacks : public BLECharacteristicCallbacks {
+    void onWrite(BLECharacteristic *p) {
+        std::string val = p->getValue();
+        int brightness = val[0];  // 0-255
+        analogWrite(LED_PIN, brightness);
+    }
+};</code></pre>
+<h2>验收标准</h2>
+<ol><li>✅ iPhone 扫描到 "SmartLight" 设备</li><li>✅ App 滑动条控制 LED 亮度 0–100%</li><li>✅ 断连后 ESP32 保持最后状态</li></ol>
+
+  </div>
+</div>
+<div class="page-footer">
+  <p><a href="../README.html">← 返回教程首页</a> · 单片机嵌入式教程</p>
+</div>
+<script src="../_assets/site.js" defer></script>
+</body>
+</html>
