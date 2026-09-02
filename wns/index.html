@@ -15,6 +15,9 @@
 </head>
 <body>
   <div class="bg-grid" aria-hidden="true"></div>
+  <div class="luminous-orb a" aria-hidden="true"></div>
+  <div class="luminous-orb b" aria-hidden="true"></div>
+  <div class="luminous-sweep" aria-hidden="true"></div>
   <a class="skip-link" href="#stage">跳到主要内容</a>
 
   <button class="rail-toggle" type="button" data-rail-toggle aria-expanded="false" aria-label="打开导航">☰</button>
@@ -41,7 +44,7 @@
 
     <div class="stage" id="stage">
       <section class="status-board" id="board" data-section>
-        <div class="status-top">
+        <div class="status-top reveal">
           <h1>
             <span>WNS · NETWORK HUB</span>
             WiFi 管家
@@ -50,168 +53,215 @@
         </div>
 
         <div class="status-grid">
-          <article class="panel hero-panel">
-            <div>
-              <div class="panel-label">Mission</div>
-              <p>个人网络中心——安全管理密码、二维码分享、网络诊断。家里、办公室、旅途中的 Wi-Fi，全部留在你的 iPhone 上。</p>
+          <article class="panel hero-panel luminous-wrap reveal">
+            <div class="luminous-inner">
+              <div>
+                <div class="panel-label">Mission</div>
+                <p>个人网络中心——安全管理密码、二维码分享、网络诊断。密码与备注全部保存在本机，不上传服务器。</p>
+              </div>
+              <div class="signal-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
             </div>
-            <div class="signal-bars" aria-hidden="true">
-              <i></i><i></i><i></i><i></i>
+          </article>
+          <article class="panel luminous-wrap reveal">
+            <div class="luminous-inner">
+              <div class="panel-label">Tabs</div>
+              <div class="panel-value">4<small>首页 · 网络 · 密码本 · 我的</small></div>
             </div>
           </article>
-          <article class="panel">
-            <div class="panel-label">Saved</div>
-            <div class="panel-value">本地<small>Keychain 加密存储</small></div>
+          <article class="panel luminous-wrap reveal">
+            <div class="luminous-inner">
+              <div class="panel-label">Category</div>
+              <div class="panel-value cyan">4<small>家庭 · 公司 · 出行 · 其他</small></div>
+            </div>
           </article>
-          <article class="panel">
-            <div class="panel-label">Category</div>
-            <div class="panel-value cyan">5<small>家庭 · 公司 · 出行 · 其他</small></div>
+          <article class="panel luminous-wrap reveal">
+            <div class="luminous-inner">
+              <div class="panel-label">Storage</div>
+              <div class="panel-value">LOCAL<small>Keychain · App 沙盒</small></div>
+            </div>
           </article>
-          <article class="panel">
-            <div class="panel-label">Tabs</div>
-            <div class="panel-value">4<small>首页 · 网络 · 密码本 · 我的</small></div>
-          </article>
-          <article class="panel">
-            <div class="panel-label">Theme</div>
-            <div class="panel-value">多款<small>森林绿 · 信任蓝 · 午夜蓝</small></div>
+          <article class="panel luminous-wrap reveal">
+            <div class="luminous-inner">
+              <div class="panel-label">Widget</div>
+              <div class="panel-value">3<small>小 · 中 · 大 桌面小组件</small></div>
+            </div>
           </article>
         </div>
       </section>
 
       <section class="module-map" id="modules" data-section>
-        <p class="section-tag">Module Map</p>
-        <h2 class="section-title">四个 Tab，对应四种网络场景</h2>
+        <p class="section-tag reveal">Module Map</p>
+        <h2 class="section-title reveal">App 内实际功能（按 Tab 分组）</h2>
 
         <div class="modules">
-          <article class="module">
-            <div class="module-head"><b>首页</b><span>HOME</span></div>
-            <ul>
-              <li>当前网络状态 <em>LIVE</em></li>
-              <li>快捷操作入口 <em>6项</em></li>
-              <li>常用网络收藏 <em>★</em></li>
-              <li>过期网络提醒 <em>本地通知</em></li>
-            </ul>
+          <article class="module luminous-wrap reveal">
+            <div class="luminous-inner">
+              <div class="module-head"><b>首页</b><span>HOME</span></div>
+              <ul>
+                <li>当前网络状态卡 <em>实时</em></li>
+                <li>扫描二维码导入 <em>相机</em></li>
+                <li>分享 / 诊断 / 优化 <em>快捷</em></li>
+                <li>防蹭网 / 安全检测 <em>快捷</em></li>
+                <li>常用网络 / 最近保存 <em>列表</em></li>
+              </ul>
+            </div>
           </article>
-          <article class="module">
-            <div class="module-head"><b>网络</b><span>NET</span></div>
-            <ul>
-              <li>全面网络诊断 <em>报告</em></li>
-              <li>一键优化 <em>DNS·缓存</em></li>
-              <li>防蹭网扫描 <em>LAN</em></li>
-              <li>门户页检测 <em>酒店机场</em></li>
-            </ul>
+          <article class="module luminous-wrap reveal">
+            <div class="luminous-inner">
+              <div class="module-head"><b>网络</b><span>NET</span></div>
+              <ul>
+                <li>分享 Wi-Fi / 健康体检 <em>连接</em></li>
+                <li>一键诊断 / 认证页面 <em>连接</em></li>
+                <li>安全检测 / 局域网设备 <em>安全</em></li>
+                <li>一键优化 / 信号地图 <em>优化</em></li>
+                <li>DNS 优选 / 缓存清理 <em>优化</em></li>
+                <li>网速测试 / 扫描 WiFi 码 <em>工具</em></li>
+              </ul>
+            </div>
           </article>
-          <article class="module">
-            <div class="module-head"><b>密码本</b><span>VAULT</span></div>
-            <ul>
-              <li>扫码导入 Wi-Fi <em>QR</em></li>
-              <li>二维码分享 <em>系统分享</em></li>
-              <li>分类与收藏 <em>本地</em></li>
-              <li>面容 ID 保护 <em>Keychain</em></li>
-            </ul>
+          <article class="module luminous-wrap reveal">
+            <div class="luminous-inner">
+              <div class="module-head"><b>密码本</b><span>VAULT</span></div>
+              <ul>
+                <li>搜索名称或 SSID <em>筛选</em></li>
+                <li>家庭 / 公司 / 出行 / 其他 <em>4 类</em></li>
+                <li>添加 / 编辑网络 <em>手动</em></li>
+                <li>扫码导入 / 二维码分享 <em>QR</em></li>
+                <li>连接 / 复制密码 / 过期提醒 <em>详情</em></li>
+              </ul>
+            </div>
           </article>
-          <article class="module">
-            <div class="module-head"><b>我的</b><span>ME</span></div>
-            <ul>
-              <li>外观皮肤切换 <em>即时生效</em></li>
-              <li>已保存 / 常用统计 <em>本地</em></li>
-              <li>隐私政策与合规 <em>文档</em></li>
-              <li>面容 ID 与通知 <em>设置</em></li>
-            </ul>
+          <article class="module luminous-wrap reveal">
+            <div class="luminous-inner">
+              <div class="module-head"><b>我的</b><span>ME</span></div>
+              <ul>
+                <li>面容 / 指纹解锁 <em>开关</em></li>
+                <li>已保存 / 常用 / 网速 <em>统计</em></li>
+                <li>桌面小组件添加指引 <em>Widget</em></li>
+                <li>功能介绍与合规说明 <em>文档</em></li>
+                <li>应用名称与版本号 <em>关于</em></li>
+              </ul>
+            </div>
           </article>
         </div>
       </section>
 
       <section class="filmstrip" id="screens" data-section>
         <div class="filmstrip-head">
-          <div>
+          <div class="reveal">
             <p class="section-tag">Interface</p>
-            <h2 class="section-title">界面预览</h2>
+            <h2 class="section-title">模拟器实机截图</h2>
           </div>
-          <p>清爽浅色界面，森林绿主题。横向滑动查看四个 Tab 真实界面。</p>
+          <p class="reveal">深色主题，荧光绿点缀。以下为 iOS 模拟器当前运行界面，可横向拖拽浏览。</p>
         </div>
         <div class="filmstrip-track" tabindex="0" aria-label="界面截图横向滚动">
-          <figure class="frame">
+          <figure class="frame reveal">
             <figcaption class="frame-cap">HOME · 首页</figcaption>
-            <img src="assets/screen-home.png" alt="首页界面" width="240" height="520" loading="lazy">
+            <div class="luminous-wrap">
+              <div class="luminous-inner">
+                <img src="assets/screen-home.png" alt="首页界面" width="240" height="520" loading="lazy">
+              </div>
+            </div>
           </figure>
-          <figure class="frame">
+          <figure class="frame reveal">
             <figcaption class="frame-cap">NET · 网络</figcaption>
-            <img src="assets/screen-network.png" alt="网络界面" width="240" height="520" loading="lazy">
+            <div class="luminous-wrap">
+              <div class="luminous-inner">
+                <img src="assets/screen-network.png" alt="网络界面" width="240" height="520" loading="lazy">
+              </div>
+            </div>
           </figure>
-          <figure class="frame">
+          <figure class="frame reveal">
             <figcaption class="frame-cap">VAULT · 密码本</figcaption>
-            <img src="assets/screen-vault.png" alt="密码本界面" width="240" height="520" loading="lazy">
+            <div class="luminous-wrap">
+              <div class="luminous-inner">
+                <img src="assets/screen-vault.png" alt="密码本界面" width="240" height="520" loading="lazy">
+              </div>
+            </div>
           </figure>
-          <figure class="frame">
+          <figure class="frame reveal">
             <figcaption class="frame-cap">ME · 我的</figcaption>
-            <img src="assets/screen-me.png" alt="我的界面" width="240" height="520" loading="lazy">
+            <div class="luminous-wrap">
+              <div class="luminous-inner">
+                <img src="assets/screen-settings.png" alt="我的界面" width="240" height="520" loading="lazy">
+              </div>
+            </div>
           </figure>
         </div>
       </section>
 
       <section class="spec-sheet" id="spec" data-section>
-        <p class="section-tag">Data Spec</p>
-        <h2 class="section-title">数据与权限说明</h2>
+        <p class="section-tag reveal">Data Spec</p>
+        <h2 class="section-title reveal">数据与权限说明</h2>
 
         <div class="spec-grid">
-          <div class="spec-block wide">
-            <h3>存储策略</h3>
-            <dl class="spec-rows">
-              <div class="spec-row">
-                <dt>密码</dt>
-                <dd>写入 iOS Keychain，不上传服务器</dd>
-              </div>
-              <div class="spec-row">
-                <dt>网络备注</dt>
-                <dd>保存在 App 沙盒，删除 App 即清除</dd>
-              </div>
-              <div class="spec-row">
-                <dt>检测历史</dt>
-                <dd>仅存本机，用于回看诊断结果</dd>
-              </div>
-            </dl>
+          <div class="spec-block wide luminous-wrap reveal">
+            <div class="luminous-inner">
+              <h3>存储策略</h3>
+              <dl class="spec-rows">
+                <div class="spec-row">
+                  <dt>密码</dt>
+                  <dd>写入 iOS Keychain，不上传服务器</dd>
+                </div>
+                <div class="spec-row">
+                  <dt>网络备注</dt>
+                  <dd>保存在 App 沙盒，删除 App 即清除</dd>
+                </div>
+                <div class="spec-row">
+                  <dt>测速记录</dt>
+                  <dd>仅存本机，用于「我的」页展示最近网速等级</dd>
+                </div>
+              </dl>
+            </div>
           </div>
-          <div class="spec-block">
-            <h3>系统权限</h3>
-            <dl class="spec-rows">
-              <div class="spec-row">
-                <dt>定位</dt>
-                <dd>仅读取当前 Wi-Fi 名称（SSID），不追踪位置</dd>
-              </div>
-              <div class="spec-row">
-                <dt>本地网络</dt>
-                <dd>局域网设备探测与网关诊断</dd>
-              </div>
-              <div class="spec-row">
-                <dt>相机</dt>
-                <dd>扫描 Wi-Fi 二维码</dd>
-              </div>
-            </dl>
+          <div class="spec-block luminous-wrap reveal">
+            <div class="luminous-inner">
+              <h3>系统权限</h3>
+              <dl class="spec-rows">
+                <div class="spec-row">
+                  <dt>定位</dt>
+                  <dd>仅读取当前 Wi-Fi 名称（SSID），不追踪位置</dd>
+                </div>
+                <div class="spec-row">
+                  <dt>本地网络</dt>
+                  <dd>局域网设备探测与网关诊断</dd>
+                </div>
+                <div class="spec-row">
+                  <dt>相机</dt>
+                  <dd>扫描 Wi-Fi 二维码</dd>
+                </div>
+                <div class="spec-row">
+                  <dt>面容 ID</dt>
+                  <dd>可选，用于解锁密码本</dd>
+                </div>
+              </dl>
+            </div>
           </div>
-          <div class="spec-block">
-            <h3>网络请求</h3>
-            <dl class="spec-rows">
-              <div class="spec-row">
-                <dt>测速 / DNS</dt>
-                <dd>连接公共检测服务器，不含密码</dd>
-              </div>
-              <div class="spec-row">
-                <dt>数据共享</dt>
-                <dd>不出售、不共享用户数据</dd>
-              </div>
-            </dl>
-            <a class="spec-link" href="privacy.html">完整隐私政策 →</a>
+          <div class="spec-block luminous-wrap reveal">
+            <div class="luminous-inner">
+              <h3>网络请求</h3>
+              <dl class="spec-rows">
+                <div class="spec-row">
+                  <dt>测速 / DNS</dt>
+                  <dd>连接公共检测服务器，不含密码</dd>
+                </div>
+                <div class="spec-row">
+                  <dt>过期提醒</dt>
+                  <dd>本地通知，无通知设置页</dd>
+                </div>
+              </dl>
+              <a class="spec-link" href="privacy.html">完整隐私政策 →</a>
+            </div>
           </div>
         </div>
       </section>
 
       <section class="action-dock" id="get" data-section>
-        <div class="dock-copy">
+        <div class="dock-copy reveal">
           <h2>即将登陆 App Store</h2>
           <p>WiFi 管家正在准备上架。如需测试资格或产品反馈，欢迎发邮件联系。</p>
         </div>
-        <div class="dock-actions">
+        <div class="dock-actions reveal">
           <a class="btn btn-primary" href="mailto:support@wns-wifimanager.app">联系获取测试资格</a>
           <a class="btn btn-ghost" href="privacy.html">阅读隐私政策</a>
         </div>
