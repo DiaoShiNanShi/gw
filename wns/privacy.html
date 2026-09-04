@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WiFi 管家 隐私政策</title>
-  <meta name="description" content="WiFi 管家隐私政策：本地存储、不上传个人数据、权限用途说明。">
+  <title>wifi共享钥匙 隐私政策</title>
+  <meta name="description" content="wifi共享钥匙隐私政策：本机存储 Wi-Fi 密码、第三方广告（穿山甲）说明、权限用途与数据删除。">
   <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml">
   <link rel="canonical" href="https://diaoshinanshi.github.io/gw/wns/privacy.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,38 +23,39 @@
       <a class="back" href="index.html">← 返回控制台</a>
       <p class="section-tag">Privacy Policy</p>
       <h1>隐私政策</h1>
-      <p>最后更新：2026 年 9 月 2 日</p>
+      <p>最后更新：2026 年 9 月 4 日</p>
     </header>
 
     <article class="legal-body luminous-wrap">
       <div class="luminous-inner">
       <h2>概述</h2>
-      <p>WiFi 管家（以下简称「本 App」）是一款帮助您管理 Wi-Fi 密码、诊断网络连接、检测公共网络安全的工具类应用。我们重视您的隐私，本政策说明我们如何处理（以及不处理）您的信息。</p>
+      <p>wifi共享钥匙（以下简称「本 App」）是一款帮助您在本机管理 Wi-Fi 密码、分享访客二维码，并进行可选网络诊断的工具类应用。您保存的 Wi-Fi 密码与备注存储在设备本地，我们不会要求您注册账号，也不会将密码上传至我们的服务器。</p>
+
+      <h2>广告与第三方 SDK</h2>
+      <p>本 App <strong>免费使用</strong>，由第三方广告服务（穿山甲 / Pangle 及其聚合 SDK）支持。从第二次冷启动起可能展示开屏广告，首页底部可能展示 Banner 广告。广告 SDK 可能处理设备标识符、广告展示与点击等数据，用于广告投放、归因与效果衡量。您可在 iOS「设置 → 隐私与安全性 → 跟踪」中管理 App 跟踪授权（ATT）。</p>
 
       <h2>我们收集什么</h2>
-      <p>本 App <strong>不收集、不上传</strong>您的个人数据到我们的服务器。您保存的 Wi-Fi 密码、网络备注、检测历史均存储在您的设备本地（Keychain 与 App 沙盒）。</p>
-      <p>我们不会要求您注册账号，也不会通过本 App 建立可识别个人身份的用户档案。</p>
+      <p>除上述广告相关数据外，本 App <strong>不会将您的 Wi-Fi 密码或个人备注上传</strong>到我们的服务器。检测历史保存在设备本地。</p>
+      <p>广告 SDK 可能收集崩溃与性能相关数据，用于 SDK 稳定性与广告服务优化，不会用于识别您的 Wi-Fi 密码内容。</p>
 
       <h2>设备权限用途</h2>
       <ul>
         <li><strong>定位（使用时）</strong>：仅用于读取当前连接的 Wi-Fi 名称（SSID），系 iOS 系统要求。我们不会追踪或上传您的地理位置。</li>
         <li><strong>本地网络</strong>：用于局域网设备探测与网关连通性诊断。</li>
-        <li><strong>相机</strong>：用于扫描 Wi-Fi 二维码，快速导入网络信息。</li>
-        <li><strong>面容 ID / Touch ID</strong>：用于解锁密码本（可选功能，由您自行开启）。</li>
-        <li><strong>通知</strong>：仅在您为临时 Wi-Fi 设置过期提醒时，用于本地到期提醒。</li>
+        <li><strong>相机</strong>：用于扫描 Wi-Fi 二维码。</li>
+        <li><strong>面容 ID / Touch ID</strong>：可选，用于解锁密码本。</li>
+        <li><strong>通知</strong>：仅在您为临时 Wi-Fi 设置过期提醒时使用。</li>
+        <li><strong>App 跟踪透明度（ATT）</strong>：可选，用于向您展示更相关的广告。</li>
       </ul>
 
       <h2>网络请求</h2>
-      <p>测速、DNS 测试、门户检测、连通性诊断等功能会向第三方公共服务器（如 Cloudflare、Apple 连通性检测地址等）发起网络请求，仅用于实现对应功能，请求内容<strong>不包含</strong>您的 Wi-Fi 密码或保存在密码本中的敏感信息。</p>
+      <p>测速、DNS 测试、门户检测、广告加载等功能会向第三方服务器发起网络请求，仅用于实现对应功能，<strong>不包含</strong>您的 Wi-Fi 密码。部分广告素材可能通过 HTTP 加载（穿山甲 SDK 集成要求），您的 Wi-Fi 密码不会经此通道传输。</p>
 
-      <h2>数据共享</h2>
-      <p>我们不会向第三方出售或共享您的数据。您通过系统分享功能主动分享的二维码或海报由您自行控制接收方与分享范围。</p>
+      <h2>数据共享与删除</h2>
+      <p>我们不会出售您的 Wi-Fi 密码。广告数据由第三方广告服务商按其隐私政策处理。您通过系统分享功能主动分享的二维码或海报由您自行控制接收方与分享范围。删除 App 即可删除所有本地保存的密码与记录。</p>
 
       <h2>数据存储与安全</h2>
       <p>Wi-Fi 密码等敏感信息优先存储在 iOS Keychain 中。其他应用数据保存在 App 沙盒内，受 iOS 系统隔离保护。您可在设置中开启面容 ID 作为额外访问保护。</p>
-
-      <h2>数据删除</h2>
-      <p>删除 App 或清除 App 数据即可删除所有本地保存的信息。卸载后，我们无法为您恢复任何已删除的本地数据。</p>
 
       <h2>儿童隐私</h2>
       <p>本 App 不面向 13 岁以下儿童，也不会故意收集儿童信息。</p>
@@ -63,9 +64,7 @@
       <p>我们可能适时更新本隐私政策。更新后的版本将发布在本页面，并修改文首「最后更新」日期。</p>
 
       <h2>联系我们</h2>
-      <p>如有疑问，请发送邮件至 <a href="mailto:support@wns-wifimanager.app">support@wns-wifimanager.app</a>。</p>
-
-      <p class="legal-note">提示：正式上线前，请根据实际运营主体、服务地区及所接入的第三方 SDK 进行法律审核。</p>
+      <p>如有疑问，请发送邮件至 <a href="mailto:hmszo.rafxp745@gmx.com">hmszo.rafxp745@gmx.com</a>。</p>
       </div>
     </article>
   </main>

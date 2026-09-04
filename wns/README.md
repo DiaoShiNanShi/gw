@@ -1,4 +1,4 @@
-# WiFi 管家官网
+# wifi共享钥匙官网
 
 纯静态官网，无需构建步骤。
 
@@ -17,8 +17,10 @@ python3 -m http.server 4173 -d .
 - 官网：`https://diaoshinanshi.github.io/gw/wns/`
 - 隐私政策：`https://diaoshinanshi.github.io/gw/wns/privacy.html`
 
-正式上线前请完成：
+与 App 内 `AppLegal.websiteURL` / `AppLegal.privacyPolicyURL` 保持一致。
 
-- App Store 上线后，将首页「即将登陆 App Store」入口替换为正式下载链接。
-- 当前联系邮箱为 `support@wns-wifimanager.app`。
-- 根据实际运营主体、服务地区和所接入的第三方 SDK 对隐私政策做法律审核。
+## 合规说明
+
+- 本 App 免费使用，含穿山甲（Pangle）第三方广告。
+- Wi-Fi 密码仅存本机，不上传我们的服务器。
+- 联系邮箱：`hmszo.rafxp745@gmx.com`
