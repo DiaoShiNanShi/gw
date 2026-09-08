@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>韩剧片单 · 追剧片单与 AI 导视</title>
+  <meta name="description" content="韩剧片单：TMDB 韩剧元数据、追剧进度、AI 剧情解读与情绪荐剧。免费使用，不提供正片，仅官方预告片。">
+  <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/app-icon.svg">
+  <link rel="canonical" href="https://diaoshinanshi.github.io/gw/hanjulist/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="aurora" aria-hidden="true"></div>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html">
+        <img src="assets/app-icon.svg" alt="" width="40" height="40">
+        <span>
+          韩剧片单
+          <small>K-Drama List</small>
+        </span>
+      </a>
+      <nav class="topnav" aria-label="页面导航">
+        <a href="#lineup" data-nav>导视</a>
+        <a href="#features" data-nav>功能</a>
+        <a href="#ai" data-nav>AI</a>
+        <a href="#data" data-nav>说明</a>
+        <a href="privacy.html">隐私</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+    <section class="hero">
+      <div class="hero-copy reveal">
+        <div class="eyebrow"><i aria-hidden="true"></i>Playlist · Guide · Track</div>
+        <h1>把韩剧<br><em>片单、进度与解读</em><br>收进一部 App</h1>
+        <p class="hero-lead">
+          韩剧片单不是视频站——它帮你浏览 TMDB 韩剧信息、记录「想看 / 在看 / 看完」、保存看到第几集，并用 AI 做剧情导视与情绪荐剧。不提供剧集正片，仅可观看官方预告片。
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#get">即将登陆 App Store</a>
+          <a class="btn btn-ghost" href="privacy.html">阅读隐私政策</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <b>5</b>
+            <span>底部 Tab：首页 · 浏览 · 搜索 · 追剧 · 我的</span>
+          </div>
+          <div class="stat">
+            <b>本地</b>
+            <span>追剧记录保存在设备，无需注册登录</span>
+          </div>
+          <div class="stat">
+            <b>免费</b>
+            <span>含第三方广告，首次启动说明数据用途</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-stage reveal" aria-hidden="true">
+        <div class="phone phone-a">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="screen-head">Tonight · 热门韩剧</div>
+            <div class="screen-title">发现下一部<br>想追的剧</div>
+            <div class="poster-row">
+              <div class="poster"></div>
+              <div class="poster"></div>
+              <div class="poster"></div>
+              <div class="poster"></div>
+            </div>
+            <div class="mood-strip">
+              <p>情绪荐剧 · AI 生成</p>
+              <div class="mood-chips">
+                <i>想哭</i><i>想嗑糖</i><i>要爽剧</i><i>睡前轻松</i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone phone-b">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="screen-head">Watchlist · 追剧</div>
+            <div class="watch-card">
+              <b>在看 · 第 8 集</b>
+              <span>进度保存在本机，随时续看</span>
+              <div class="progress"><i></i></div>
+            </div>
+            <div class="watch-card">
+              <b>防剧透模式已开启</b>
+              <span>AI 解读仅基于已看集数</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="lineup">
+      <p class="section-tag reveal">Channel Lineup</p>
+      <h2 class="section-title reveal">五个 Tab，各司其职</h2>
+      <p class="section-lead reveal">不像通用工具箱堆功能——每个 Tab 对应一种追剧动作，从发现到记录，路径清晰。</p>
+      <div class="lineup">
+        <article class="lineup-item reveal">
+          <span class="ch">CH 01</span>
+          <div>
+            <b>首页</b>
+            <p>今日推荐、热门韩剧、AI 助手入口与情绪荐剧卡片。</p>
+          </div>
+        </article>
+        <article class="lineup-item reveal">
+          <span class="ch">CH 02</span>
+          <div>
+            <b>浏览</b>
+            <p>类型、年份、评分、连载状态等高级筛选，按热度或评分排序。</p>
+          </div>
+        </article>
+        <article class="lineup-item reveal">
+          <span class="ch">CH 03</span>
+          <div>
+            <b>搜索</b>
+            <p>片名搜索或 AI 自然语言搜剧；支持筛选与最近搜索。</p>
+          </div>
+        </article>
+        <article class="lineup-item reveal">
+          <span class="ch">CH 04</span>
+          <div>
+            <b>追剧</b>
+            <p>想看 / 在看 / 看完分组，记录当前集数，一键续追。</p>
+          </div>
+        </article>
+        <article class="lineup-item reveal">
+          <span class="ch">CH 05</span>
+          <div>
+            <b>我的</b>
+            <p>追剧统计、数据来源、广告说明、AI 状态与关于信息。</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <p class="section-tag reveal">Detail Sheet</p>
+      <h2 class="section-title reveal">详情页能做什么</h2>
+      <p class="section-lead reveal">打开一部剧，不只是看简介——而是管理你的观看关系。</p>
+      <div class="epg reveal">
+        <div class="epg-head">
+          <div>模块</div>
+          <div>说明</div>
+          <div>备注</div>
+        </div>
+        <div class="epg-row">
+          <div>追剧卡片</div>
+          <div>
+            <b>标记状态并保存集数</b>
+            <p>想看、在看、看完；在看时可记录「看到第几集」。</p>
+          </div>
+          <div><span class="tag">本地存储</span></div>
+        </div>
+        <div class="epg-row">
+          <div>预告片</div>
+          <div>
+            <b>官方预告片播放</b>
+            <p>通过应用内浏览器打开 YouTube 预告，不提供正片资源。</p>
+          </div>
+          <div><span class="tag">合规</span></div>
+        </div>
+        <div class="epg-row">
+          <div>观看平台</div>
+          <div>
+            <b>跳转 TMDB 或浏览器</b>
+            <p>查看播出平台信息，由 TMDB 提供元数据。</p>
+          </div>
+          <div><span class="tag">TMDB</span></div>
+        </div>
+        <div class="epg-row">
+          <div>主演</div>
+          <div>
+            <b>演员列表与详情</b>
+            <p>查看演员信息与作品，支持 AI 演员解读。</p>
+          </div>
+          <div><span class="tag">演员页</span></div>
+        </div>
+        <div class="epg-row">
+          <div>AI 示例点评</div>
+          <div>
+            <b>AI 生成的示例分析</b>
+            <p>非真实用户评论，页面有明确标注与说明。</p>
+          </div>
+          <div><span class="tag">AI 生成</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ai">
+      <p class="section-tag reveal">AI Guide</p>
+      <h2 class="section-title reveal">AI 不是噱头，是导视层</h2>
+      <p class="section-lead reveal">剧情解读、分集要点、演员导视、自然语言搜剧与情绪荐剧——均在 App 内标注 AI 生成及数据发送说明。</p>
+      <div class="feature-grid">
+        <article class="feature-card reveal">
+          <div class="icon">📖</div>
+          <h3>剧情 / 分集解读</h3>
+          <p>一键生成主线概括或单集要点，帮助快速了解故事走向。</p>
+        </article>
+        <article class="feature-card reveal">
+          <div class="icon">🛡</div>
+          <h3>防剧透模式</h3>
+          <p>开启后，AI 解读与示例点评仅基于你已看到的集数，避免被剧透。</p>
+        </article>
+        <article class="feature-card reveal">
+          <div class="icon">🔍</div>
+          <h3>AI 搜剧</h3>
+          <p>用自然语言描述偏好，例如「治愈系校园剧」「类似黑暗荣耀的复仇剧」。</p>
+        </article>
+      </div>
+
+      <div class="mood-board" style="margin-top: 18px;">
+        <article class="mood-card reveal">
+          <div class="emoji">💧</div>
+          <b>想哭</b>
+          <p>需要情感释放时，AI 挑 5 部合适韩剧。</p>
+        </article>
+        <article class="mood-card reveal">
+          <div class="emoji">🍬</div>
+          <b>想嗑糖</b>
+          <p>甜蜜爱情向推荐，快速找到下一部甜剧。</p>
+        </article>
+        <article class="mood-card reveal">
+          <div class="emoji">⚡</div>
+          <b>要爽剧</b>
+          <p>复仇、逆袭、高能反转类片单。</p>
+        </article>
+        <article class="mood-card reveal">
+          <div class="emoji">🌙</div>
+          <b>睡前轻松</b>
+          <p>节奏舒缓、适合放松收看的剧集。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="data">
+      <p class="section-tag reveal">Data & Compliance</p>
+      <h2 class="section-title reveal">数据与合规说明</h2>
+      <div class="feature-grid">
+        <article class="feature-card reveal">
+          <div class="icon">🎬</div>
+          <h3>TMDB 元数据</h3>
+          <p>剧集信息、海报、演员与评分来自 TMDB API。本产品使用 TMDB API，未经 TMDB 认可或认证。</p>
+        </article>
+        <article class="feature-card reveal">
+          <div class="icon">📱</div>
+          <h3>本地追剧记录</h3>
+          <p>想看 / 在看 / 看完状态、集数进度、点赞等保存在设备本地，无需账号。</p>
+        </article>
+        <article class="feature-card reveal">
+          <div class="icon">📣</div>
+          <h3>广告与隐私</h3>
+          <p>App 免费，部分页面展示第三方广告。首次启动会说明数据用途；可在系统设置中管理跟踪授权（ATT）。</p>
+        </article>
+      </div>
+    </section>
+
+    <div class="notice-band reveal">
+      <div class="notice-inner">
+        <h2>重要说明</h2>
+        <p>韩剧片单不提供任何剧集正片或盗版资源，仅展示 TMDB 元数据并支持观看官方预告片。AI 内容由第三方服务生成，使用时会发送剧名、简介、分集信息等文本以生成结果。完整说明见<a href="privacy.html">隐私政策</a>。</p>
+      </div>
+    </div>
+
+    <section class="cta" id="get">
+      <div class="cta-box reveal">
+        <h2>即将登陆 App Store</h2>
+        <p>韩剧片单正在准备上架。如需 TestFlight 测试资格、商务合作或产品反馈，欢迎邮件联系。</p>
+        <div class="cta-actions">
+          <a class="btn btn-primary" href="mailto:hmszo.rafxp745@gmx.com">联系开发者</a>
+          <a class="btn btn-ghost" href="privacy.html">隐私政策</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <span>© 2026 韩剧片单 · K-Drama List</span>
+    <span>
+      <a href="privacy.html">隐私政策</a>
+      ·
+      <a href="mailto:hmszo.rafxp745@gmx.com">hmszo.rafxp745@gmx.com</a>
+    </span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
