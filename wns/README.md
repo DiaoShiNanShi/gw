@@ -21,6 +21,7 @@ python3 -m http.server 4173 -d .
 
 ## 合规说明
 
-- 本 App 免费使用，含穿山甲（Pangle）第三方广告。
+- 本 App 免费使用，含穿山甲（Pangle）第三方广告（开屏、Banner、插屏、信息流）。
+- 广告位配置内置在 App 中，无远程开关。
 - Wi-Fi 密码仅存本机，不上传我们的服务器。
 - 联系邮箱：`hmszo.rafxp745@gmx.com`
